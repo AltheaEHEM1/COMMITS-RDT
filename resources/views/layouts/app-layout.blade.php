@@ -104,7 +104,7 @@
                 style="transition: opacity 0.5s;">
                 {{ session('error') }}
             </div>
-        @endif
+        @endif--}}
 
         <main class="h-full md:ml-64">
             <!--loading spinner-->
