@@ -75,8 +75,10 @@
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-2 focus:outline-none focus:ring-blue-500 block w-full p-2.5">
                         <option value="">Select diagnosis</option>
                         @foreach ($services as $service)
-                            @if (!$loop->last)
-                                {{-- to not include the "Total Online Consult" --}}
+                            @if (!empty($service['data'][5]))
+                                {{-- Category header: shown but not selectable --}}
+                                <option value="" disabled><strong>{{ $service['name'] }}</strong></option>
+                            @else
                                 <option value="{{ $service['name'] }}">{{ $service['name'] }}</option>
                             @endif
                         @endforeach

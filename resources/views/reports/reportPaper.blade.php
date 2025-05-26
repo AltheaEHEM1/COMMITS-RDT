@@ -158,7 +158,7 @@
                             48, 49, 51, 52, 53, 54, 56, 57, 58, 61, 62, 63, 64, 65, 66, 68, 69, 71, 
                             72, 73, 74, 75, 77, 79, 80, 82, 83, 84, 85]) ? 'pl-9' : 
                             (in_array($loop->index, [0, 70, 76, 78, 81]) ? 'bg-blue-200 font-bold' :
-                            (in_array($loop->index, [1, 11, 21, 27, 32, 33, 36, 41, 43, 50, 55, 59, 60, 67]) ? 'bg-yellow-100 font-bold' : '')) }}">{{ $service['name'] }} {{ $loop->index }}</td>
+                            (in_array($loop->index, [1, 11, 21, 27, 32, 33, 36, 41, 43, 50, 55, 59, 60, 67]) ? 'bg-yellow-100 font-bold' : '')) }}">{{ $service['name'] }}</td>
                             @foreach ($service['data'] as $data)
                                 <td class="border border-black cells 
                                     {{ in_array($loop->parent->index, [0, 70, 76, 78, 81]) ? 'bg-blue-200 font-bold' :
@@ -190,7 +190,6 @@
                             {{ in_array($loop->index, [86, 90]) ? 'bg-yellow-100 font-bold' :
                             (in_array($loop->index, [87, 88, 89, 91, 92]) ? 'pl-9' : '')}}">
                                 {{ $service['name'] }}  
-                                {{ $loop->index }}
                             </td>
                             @foreach($service['data'] as $data)
                                 <td class="border border-black cells
@@ -572,9 +571,14 @@
                                 margin: 0;
                             }
                             body {
-                                margin: 0;
+                                display: flex !important;
+                                justify-content: center !important;
+                                align-items: center !important;
+                                margin-right: 50px;
+                                margin-left: 15px;
+                                margin-top: 20px;
+                                margin-bottom: 0px;
                                 padding: 0;
-                                background: white;
                             }
                             #ctrlNumber {
                                 width: 180px;
@@ -582,12 +586,15 @@
                             }
                             #reportPaperID {
                                 box-shadow: none !important;
-                                margin: 0 !important;
-                                padding-bottom: 0 !important;
+                                width: 100% !important;
+                                margin: 0 auto !important;
+                                padding: 0 !important;
+                                box-sizing: border-box !important;
                             }                      
                             td, th {
                                 word-wrap: break-word;
                                 overflow-wrap: break-word;
+                                text-align: center !important;
                             }
                             input[type="text"], 
                             input[type="number"], 
@@ -597,8 +604,9 @@
                             }
                             #table1, #table2, #table3, #table4, #table5 {
                                 width: 100% !important;
-                                margin: 0;
-                                padding: 0;
+                            }
+                            #table2, #table3, #table4, #table5 {
+                                margin-left: 20px;
                             }
                             #table-header {
                                 text-align: center;

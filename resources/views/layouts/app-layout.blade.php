@@ -94,8 +94,8 @@
         <x-sidebar />
 
         <!-- Notification Messages -->
-        @if (session('success'))
-            <div id="session-alert" class="fixed z-50 tw-p-4 tw-mb-4 tw-text-green-800 tw-bg-green-200 tw-rounded-lg"
+        {{-- @if (session('success'))
+            <div id="session-alert" class="fixed z-50 text-white tw-p-4 tw-mb-4 tw-text-green-800 tw-bg-green-200 tw-rounded-lg"
                 style="transition: opacity 0.5s;">
                 {{ session('success') }}
             </div>
@@ -106,9 +106,7 @@
             </div>
         @endif
 
-        {{-- checks if the route is profile page if not it will add margin left --}}
-        <main
-            class="h-full md:ml-64">
+        <main class="h-full md:ml-64">
             <!--loading spinner-->
             <x-loading-spinner />
 
