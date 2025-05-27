@@ -1,5 +1,7 @@
 @extends('layouts.app-layout')
 
+@section('title', 'Medical Clearance')
+
 @section('content')
     <!-- Buttons (Optional for print view, you can hide them when printing) -->
     <div class="flex space-x-10 justify-between mb-5">

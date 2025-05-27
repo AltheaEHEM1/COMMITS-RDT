@@ -65,8 +65,6 @@
         </x-inventory.form>
     </x-inventory.modal>
 
-    <!-- Error Modal Component -->
-    <x-inventory.date-error-modal />
 
 @endsection
 
@@ -116,10 +114,7 @@
                                 target="{{'return-'.$medicine->id}}" 
                                 action="{{ route('return_medicine', $medicine->id) }}" 
                             />
-                            <x-inventory.confirm-return 
-                                target="{{ 'return-'.$medicine->id }}"
-                                action="{{ route('return_medicine', $medicine->id) }}"
-                            />
+                            
                             <!-- Edit Button -->
                             <x-inventory.btn-edit-modal heading="Edit a Record" target="{{ 'edit-'.$medicine->id }}" >  
                                 <x-inventory.form method="POST" action="{{ route('update_medicine', $medicine->id) }}" 
@@ -204,3 +199,68 @@
 
     {{ $medicines->links() }}
 @endsection
+
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Find all medicine forms
+    const forms = document.querySelectorAll('form[id$="medicine-form"], form[id^="edit-medicine-form"]');
+    
+    forms.forEach(form => {
+        const formId = form.id;
+        const dateReceived = form.querySelector('[name="date_received"]');
+        const expirationDate = form.querySelector('[name="expiration_date"]');
+        
+        if (dateReceived && expirationDate) {
+            // Initially disable expiration date if date_received is empty
+            if (!dateReceived.value) {
+                expirationDate.disabled = true;
+            } else {
+                // Set min date to date_received value
+                expirationDate.min = dateReceived.value;
+            }
+            
+            // Helper message
+            const helperText = document.createElement('p');
+            helperText.className = 'text-xs text-gray-500 mt-1';
+            helperText.textContent = dateReceived.value ? 'Must be after date received' : 'Please select date received first';
+            expirationDate.parentNode.appendChild(helperText);
+            
+            // When date_received changes, update expiration_date constraints
+            dateReceived.addEventListener('change', function() {
+                if (this.value) {
+                    // Enable expiration date field
+                    expirationDate.disabled = false;
+                    
+                    // Set minimum date to date received
+                    expirationDate.min = this.value;
+                    
+                    // Update helper text
+                    helperText.textContent = 'Must be after date received';
+                    
+                    // Clear expiration date if it's now invalid
+                    if (expirationDate.value && expirationDate.value <= this.value) {
+                        expirationDate.value = '';
+                    }
+                } else {
+                    // If date received is cleared, disable expiration date
+                    expirationDate.disabled = true;
+                    expirationDate.value = '';
+                    helperText.textContent = 'Please select date received first';
+                }
+            });
+            
+            // Only allow form submission if expiration date is after date received
+            form.addEventListener('submit', function(e) {
+                if (dateReceived.value && expirationDate.value) {
+                    if (expirationDate.value <= dateReceived.value) {
+                        e.preventDefault();
+                        alert('Expiration date must be after date received');
+                    }
+                }
+            });
+        }
+    });
+});
+</script>
+@endpush

@@ -1,4 +1,4 @@
-<div id="date-error-modal" tabindex="-1" aria-hidden="true" class="fixed top-0 left-0 right-0 z-[60] hidden w-full h-full overflow-x-hidden overflow-y-auto flex items-center justify-center" style="background-color: rgba(0, 0, 0, 0.5); backdrop-filter: blur(4px);">
+<div id="date-error-modal" tabindex="-1" aria-hidden="true" class="fixed mt-0 top-0 h-screen left-0 right-0 z-50 nt-0 hidden w-full overflow-x-hidden overflow-y-auto flex items-center justify-center" style="background-color: rgba(0, 0, 0, 0.5); backdrop-filter: blur(4px);">
     <div class="relative w-full max-w-sm max-h-full transition-all duration-300 transform scale-95 opacity-0" id="date-error-modal-container">
         <div class="relative overflow-hidden bg-white rounded-lg shadow-lg">
             <!-- Modal header -->

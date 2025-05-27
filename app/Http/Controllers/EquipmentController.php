@@ -45,10 +45,13 @@ class EquipmentController extends Controller
             $validated[$field] = $request->has($field) ? 1 : 0;
         }
         
+        // Create equipment
         Equipment::create($validated);
 
-        return redirect()->route('inventory-equipment')
-            ->with('success', 'Equipment added successfully');
+        return redirect()->route('inventory-equipment')->with([
+            'action' => 'add',
+            'message' => "Equipment '{$validated['general_description']}' has been added successfully."
+        ]);
     }
 
 
@@ -74,8 +77,10 @@ class EquipmentController extends Controller
         
         $equipment->update($validated);
 
-        return redirect()->route('inventory-equipment')
-            ->with('success', 'Equipment updated successfully');
+        return redirect()->route('inventory-equipment')->with([
+            'action' => 'edit',
+            'message' => "Equipment '{$equipment->general_description}' has been updated successfully."
+        ]);
     }
 
     public function deduct(Request $request, Equipment $medicine)
@@ -89,31 +94,19 @@ class EquipmentController extends Controller
     public function destroy(Request $request, Equipment $equipment)
     {
         try {
-            $request->validate([
-                'password' => 'required',
-            ]);
-
-            if (!Hash::check($request->password, auth()->user()->password)) {
-                throw ValidationException::withMessages([
-                    'password' => ['The provided password is incorrect.']
-                ]);
-            }
-
+            // Store equipment name before deletion
+            $equipmentName = $equipment->general_description;
+            
             $equipment->delete();
             
-            return response()->json([
-                'success' => true,
-                'message' => 'Equipment deleted successfully'
+            return redirect()->route('inventory-equipment')->with([
+                'action' => 'delete',
+                'message' => "Equipment '{$equipmentName}' has been deleted successfully."
             ]);
 
-        } catch (ValidationException $e) {
-            return response()->json([
-                'error' => $e->errors()['password'][0]
-            ], 422);
         } catch (\Exception $e) {
-            return response()->json([
-                'error' => 'An error occurred while deleting the equipment.'
-            ], 500);
+            return redirect()->route('inventory-equipment')
+                ->with('error', 'An error occurred while deleting the equipment.');
         }
     }
 }

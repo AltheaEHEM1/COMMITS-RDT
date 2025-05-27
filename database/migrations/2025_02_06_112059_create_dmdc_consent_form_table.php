@@ -16,6 +16,9 @@ return new class extends Migration
             $table->unsignedBigInteger('document_id');
             $table->string('event_name');
             $table->timestamps();
+            $table->string('control_number');
+            $table->string('revision');
+            $table->date('date_issued'); // Date the contruct was issued
             $table->string('document_type')->default('dmdc_consent_form');
             $table->softDeletes();
         

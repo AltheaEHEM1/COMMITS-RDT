@@ -1,19 +1,19 @@
 @extends('layouts.guest-layout')
 
 @section('guest_content')
-    <div class="p-6 space-y-6">
+    <div class="space-y-6">
         <div class="text-center">
             <!-- Placeholder for logo -->
             <div
-                class="mx-auto h-16 w-16 bg-gradient-to-r rounded-full flex items-center justify-center shadow-md overflow-hidden">
+                class="mx-auto h-14 w-14 bg-gradient-to-r rounded-full flex items-center justify-center overflow-hidden">
                 <img src="{{ asset('images/prms-logo 2.jpg') }}" alt="Logo" class="h-full w-full object-cover">
             </div>
 
-            <h1 class="mt-6 text-xl font-semibold text-gray-900">
-                Patient Record System
+            <h1 class="mt-4 text-xl font-semibold text-gray-900">
+                PRMS
             </h1>
-            <p class="mt-2 text-sm text-gray-600">
-                Sign in to access patient records
+            <p class="mt-1 text-sm text-gray-600">
+                Log in to access patient records
             </p>
         </div>
 

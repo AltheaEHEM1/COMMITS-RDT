@@ -8,6 +8,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\MedicineController;
 use App\Http\Controllers\SupplyController;
 use App\Http\Controllers\EquipmentController;
+use App\Http\Controllers\InventoryExportController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\PatientHistoryController;
 use App\Http\Controllers\ForgotPasswordController;
@@ -16,7 +17,8 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\SettingController;
 use Illuminate\Support\Facades\Auth;
-
+use SebastianBergmann\CodeCoverage\Report\Html\Dashboard;
+use App\Http\Controllers\ActivityLogController;
 
 // Guest routes
 Route::middleware(['guest'])->group(function () {
@@ -132,7 +134,13 @@ Route::middleware(['auth'])->group(function () {
                 Route::delete('/{equipment}', 'destroy')->name('delete_equipment');
             });
         });
+
+        // Add this route in an appropriate section of your web.php file
+        Route::get('/export/{type}', [App\Http\Controllers\InventoryExportController::class, 'export'])->name('inventory.export');
     });
+
+    //Fuzzy Search Route
+    Route::post('/patients/check-similar', [PatientController::class, 'checkSimilar'])->name('patients.check-similar');
 
     // Document Routes
     Route::prefix('documents')->group(function () {
@@ -181,8 +189,10 @@ Route::middleware(['auth'])->group(function () {
 
         }
     });
-
-    // Report Routes
+    //Control Number
+    Route::post('/documents', [DocumentController::class, 'ControlNumber'])->name('control-numbers.store');
+    Route::put('/documents/{id}', [DocumentController::class, 'updateControlNumber'])->name('control-numbers.update');
+    Route::get('/documents/edit/{id}', [DocumentController::class, 'editControlNumber'])->name('control-number.edit');    // Report Routes
     Route::prefix('reports')->group(function () {
 
         // Display a list of reports, allowing filters
@@ -236,4 +246,31 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/notifications/clear-all', [NotificationController::class, 'clearAll'])
         ->name('notifications.clearAll')
         ->middleware('auth');
+});
+
+
+
+//Super Admin
+Route::middleware(['auth', 'superadmin'])->group(function () {
+    Route::prefix('admin')->group(function () {
+
+        Route::get('/', function () {
+            return redirect()->route('Superadmin_dashboard');
+        });
+
+        //Dashboard
+        Route::get('/dashboard', [DashboardController::class, 'superadminDashboard'])->name('Superadmin_dashboard');
+
+        // User management
+        Route::prefix('users')->group(function () {
+            Route::get('/', [UserController::class, 'getUsers'])->name('users.get');
+            // Add this to your routes/web.php
+            Route::get('/admin/users/add', [UserController::class, 'create'])->name('user.create');
+            Route::post('/admin/users/add', [UserController::class, 'store'])->name('user.store');
+            Route::post('/edit', [UserController::class, 'update'])->name('user.update');
+            Route::post('/delete', [UserController::class, 'delete'])->name('user.destroy');
+        });
+
+        Route::get('/activity-logs', [ActivityLogController::class, 'index'])->name('Auditlog');
+    });
 });

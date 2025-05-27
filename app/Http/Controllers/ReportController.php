@@ -19,7 +19,7 @@ class ReportController extends Controller
     public function index(Request $request)
     {
         $query = Report::query();
-        
+
         if ($request->has('category')) {
             $query->where('category', $request->category);
         }
@@ -145,10 +145,11 @@ class ReportController extends Controller
         }
     }
 
-    public function showReportPaper(){
+    public function showReportPaper()
+    {
 
         $services = $this->getDefaultServices();
-        
+
         return view('reports.reportPaper', compact('services'));
     }
 
@@ -158,7 +159,7 @@ class ReportController extends Controller
             'fromDurationDate' => 'required|date',
             'toDurationDate'   => 'required|date',
         ]);
-        
+
         // Convert the incoming date strings to Carbon instances and ensure they cover the full day.
         $from = Carbon::parse($request->input('fromDurationDate'))->startOfDay();
         $to = Carbon::parse($request->input('toDurationDate'))->endOfDay();
@@ -171,7 +172,7 @@ class ReportController extends Controller
             ->get();
 
         $services = $this->getDefaultServices();
-        
+
         $categoryMapping = [
             'students'       => 0,
             'faculty'        => 1,
@@ -227,7 +228,8 @@ class ReportController extends Controller
     }
 
     // to initialize the services array once
-    private function getDefaultServices(): array {
+    private function getDefaultServices(): array
+    {
         return [
             [
                 'name' => 'I. CONSULTATION / TREATMENT',
@@ -687,7 +689,7 @@ class ReportController extends Controller
                 'Overall'     => $request->totalOverall,
             ],
         ];
-        
+
         return Excel::download(new ReportsExport($data), 'medical_report.xlsx');
     }
 }

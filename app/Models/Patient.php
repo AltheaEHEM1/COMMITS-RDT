@@ -4,10 +4,14 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
+use Laravel\Scout\Searchable;
 class Patient extends Model
 {
+    use LogsActivity;
     use HasFactory;
+    use Searchable;
 
     /**
      * The attributes that are mass assignable.
@@ -27,6 +31,18 @@ class Patient extends Model
         'physician_id',
     ];
 
+    // for fuzzy search
+    public function toSearchableArray()
+    {
+        return [
+            'id' => $this->id,
+            'firstName' => $this->firstName,
+            'middleName' => $this->middleName,
+            'lastName' => $this->lastName,
+            'full_name' => "{$this->firstName} {$this->middleName} {$this->lastName}",
+        ];
+    }
+    
     /**
      * Validation rules for patient data
      * 
@@ -71,6 +87,13 @@ class Patient extends Model
         ];
     }
 
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logAll() // logs all fillable attributes
+            ->useLogName('patient')
+            ->logOnlyDirty(); // only logs changes
+    }
     /**
      * Get full name attribute
      *

@@ -1,22 +1,34 @@
 @extends('layouts.app-layout')
 
+@section('title', 'Documents')
+
 @section('content')
     <div class="container mx-auto">
         <x-page-title class="mb-2" value="Documents" />
         <!-- Header -->
-        <div class="flex justify-between items-center mb-3">
+        <div class="flex justify-between items-center mb-4">
             <h2 class="text-gray-500">Recents</h2>
-            <div class="flex space-x-2">
+            <div class="flex flex-wrap items-center justify-end w-full gap-2 mb-4">
                 <!-- Filter Dropdown -->
-                <div class="relative inline-block text-left">
+                <div class="relative">
+                    <button onclick="openControlNumber()" class="inline-flex items-center gap-1 px-2 py-2.5 text-blue-500 bg-blue-100 hover:bg-blue-200 rounded-lg transition-all duration-200">
+                        <svg class="w-6 h-6 text-blue-800 dark:text-blue" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
+                            <path fill-rule="evenodd" d="M8 7V2.221a2 2 0 0 0-.5.365L3.586 6.5a2 2 0 0 0-.365.5H8Zm2 0V2h7a2 2 0 0 1 2 2v.126a5.087 5.087 0 0 0-4.74 1.368v.001l-6.642 6.642a3 3 0 0 0-.82 1.532l-.74 3.692a3 3 0 0 0 3.53 3.53l3.694-.738a3 3 0 0 0 1.532-.82L19 15.149V20a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9h5a2 2 0 0 0 2-2Z" clip-rule="evenodd"/>
+                            <path fill-rule="evenodd" d="M17.447 8.08a1.087 1.087 0 0 1 1.187.238l.002.001a1.088 1.088 0 0 1 0 1.539l-.377.377-1.54-1.542.373-.374.002-.001c.1-.102.22-.182.353-.237Zm-2.143 2.027-4.644 4.644-.385 1.924 1.925-.385 4.644-4.642-1.54-1.54Zm2.56-4.11a3.087 3.087 0 0 0-2.187.909l-6.645 6.645a1 1 0 0 0-.274.51l-.739 3.693a1 1 0 0 0 1.177 1.176l3.693-.738a1 1 0 0 0 .51-.274l6.65-6.646a3.088 3.088 0 0 0-2.185-5.275Z" clip-rule="evenodd"/>
+                        </svg>
+
+                    </button>
+
+                </div>
+                <div class="relative">
                     <button onclick="toggleDropdown('document-type-dropdown')"
-                        class="inline-flex items-center gap-2 px-2 py-2.5 text-gray-500 bg-gray-50 border-2 border-gray-500 hover:bg-gray-100 rounded-lg transition-all duration-200 shadow-md hover:shadow-lg active:shadow-sm transform active:translate-y-0">
+                        class="inline-flex items-center gap-1 px-2 py-2.5 text-blue-500 bg-blue-100 hover:bg-blue-200 rounded-lg transition-all duration-200">
                         <p class="px-2">Document Type</p>
                         <svg xmlns="http://www.w3.org/2000/svg" width="32" height="25" viewBox="0 0 32 25"
                             fill="none">
                             <path
                                 d="M15.5993 15.4256L10.1191 11.2891L11.9458 9.91016L15.5993 12.6679L19.2526 9.91016L21.0793 11.2891L15.5993 15.4256Z"
-                                fill="#808080" />
+                                fill="currentColor" />
                         </svg>
                     </button>
                     <div id="document-type-dropdown"
@@ -30,15 +42,15 @@
                     </div>
                 </div>
 
-                <div class="relative inline-block text-left">
+                <div class="relative">
                     <button onclick="toggleDropdown('date-dropdown')"
-                        class="inline-flex items-center gap-2 px-4 py-2.5 text-white bg-yellow-500 hover:bg-yellow-400 rounded-lg transition-all duration-200 shadow-md hover:shadow-lg active:shadow-sm transform active:translate-y-0">
+                        class="inline-flex items-center gap-1 px-3 py-2.5 text-blue-500 bg-blue-100 hover:bg-blue-200 rounded-lg transition-all duration-200">
                         <p class="px-2">Month</p>
                         <svg xmlns="http://www.w3.org/2000/svg" width="32" height="25" viewBox="0 0 32 25"
                             fill="none">
                             <path
                                 d="M15.5993 15.4256L10.1191 11.2891L11.9458 9.91016L15.5993 12.6679L19.2526 9.91016L21.0793 11.2891L15.5993 15.4256Z"
-                                fill="#FFFFFF" />
+                                fill="currentColor" />
                         </svg>
                     </button>
                     <div id="date-dropdown"
@@ -53,7 +65,7 @@
                 <!-- Add Dropdown -->
                 <div class="relative inline-block text-left">
                     <button onclick="toggleDropdown('add-dropdown')"
-                        class="inline-flex items-center gap-2 px-4 py-2.5 text-white bg-blue-500 hover:bg-blue-600 rounded-lg transition-all duration-200 shadow-md hover:shadow-lg active:shadow-sm transform active:translate-y-0">
+                        class="inline-flex items-center gap-2 px-4 py-2.5 text-white bg-blue-500 hover:bg-blue-600 rounded-lg transition-all duration-200 transform active:translate-y-0">
                         <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 17 17"
                             fill="none">
                             <path
@@ -69,7 +81,7 @@
                         </svg>
                     </button>
                     <div id="add-dropdown"
-                        class="dropdown-content absolute right-0 mt-2 w-64 bg-white border border-gray-200 rounded shadow-lg">
+                        class="dropdown-content absolute z-50 right-0 mt-2 w-64 bg-white border border-gray-200 rounded shadow-lg">
                         <a href="{{ route('documents.medical_certificate.create', ['document_type' => 'Medical Certificate']) }}"
                             class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Medical Certificate</a>
                         <a href="{{ route('documents.medical_clearance.create', ['document_type' => 'Medical Clearance']) }}"
@@ -99,93 +111,349 @@
                 @foreach ($documents as $document)
                     <div id="document-container"
                         class="bg-white p-4 rounded-lg shadow flex justify-between items-center cursor-pointer transition-all w-full">
-                        <a
-                            href="{{ route('documents.' . strtolower(str_replace(' ', '_', $document->document_type)) . '.view', $document->id) }}">
-                            <div>
-                                <p class="font-medium text-gray-800">{{ $document->document_type }}</p>
-                                <p class="text-gray-600 text-sm">{{ $document->created_at->format('F j, Y') }}</p>
-                            </div>
-                            <div class="flex space-x-3">
-                                <!-- Edit Icon -->
-                                <a href="{{ route('documents.' . strtolower(str_replace(' ', '_', $document->document_type)) . '.edit', $document->id) }}"
-                                    class="hover:text-yellow-500">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 fill-current"
-                                        viewBox="0 0 24 24">
+                        <div>
+                            <p class="font-medium text-gray-800">{{ $document->document_type }}</p>
+                            <p class="text-gray-600 text-sm">{{ $document->created_at->format('F j, Y') }}</p>
+                        </div>
+                        <div class="flex items-center justify-center space-x-2">
+                            <!-- Actions dropwdown -->
+                            <div class="relative">
+                                <button onclick="toggleDropdown('actions-dropdown-{{ $document->id }}')"
+                                    class="inline-flex items-center gap-1 p-2 text-gray-700 bg-gray-200 text-sm hover:bg-gray-300 rounded-lg transition-all duration-200">
+                                    <p class="pl-2">Actions</p>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="25"
+                                        viewBox="0 0 32 25" fill="none">
                                         <path
-                                            d="M3 21H8L19.435 9.565L14.435 4.565L3 16V21ZM14.435 4.565L17.435 1.565L20.435 4.565L17.435 7.565L14.435 4.565Z" />
+                                            d="M15.5993 15.4256L10.1191 11.2891L11.9458 9.91016L15.5993 12.6679L19.2526 9.91016L21.0793 11.2891L15.5993 15.4256Z"
+                                            fill="currentColor" />
                                     </svg>
-                                </a>
-                                <!-- Delete Icon -->
-                                <button onclick="openModal()" class="hover:text-red-500">
-                                    <div class="group w-6 h-6">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="19"
-                                            viewBox="0 0 24 19" fill="none"
-                                            class="w-6 h-6 stroke-gray-700 group-hover:stroke-red-500">
-                                            <path
-                                                d="M21 4.59962C17.67 4.34578 14.32 4.21501 10.98 4.21501C9 4.21501 7.02 4.29193 5.04 4.44578L3 4.59962M8.5 3.8227L8.72 2.81501C8.88 2.08424 9 1.53809 10.69 1.53809H13.31C15 1.53809 15.13 2.11501 15.28 2.8227L15.5 3.8227M18.85 7.03039L18.2 14.7765C18.09 15.9842 18 16.9227 15.21 16.9227H8.79C6 16.9227 5.91 15.9842 5.8 14.7765L5.15 7.03039M10.33 12.6919H13.66M9.5 9.61501H14.5"
-                                                stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
-                                        </svg>
-                                    </div>
                                 </button>
+                                <div id="actions-dropdown-{{ $document->id }}"
+                                    class="dropdown-content text-center text-sm z-50 absolute left-0 mt-2 w-28 bg-white border border-gray-200 rounded shadow-lg hidden">
+                                    <a href="{{ route('documents.' . strtolower(str_replace(' ', '_', $document->document_type)) . '.view', $document->id) }}"
+                                        class="block px-4 py-2 text-gray-700 hover:bg-gray-100">View</a>
+                                    <a href="{{ route('documents.' . strtolower(str_replace(' ', '_', $document->document_type)) . '.edit', $document->id) }}"
+                                        class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Edit</a>
+                                    <form id="delete-document-{{$document->id}}"
+                                        action="{{ route('documents.' . strtolower(str_replace(' ', '_', $document->document_type)) . '.delete', $document->id) }}"
+                                        method="POST">
+                                        @csrf
+                                        @method('DELETE')
+                                        <a type="button" onclick="confirmDelete('delete-document-{{$document->id}}')"
+                                            class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Delete</a>
+                                    </form>
+                                </div>
                             </div>
-                        </a>
+                        </div>
                     </div>
                 @endforeach
             @endif
         </div>
-
     </div>
-@endsection
+    <!-- Modal for Control Number -->
+    <div id="ControlNumberModal" class="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50 hidden">
+        <div class="modal-content1 bg-white rounded-lg shadow-lg p-6 w-full max-w-lg relative">
+            <!-- Close Button in Top-Right -->
+            <span class="close absolute top-2.5 right-2.5 text-red-500 text-2xl cursor-pointer hover:text-red-700"
+                onclick="closeControlNumber()">&times;</span>
+                            <!-- Modal Title -->
+            <h3 class="text-xl font-bold mb-4 text-gray-700">Documents Control Number</h3>
+                @if($controlNumber->isEmpty())
+                    <div class="text-center text-gray-500 font-medium p-4">
+                        <p>No Control Number Added.</p>
+                    </div>
+                 @else
+                 <div class="space-y-4">
+                     @foreach($controlNumber as $control)
+                        <div class="border-b pb-2 flex items-center justify-between">
+                            <div>
+                                <h2 class="text-md font-semibold text-gray-800">{{ $control->document_type }}</h2>
+                                <p class="text-gray-700 text-sm">{{ $control->control_number }} | Rev. {{ $control->revision }} | {{ \Carbon\Carbon::parse($control->date_issued)->format('F d, Y') }}</p>
+                            </div>
+                             <!-- Edit Button -->
+                             <a onclick="openEditModal({{ $control->id }})" data-target="#editFormModal{{ $control->id }}" class="hover:bg-blue-100 rounded-md py-2 px-2 inline-flex items-center justify-center">
+                                    <svg class="w-7 h-7 text-blue-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
+                                        <path fill-rule="evenodd" d="M11.32 6.176H5c-1.105 0-2 .949-2 2.118v10.588C3 20.052 3.895 21 5 21h11c1.105 0 2-.948 2-2.118v-7.75l-3.914 4.144A2.46 2.46 0 0 1 12.81 16l-2.681.568c-1.75.37-3.292-1.263-2.942-3.115l.536-2.839c.097-.512.335-.983.684-1.352l2.914-3.086Z" clip-rule="evenodd"/>
+                                        <path fill-rule="evenodd" d="M19.846 4.318a2.148 2.148 0 0 0-.437-.692 2.014 2.014 0 0 0-.654-.463 1.92 1.92 0 0 0-1.544 0 2.014 2.014 0 0 0-.654.463l-.546.578 2.852 3.02.546-.579a2.14 2.14 0 0 0 .437-.692 2.244 2.244 0 0 0 0-1.635ZM17.45 8.721 14.597 5.7 9.82 10.76a.54.54 0 0 0-.137.27l-.536 2.84c-.07.37.239.696.588.622l2.682-.567a.492.492 0 0 0 .255-.145l4.778-5.06Z" clip-rule="evenodd"/>
+                                    </svg>
+                             </a>
+                        </div>
+                        @endforeach
+                </div>
+                @endif
 
-@if (!empty($document))
-    <!-- Confirmation Modal -->
-    <div id="confirmation-modal"
-        class="fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center z-50 hidden">
-        <div class="bg-white p-6 rounded-lg shadow-lg max-w-sm w-full">
-            <h3 class="text-lg font-bold mb-4 text-gray-700 text-center">Confirm Deletion</h3>
-            <p class="mb-6 text-gray-600 text-sm text-center">Are you sure you want to delete the Document?</p>
-            <div class="flex justify-between">
-                <button id="cancel-delete" onclick="closeModal()"
-                    class="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400">Cancel</button>
-                <form
-                    action="{{ route('documents.' . strtolower(str_replace(' ', '_', $document->document_type)) . '.delete', $document->id) }}"
-                    method="POST" style="display: inline;">
+            @if(!$allTypesCreated)
+            <div class="flex justify-end space-x-4 mt-6">
+                    <button onclick="openCreateForm()" type="button"
+                        class="bg-[#3CAA38] hover:bg-[#2B8E2F] text-white font-medium py-2 px-4 rounded-md">
+                            Add
+                    </button>
+                </div>
+            @endif
+        </div>
+    </div>
+
+
+    <!-- Create Form Modal For Controller Number -->
+    <div id="createFormModal" class="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50 hidden">
+        <div class="modal-content1 bg-white rounded-lg shadow-lg p-6 w-full max-w-lg relative">
+            <!-- Close Button in Top-Right -->
+            <span class="close absolute top-2.5 right-2.5 text-red-500 text-2xl cursor-pointer hover:text-red-700"
+                onclick="closeCreateModal()">&times;</span>
+
+            <!-- Modal Title -->
+            <h3 class="text-xl font-bold mb-4 text-gray-700">Create Control Number</h3>
+
+            <!-- Form Container -->
+            <div id="formContainer" class="space-y-4">
+                <form action="{{ route('control-numbers.store') }}" method="POST">
                     @csrf
-                    @method('DELETE')
-                    <button type="submit" id="confirm-delete"
-                        class="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700">Delete</button>
-                </form>
+                    <div class="form-group">
+                    <label class="block text-gray-600 font-medium mb-1">Document Type: <span
+                    class="text-red-500">*</span></label>
+                        <select name="document_type"
+                            class="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                required>
+                            <option value="">Document Type</option>
+                            <option value="Excuse Letter">Excuse Letter</option>
+                            <option value="Annual Medical Clearance">Annual Medical Clearance</option>
+                            <option value="Medical Clearance">Medical Clearance</option>
+                            <option value="Medical Certificate">Medical Certificate</option>
+                            <option value="DMDC Consent Form">DMDC Consent Form</option>
+                            <option value="Waiver">Waiver</option>
+                            <option value="Waiver for Pulmonary Case">Waiver for Pulmonary Case</option>
+                        </select>
+                        <span class="text-red-500 text-sm hidden">Document Type is required.</span>
+
+                        <label class="block text-gray-600 font-medium mb-1">Control Number: <span
+                        class="text-red-500">*</span></label>
+                        <input type="text" id="dateInput"
+                            class="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            name="control_number" required>
+                            <label class="block text-gray-600 font-medium mb-1">Revision No.: <span
+                            class="text-red-500">*</span></label>
+                        <input type="text" id="dateInput"
+                            class="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            name="revision" required>
+                        <span id="dateError" class="text-red-500 text-sm hidden">Revision No. is required.</span>
+                        <label class="block text-gray-600 font-medium mb-1">Date: <span
+                        class="text-red-500">*</span></label>
+                        <input type="date" id="dateInput"
+                            class="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            name="date_issued" required>
+                        <span id="dateError" class="text-red-500 text-sm hidden">Date is required.</span>
+                    </div>
+                    
+                    <div class="flex justify-end space-x-4 mt-6">
+                        <button onclick="goBack()" type="button"
+                            class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-medium py-2 px-4 rounded-md">
+                                Back
+                        </button>
+                        <button type="submit"
+                            class="bg-[#3CAA38] hover:bg-[#2B8E2F] text-white font-medium py-2 px-4 rounded-md">
+                                Submit
+                        </button>
+                    </div>
+                </form>  
             </div>
         </div>
     </div>
-@endif
+                        @foreach($controlNumber as $control)
+                                    <!-- Edit Form Modal For Controller Number -->
+                            <div id="editFormModal-{{ $control->id }}" class="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50 hidden">
+                                <div class="modal-content1 bg-white rounded-lg shadow-lg p-6 w-full max-w-lg relative">
+                                <!-- Close Button in Top-Right -->
+                                    <span class="close absolute top-2.5 right-2.5 text-red-500 text-2xl cursor-pointer hover:text-red-700"
+                                    onclick="closeEditModal({{ $control->id }})">&times;</span>
+
+                                    <!-- Modal Title -->
+                                    <h3 class="text-xl font-bold mb-4 text-gray-700">Edit Control Number</h3>
+
+                                <!-- Form Container -->
+                                    <div id="formContainer" class="space-y-4">
+                                        <form action="{{ route('control-numbers.update', $control->id) }}" method="POST">
+                                        @csrf
+                                        @method('PUT')
+                                            <div class="form-group">
+                                                <input type="hidden" name="document_type" value="{{ $control->document_type }}">
+                                                <label class="block text-gray-800 text-md font-bold mb-1">{{ $control->document_type ?? '' }}</label>
+                                                <label class="block text-gray-600 font-medium mb-1">Control Number: <span
+                                                class="text-red-500">*</span></label>
+                                                    <input type="text" id="dateInput" value="{{ old('control_number', $control->control_number ?? '') }}"
+                                                        class="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                                        name="control_number" required>
+                                                <label class="block text-gray-600 font-medium mb-1">Revision No.: <span
+                                                class="text-red-500">*</span></label>
+                                                <input type="text" id="dateInput" value="{{ old('revision', $control->revision ?? '') }}"
+                                                        class="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                                        name="revision" required>
+                                                <span id="dateError" class="text-red-500 text-sm hidden">Revision No. is required.</span>
+                                                <label class="block text-gray-600 font-medium mb-1">Date: <span
+                                                class="text-red-500">*</span></label>
+                                                <input type="date" id="dateInput" value="{{ old('date_issued', $control->date_issued ?? '') }}"
+                                                        class="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                                        name="date_issued" required>
+                                                    <span id="dateError" class="text-red-500 text-sm hidden">Date is required.</span>
+                                            </div>  
 
 
-<script>
-    function toggleDropdown(dropdownId) {
-        document.querySelectorAll('.dropdown-content').forEach(dropdown => {
-            if (dropdown.id !== dropdownId) dropdown.classList.remove('show');
-        });
-        const dropdown = document.getElementById(dropdownId);
-        dropdown.classList.toggle('show');
-    }
+                                            <div class="flex justify-end space-x-4 mt-6">
+                                                <button onclick="goBack2({{ $control->id }})" type="button"
+                                                    class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-medium py-2 px-4 rounded-md">
+                                                        Back
+                                                </button>
+                                                <button type="submit"
+                                                    class="bg-[#3CAA38] hover:bg-[#2B8E2F] text-white font-medium py-2 px-4 rounded-md">
+                                                        Save Edit
+                                                </button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        @endforeach
+@endsection
 
-    window.onclick = function(event) {
-        if (!event.target.closest('.relative')) {
-            document.querySelectorAll('.dropdown-content').forEach(dropdown => dropdown.classList.remove('show'));
+@push('scripts')
+    <script>
+        function openCreateForm() {
+            let modal = document.getElementById("createFormModal");
+            let modalContent = modal.querySelector("div.relative");
+            document.getElementById('ControlNumberModal').classList.add('hidden');
+
+            modal.classList.remove("hidden");
+            setTimeout(() => {
+                modal.classList.remove("opacity-0");
+                modalContent.classList.remove("scale-95");
+                modalContent.classList.add("scale-100");
+            }, 10); // Small delay to trigger animation
+
+            checkAdditionalFields();
         }
-    };
+        function closeCreateModal() {
+            let modal = document.getElementById("createFormModal");
+            let modalContent = modal.querySelector("div.relative");
+            
+            modal.classList.add("hidden");
+            modalContent.classList.remove("scale-100");
+            modalContent.classList.add("scale-95");
+            document.getElementById('ControlNumberModal').classList.add('hidden');
+        }
 
-    function openModal() {
-        document.getElementById('confirmation-modal').classList.remove('hidden');
+        function openEditModal(controlId) {
+            const modal = document.getElementById('editFormModal-' + controlId);
+            document.getElementById('ControlNumberModal').classList.add('hidden');
+            if (modal) {
+                modal.classList.remove('hidden');
+            }
+        }
 
-    }
+        function closeEditModal(controlId) {
+            const modal = document.getElementById('editFormModal-' + controlId);
+            if (modal) {
+             modal.classList.add('hidden');
+            }
+        }
 
-    function closeModal() {
-        document.getElementById('confirmation-modal').classList.add('hidden');
-    }
-</script>
+        function goBack2(controlId){
+            const modal = document.getElementById('editFormModal-' + controlId);
+            if (modal) {
+                modal.classList.add('hidden');
+            }
+            document.getElementById('ControlNumberModal').classList.remove('hidden');
+        }
+        function openControlNumber() {
+            let modal = document.getElementById("ControlNumberModal");
+            let modalContent = modal.querySelector("div.relative");
+            modal.classList.remove("hidden");
+            setTimeout(() => {
+                modal.classList.remove("opacity-0");
+                modalContent.classList.remove("scale-95");
+                modalContent.classList.add("scale-100");
+            }, 10); // Small delay to trigger animation
+        }
 
-</body>
+        function closeControlNumber(){
+            let modal = document.getElementById("ControlNumberModal");
+            let modalContent = modal.querySelector("div.relative");
 
-</html>
+            modal.classList.add("opacity-0");
+            modalContent.classList.remove("scale-100");
+            modalContent.classList.add("scale-95");
+
+            setTimeout(() => {
+                modal.classList.add("hidden");
+            }, 300); // Matches transition duration
+        }
+
+        function closeCreateForm() {
+            let modal = document.getElementById("createFormModal");
+            let modalContent = modal.querySelector("div.relative");
+
+            modal.classList.add("opacity-0");
+            modalContent.classList.remove("scale-100");
+            modalContent.classList.add("scale-95");
+
+            setTimeout(() => {
+                modal.classList.add("hidden");
+            }, 300); // Matches transition duration
+        }
+
+        function goBack(){
+            document.getElementById('createFormModal').classList.add('hidden');
+            document.getElementById('ControlNumberModal').classList.remove('hidden');
+        }
+
+        function toggleDropdown(dropdownId) {
+            document.querySelectorAll('.dropdown-content').forEach(dropdown => {
+                if (dropdown.id !== dropdownId) dropdown.classList.remove('show');
+            });
+            const dropdown = document.getElementById(dropdownId);
+            dropdown.classList.toggle('show');
+        }
+
+        window.onclick = function(event) {
+            if (!event.target.closest('.relative')) {
+                document.querySelectorAll('.dropdown-content').forEach(dropdown => dropdown.classList.remove('show'));
+            }
+        };
+
+        function confirmDelete(id) {
+            let form = document.getElementById(id);
+
+            Swal.fire({
+                title: "Warning!",
+                text: "Are you sure you want to delete this document?",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: '#FF0000',
+                confirmButtonText: 'Delete',
+                cancelButtonText: 'Cancel'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    form.submit();
+                }
+            });
+        }
+    </script>
+
+    @if (session('success'))
+        <script>
+            Swal.fire({
+                title: "Success!",
+                text: `{!! session('success') !!}`,
+                icon: "success"
+            });
+        </script>
+    @endif
+
+    @if (session('error'))
+        <script>
+            Swal.fire({
+                title: "Error!",
+                text: `{!! session('error') !!}`,
+                icon: "error"
+            });
+        </script>
+    @endif
+@endpush

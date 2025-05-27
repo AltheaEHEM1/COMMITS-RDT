@@ -19,6 +19,9 @@ return new class extends Migration
             $table->date('excuseDate'); // Start date of the clearance
             $table->string('doctorName'); // Name of the doctor
             $table->string('license_number'); // Doctor's license number
+            $table->string('control_number');
+            $table->string('revision');
+            $table->date('date_issued'); // Date the contruct was issued
             $table->timestamps(); // Created at and updated at timestamps
             $table->string('document_type')->default('annual_medical_clearance'); // Document type
             $table->date('additional_date')->nullable(); // Additional date

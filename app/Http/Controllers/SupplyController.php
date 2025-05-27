@@ -72,8 +72,10 @@ class SupplyController extends Controller
 
             DB::commit();
 
-            return redirect()->route('inventory-supplies')
-                ->with('success', 'Supply added successfully');
+            return redirect()->route('inventory-supplies')->with([
+                'action' => 'add',
+                'message' => "Supply '{$validated['supply_name']}' has been added successfully."
+            ]);
 
         } catch (\Exception $e) {
             DB::rollBack();
@@ -135,8 +137,10 @@ class SupplyController extends Controller
                 'user_id' => $validated['user_id']
             ]);
 
-            return redirect()->route('inventory-supplies')
-                ->with('success', 'Supply updated successfully');
+            return redirect()->route('inventory-supplies')->with([
+                'action' => 'edit',
+                'message' => "Supply '{$validated['supply_name']}' has been updated successfully."
+            ]);
 
         } catch (ValidationException $e) {
             return back()
@@ -171,31 +175,33 @@ class SupplyController extends Controller
     public function destroy(Request $request, Supply $supply)
     {
         try {
-            $request->validate([
-                'password' => 'required',
-            ]);
-
-            if (!Hash::check($request->password, auth()->user()->password)) {
-                throw ValidationException::withMessages([
-                    'password' => ['The provided password is incorrect.']
-                ]);
-            }
-
+            // Store supply name before deletion
+            $supplyName = $supply->supply_name;
+            
             $supply->delete();
             
-            return response()->json([
-                'success' => true,
-                'message' => 'Supply deleted successfully'
+            return redirect()->route('inventory-supplies')->with([
+                'action' => 'delete',
+                'message' => "Supply '{$supplyName}' has been deleted successfully."
             ]);
 
-        } catch (ValidationException $e) {
-            return response()->json([
-                'error' => $e->errors()['password'][0]
-            ], 422);
         } catch (\Exception $e) {
-            return response()->json([
-                'error' => 'An error occurred while deleting the supply.'
-            ], 500);
+            return redirect()->route('inventory-supplies')
+                ->with('error', 'An error occurred while deleting the supply.');
         }
+    }
+    
+    /**
+     * Mark the specified supply as returned.
+     */
+    public function return(Supply $supply)
+    {
+        // Update the box associated with this supply
+        $supply->box->update(['isReturned' => true]);
+
+        return redirect()->back()->with([
+            'action' => 'return',
+            'message' => "Supply '{$supply->supply_name}' has been returned successfully."
+        ]);
     }
 }

@@ -1,5 +1,7 @@
 @extends('layouts.app-layout')
 
+@section('title', 'Excuse Letter')
+
 @section('content')
 <!DOCTYPE html>
 <html lang="en">
@@ -82,6 +84,11 @@
         <div class="page">
             <!-- Document Content -->
             <div class="container">
+                    <div class="flex flex-col items-end text-xs leading-tight text-gray-800">
+                        <p>{{ $specificDocument->control_number ?? '__________' }}</p>
+                        <p>Rev. {{ $specificDocument->revision ?? '_________'}}</p>
+                        <p>{{ \Carbon\Carbon::parse($specificDocument->date_issued)->format('F j, Y') ?? '__________' }} </p>
+                    </div>
                 <div class="flex items-center justify-center mb-10">
                     <div class="mr-5">
                         <img src="{{ asset('Logo_image/logopup.png') }}" alt="University logo" class="w-28 mb-5">

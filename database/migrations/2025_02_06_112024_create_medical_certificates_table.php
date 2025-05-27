@@ -21,6 +21,9 @@ return new class extends Migration
             $table->date('endDate');
             $table->string('reason');
             $table->string('doctorName');
+            $table->string('control_number');
+            $table->string('revision');
+            $table->date('date_issued'); // Date the control number was issued
             $table->timestamps();
             $table->string('document_type')->default('medical_certificate');
             $table->date('additional_date')->nullable();

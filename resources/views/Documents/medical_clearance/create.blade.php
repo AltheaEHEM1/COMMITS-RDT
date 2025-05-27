@@ -1,81 +1,8 @@
 @extends('layouts.app-layout')
 
+@section('title', 'Medical Clearance')
+
 @section('content')
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    <title>Waiver Form</title>
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        /* Adjusting for print */
-        @media print {
-            header {
-                padding: 0;
-            }
-
-            @page {
-                size: A4;
-                margin: 0;
-
-            }
-
-            .page {
-                margin-top: 0;
-                /* Move the form up */
-                position: relative;
-                top: -90px;
-                /* Adjust to move the form higher */
-                margin-top: 0;
-            }
-
-            body {
-                font-family: Arial;
-                font-size: 12px;
-            }
-
-            /* Hide all content except the container */
-            body * {
-                visibility: hidden;
-            }
-
-            .container,
-            .container * {
-                visibility: visible;
-                padding-top: 0;
-                margin-top: 0;
-            }
-
-            .page {
-                display: block;
-                height: 100%;
-
-            }
-
-            .flex-container {
-                flex-direction: column;
-                /* gap: 5px; */
-            }
-        }
-
-        /* Make the modal scrollable */
-        .modal-content1 {
-            max-height: 80vh;
-            /* Limit the height to 80% of the viewport */
-            overflow-y: auto;
-            /* Enable vertical scrolling if content exceeds */
-            padding-right: 15px;
-            /* Add space for scrollbar */
-        }
-    </style>
-</head>
-
-<body class="bg-gray-100">
-
     <!-- Buttons (Optional for print view, you can hide them when printing) -->
     <div class="flex space-x-10 justify-between mb-5">
         <button class="px-4 py-2 bg-gray-300 text-black rounded hover:bg-gray-400 flex items-center space-x-2"
@@ -112,6 +39,13 @@
         <div class="page">
             <!-- Document 2 (duplicate the structure as needed) -->
             <div class="container">
+                @foreach ($controlNumber->where('document_type', $documentType) as $control)
+                    <div class="flex flex-col items-end text-xs leading-tight text-gray-800">
+                        <p>{{ $control->control_number ?? '__________' }}</p>
+                        <p>Rev. {{ $control->revision ?? '_________'}}</p>
+                        <p>{{ \Carbon\Carbon::parse($control->date_issued)->format('F j, Y') ?? '__________' }} </p>
+                    </div>
+                @endforeach
                 <div class="flex items-center justify-center mb-5">
                     <div class="mr-5">
                         <img src="{{ asset('Logo_image/logopup.png') }}" alt="Logo" class="w-28 mb-5">
@@ -143,7 +77,9 @@
                     </p>
                     <p class="indent-8">
                         This certification is issued upon his/her request for <span id="excuse-placeholder"
-                            class="underline-offset-4"> ______________________________________________________________________________________________</span> purposes but not for medico-legal
+                            class="underline-offset-4">
+                            ______________________________________________________________________________________________</span>
+                        purposes but not for medico-legal
                         reason.
                     </p>
 
@@ -158,17 +94,24 @@
                         <p><span class="checkbox" id="status-boosters">_____</span> 1st / second Boosters</p>
                     </div>
                     <div class="w-11/30 text-left">
-                    <p><span id="x-ray-placeholder2" class="underline-offset-4">____________________</span> M.D.</p>
-                    <p><span id="x-ray-placeholder2" class="underline-offset-4">____________________</span> </p>
-                    <p>Lic No. <span id="lic_no-placeholder2" class="underline-underoffset-4">
-                            ____________________</span></p>
-                </div>
+                        <p><span id="x-ray-placeholder2" class="underline-offset-4">____________________</span> M.D.</p>
+                        <p><span id="x-ray-placeholder2" class="underline-offset-4">____________________</span> </p>
+                        <p>Lic No. <span id="lic_no-placeholder2" class="underline-underoffset-4">
+                                ____________________</span></p>
+                    </div>
                 </div>
             </div>
         </div>
 
         <!-- Document 2 (duplicate the structure as needed) -->
         <div class="container2 mt-10">
+                @foreach ($controlNumber->where('document_type', $documentType) as $control)
+                    <div class="flex flex-col items-end text-xs leading-tight text-gray-800">
+                        <p>{{ $control->control_number ?? '__________' }}</p>
+                        <p>Rev. {{ $control->revision ?? '_________'}}</p>
+                        <p>{{ \Carbon\Carbon::parse($control->date_issued)->format('F j, Y') ?? '__________' }} </p>
+                    </div>
+                @endforeach
             <div class="flex items-center justify-center mb-5">
                 <div class="mr-5">
                     <img src="{{ asset('Logo_image/logopup.png') }}" alt="Logo" class="w-28 mb-5">
@@ -200,7 +143,9 @@
                 </p>
                 <p class="indent-8">
                     This certification is issued upon his/her request for <span id="excuse-placeholder2"
-                        class="underline-offset-4"> ______________________________________________________________________________________________</span> purposes but not for medico-legal
+                        class="underline-offset-4">
+                        ______________________________________________________________________________________________</span>
+                    purposes but not for medico-legal
                     reason.
                 </p>
 
@@ -228,295 +173,136 @@
             </div>
         </div>
     </div>
-        <!-- Modal -->
-        <div id="editFormModal" class="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50 hidden">
-            <div class="modal-content1 bg-white rounded-lg shadow-lg p-6 w-full max-w-lg relative">
-                <!-- Close Button in Top-Right -->
-                <span class="close absolute top-2.5 right-2.5 text-red-500 text-2xl cursor-pointer hover:text-red-700"
-                    onclick="closeEditForm()">&times;</span>
 
-                <!-- Modal Title -->
-                <h3 class="text-xl font-bold mb-4 text-gray-700">Add Medical Clearance Form</h3>
+    <!--== Edit Form Modal ==-->
+    @include('Documents.medical_clearance.create-form')
 
-                <!-- Form Container -->
-
-            <form action="{{ route('documents.medical_clearance.store') }}" method="POST">
-                    <h2 class="text-xl font-medium mb-4 mt-6 text-gray-700 text-center">Form 1</h2>
-                @csrf
-                    <!-- Date Field -->
-                <div id="formContainer" class="space-y-4">
-                    <div class="form-group">
-                        <input type="hidden" name="document_type" value="{{ request('document_type') }}">
-                        <label class="block text-gray-600 font-medium mb-1">Date:</label>
-                        <input type="date" id="editDate"
-                            class="editDate w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" name="date"
-                            required>
-                        <span id="dateError" class="text-red-500 text-sm hidden">Date is required.</span>
-                    </div>
-
-                    <!-- Patient Name Field -->
-                    <div class="form-group">
-                        <label class="block text-gray-600 font-medium mb-1">Patient's Name:</label>
-                        <input type="text" id="editPatientName" name="patient_name"
-                            class="editPatientName w-full border rounded-md px-3 py-2"
-                            placeholder="Enter patient's name" required>
-                        <span id="nameError" class="text-red-500 text-sm hidden">Name is required.</span>
-                    </div>
-
-                    <!-- Excuse Field -->
-                    <div class="form-group">
-                        <label class="block text-gray-600 font-medium mb-1">Excuse for:</label>
-                        <input type="text" id="editExcuse" class="editExcuse w-full border rounded-md px-3 py-2" name="excuse"
-                            placeholder="Reason for excuse">
-                    </div>
-
-                    <!-- Vaccination Status -->
-                    <div class="form-group">
-                        <label class="block text-gray-600 font-medium mb-2">COVID-19 Vaccination Status:</label>
-                        <div class="space-y-2">
-                            <label class="inline-flex items-center">
-                                <input type="radio" name="vaccination_status" value="Unvaccinated" class="text-blue-500">
-                                <span class="ml-2 text-gray-700">Unvaccinated</span>
-                            </label><br>
-                            <label class="inline-flex items-center">
-                                <input type="radio" name="vaccination_status" value="Primary Incomplete"
-                                    class="text-blue-500">
-                                <span class="ml-2 text-gray-700">Primary series incomplete</span>
-                            </label><br>
-                            <label class="inline-flex items-center">
-                                <input type="radio" name="vaccination_status" value="Primary Complete"
-                                    class="text-blue-500">
-                                <span class="ml-2 text-gray-700">Primary dose / series completed</span>
-                            </label><br>
-                            <label class="inline-flex items-center">
-                                <input type="radio" name="vaccination_status" value="Boosters" class="text-blue-500">
-                                <span class="ml-2 text-gray-700">1st / second Boosters</span>
-                            </label>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label class="block text-gray-600 font-medium mb-1">Physician Name:</label>
-                        <input type="text" id="lic_no" class="Licno w-full border rounded-md px-3 py-2" name="doctorName"
-                            placeholder="Physician Name" required>
-                        <span id="PhcError" class="text-red-500 text-sm hidden">Physician is required.</span>
-                    </div>
-
-                    <div class="form-group">
-                        <label class="block text-gray-600 font-medium mb-1">Physician's Position:</label>
-                        <input type="text" id="lic_no" class="Licno w-full border rounded-md px-3 py-2" name="position"
-                            placeholder="Position" required>
-                        <span id="PstError" class="text-red-500 text-sm hidden">Position is required.</span>
-                    </div>
-                    <!-- License Number -->
-                    <div class="form-group">
-                        <label class="block text-gray-600 font-medium mb-1">Lic No:</label>
-                        <input type="text" id="lic_no" class="Licno w-full border rounded-md px-3 py-2" name="license_number"
-                            placeholder="License number" required>
-                        <span id="licError" class="text-red-500 text-sm hidden">License number is required.</span>
-                    </div>
-                </div>
-
-            <div class="hidden" id="formContainer1">
-                <h2 class="text-xl text-center font-semibold mb-7 text-gray-700 mt-4">Form 2</h2>
-
-                <div class="space-y-4"> <!-- Added space-y-4 here -->
-                    <label class="block text-gray-600 font-medium mb-1">Date:</label>
-                    <input type="date" id="editDate${formCount}" name="additional_date"
-                        class="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
-
-                    <label class="block text-gray-600 font-medium mb-1">Patient's Name:</label>
-                    <input type="text" id="editPatientName${formCount}" name="additional_patient_name"
-                        class="w-full border rounded-md px-3 py-2" placeholder="Enter patient's name">
-
-                    <label class="block text-gray-600 font-medium mb-1">Excuse for:</label>
-                    <input type="text" id="editExcuse${formCount}" name="additional_excuse"
-                        class="w-full border rounded-md px-3 py-2" placeholder="Reason for excuse">
-
-                    <label class="block text-gray-600 font-medium mb-1">X-ray result:</label>
-                    <input type="text" id="editXray${formCount}" name="xray_result"
-                        class="w-full border rounded-md px-3 py-2" placeholder="X-ray result">
-
-                    <label class="block text-gray-600 font-medium mb-2">COVID-19 Vaccination Status:</label>
-                    <div class="space-y-2">
-                        <label class="inline-flex items-center">
-                            <input type="radio" name="additional_vaccination_status" value="Unvaccinated" class="text-blue-500">
-                            <span class="ml-2 text-gray-700">Unvaccinated</span>
-                        </label><br>
-                        <label class="inline-flex items-center">
-                             <input type="radio" name="additional_vaccination_status" value="Primary Incomplete" class="text-blue-500">
-                             <span class="ml-2 text-gray-700">Primary series incomplete</span>
-                        </label><br>
-                         <label class="inline-flex items-center">
-                         <input type="radio" name="additional_vaccination_status" value="Primary Complete" class="text-blue-500">
-                         <span class="ml-2 text-gray-700">Primary dose / series completed</span>
-                         </label><br>
-                         <label class="inline-flex items-center">
-                             <input type="radio" name="additional_vaccination_status" value="Boosters" class="text-blue-500">
-                             <span class="ml-2 text-gray-700">1st / second Boosters</span>
-                         </label>
-                    </div>
-
-                    <div class="form-group">
-                        <label class="block text-gray-600 font-medium mb-1">Physician Name:</label>
-                        <input type="text" id="lic_no" class="Licno w-full border rounded-md px-3 py-2" name="additional_doctorName"
-                            placeholder="Physician Name">
-                        <span id="PhcError" class="text-red-500 text-sm hidden">Physician is required.</span>
-                    </div>
-
-                    <div class="form-group">
-                        <label class="block text-gray-600 font-medium mb-1">Physician's Position:</label>
-                        <input type="text" id="lic_no" class="Licno w-full border rounded-md px-3 py-2" name="additional_position"
-                            placeholder="Position">
-                        <span id="PstError" class="text-red-500 text-sm hidden">Position is required.</span>
-                    </div>
-                    <!-- License Number -->
-                    <div class="form-group">
-                        <label class="block text-gray-600 font-medium mb-1">Lic No:</label>
-                        <input type="text" id="lic_no" class="Licno w-full border rounded-md px-3 py-2" name="additional_license_number"
-                            placeholder="License number">
-                        <span id="licError" class="text-red-500 text-sm hidden">License number is required.</span>
-                    </div>
-                </div>
-             </div>
-
-                <div class="flex justify-end space-x-4 mt-6">
-                    <button onclick="addForm()" type="button"
-                        class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-medium py-2 px-4 rounded-md">
-                        Add Form
-                    </button>
-                    <button onclick="saveEdits()" type="submit"
-                        class="bg-[#3CAA38] hover:bg-[#2B8E2F] text-white font-medium py-2 px-4 rounded-md">
-                        Submit
-                    </button>
-                </div>
-                </form>
-            </div>
-        </div>
-        <!-- Success Notification -->
-        <div id="successMessage" class="hidden fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50">
-            <div class="bg-white rounded-lg shadow-lg p-6 w-96 text-center">
-                <div class="w-16 h-16 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <!-- Green Checkmark Icon -->
-                    <svg class="w-8 h-8 text-white" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.707a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 10-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
-                    </svg>
-                </div>
-                <p class="text-lg font-semibold">Successfully Saved!</p>
-            </div>
-        </div>
-
-
-
-        <script>
-            function printWaiver() {
-                window.print();
-            }
-
-            function goBack() {
-                window.location.href = "{{ route('documents.index') }}";
-            }
-
-            function openEditForm() {
-                document.getElementById("editFormModal").classList.remove("hidden");
-            }
-
-            function closeEditForm() {
-                document.getElementById("editFormModal").classList.add("hidden");
-            }
-
-            let formCount = 1;
-            function addForm() {
-                formCount++;
-                const formContainer1 = document.getElementById("formContainer1");
-                formContainer1.classList.remove("hidden");
-                if (formCount === 2) {
-                        document.querySelector("button[onclick='addForm()']").style.display = 'none';
-                }
-            }
-
-            function saveEdits() {
-                // Capture user inputs for Form 1
-                const waiverDate1 = document.querySelector(".editDate").value;
-                const patientName1 = document.querySelector(".editPatientName").value;
-                const excuse1 = document.querySelector(".editExcuse").value;
-                const licNoValue1 = document.querySelector(".Licno").value;
-
-                // Capture user inputs for Form 2
-                const waiverDate2 = document.getElementById("editDate1")?.value || ""; // Check if form exists
-                const patientName2 = document.getElementById("editPatientName1")?.value || "";
-                const excuse2 = document.getElementById("editExcuse1")?.value || "";
-                // const xrayResult2 = document.getElementById("editXray1")?.value || "";
-                const licNoValue2 = document.getElementById("licNo1")?.value || "";
-                const xrayResult2 = document.getElementById("editXray1")?.value || "";
-
-                // Validation logic for Form 1
-                let isValid = true;
-
-                // Validate Date for Form 1
-                const dateError = document.getElementById("dateError");
-                if (!waiverDate1) {
-                    dateError.classList.remove("hidden");
-                    isValid = false;
-                } else {
-                    dateError.classList.add("hidden");
-                }
-
-                // Validate Name for Form 1
-                const nameError = document.getElementById("nameError");
-                if (!patientName1.trim()) {
-                    nameError.classList.remove("hidden");
-                    isValid = false;
-                } else {
-                    nameError.classList.add("hidden");
-                }
-
-                                // Validate License for Form 1
-                                const licError = document.getElementById("licError");
-                if (!licNoValue1.trim()) {
-                    licError.classList.remove("hidden");
-                    isValid = false;
-                } else {
-                    licError.classList.add("hidden");
-                }
-
-
-
-                // Validation logic for Form 2 (if it exists)
-                if (waiverDate2 || patientName2 || excuse2 || licNoValue2 || xrayResult2) {
-                    if (!waiverDate2) {
-                        isValid = false;
-                        alert("Please fill in the Date for Form 2.");
-                    }
-                    if (!patientName2.trim()) {
-                        isValid = false;
-                        alert("Please fill in the Patient Name for Form 2.");
-                    }
-                    if (!licNoValue2.trim()) {
-                        isValid = false;
-                        alert("Please fill in the License Number for Form 2.");
-                    }
-                }
-
-                if (isValid) {
-                    const successMessage = document.getElementById("successMessage");
-                    successMessage.classList.remove("hidden"); // Make the success message visible
-                    console.log("Success message is visible.");
-
-                                // Hide the success message after a short delay, close the modal, and trigger print preview
-                    setTimeout(() => {
-                        successMessage.classList.add("hidden"); // Hide success message after 3.5 seconds
-                        closeAddForm(); // Close the modal
-                        document.querySelector('form').submit(); // This submits the form to Laravel
-                        }, 3500);
-                } else {
-                    console.log("Form validation failed.");
-                }
-            }
-
-        </script>
-
-</body>
-
-</html>
 @endsection
+
+@push('scripts')
+    <script>
+        function printWaiver() {
+            window.print();
+        }
+
+        function goBack() {
+            window.location.href = "{{ route('documents.index') }}";
+        }
+
+        function openEditForm() {
+            // document.getElementById("editFormModal").classList.remove("hidden");
+            let modal = document.getElementById("editFormModal");
+            let modalContent = modal.querySelector("div.relative");
+
+            modal.classList.remove("hidden");
+            setTimeout(() => {
+                modal.classList.remove("opacity-0");
+                modalContent.classList.remove("scale-95");
+                modalContent.classList.add("scale-100");
+            }, 10); // Small delay to trigger animation
+        }
+
+        function closeEditForm() {
+            // document.getElementById("editFormModal").classList.add("hidden");
+            let modal = document.getElementById("editFormModal");
+            let modalContent = modal.querySelector("div.relative");
+
+            modal.classList.add("opacity-0");
+            modalContent.classList.remove("scale-100");
+            modalContent.classList.add("scale-95");
+
+            setTimeout(() => {
+                modal.classList.add("hidden");
+            }, 300); // Matches transition duration
+        }
+
+        let formCount = 1;
+
+        function addForm() {
+            formCount++;
+            const formContainer1 = document.getElementById("formContainer1");
+            formContainer1.classList.remove("hidden");
+            if (formCount === 2) {
+                document.querySelector("button[onclick='addForm()']").style.display = 'none';
+            }
+        }
+
+        function saveEdits() {
+            // Capture user inputs for Form 1
+            const waiverDate1 = document.querySelector(".editDate").value;
+            const patientName1 = document.querySelector(".editPatientName").value;
+            const excuse1 = document.querySelector(".editExcuse").value;
+            const licNoValue1 = document.querySelector(".Licno").value;
+
+            // Capture user inputs for Form 2
+            const waiverDate2 = document.getElementById("editDate1")?.value || ""; // Check if form exists
+            const patientName2 = document.getElementById("editPatientName1")?.value || "";
+            const excuse2 = document.getElementById("editExcuse1")?.value || "";
+            // const xrayResult2 = document.getElementById("editXray1")?.value || "";
+            const licNoValue2 = document.getElementById("licNo1")?.value || "";
+            const xrayResult2 = document.getElementById("editXray1")?.value || "";
+
+            // Validation logic for Form 1
+            let isValid = true;
+
+            // Validate Date for Form 1
+            const dateError = document.getElementById("dateError");
+            if (!waiverDate1) {
+                dateError.classList.remove("hidden");
+                isValid = false;
+            } else {
+                dateError.classList.add("hidden");
+            }
+
+            // Validate Name for Form 1
+            const nameError = document.getElementById("nameError");
+            if (!patientName1.trim()) {
+                nameError.classList.remove("hidden");
+                isValid = false;
+            } else {
+                nameError.classList.add("hidden");
+            }
+
+            // Validate License for Form 1
+            const licError = document.getElementById("licError");
+            if (!licNoValue1.trim()) {
+                licError.classList.remove("hidden");
+                isValid = false;
+            } else {
+                licError.classList.add("hidden");
+            }
+
+
+
+            // Validation logic for Form 2 (if it exists)
+            if (waiverDate2 || patientName2 || excuse2 || licNoValue2 || xrayResult2) {
+                if (!waiverDate2) {
+                    isValid = false;
+                    alert("Please fill in the Date for Form 2.");
+                }
+                if (!patientName2.trim()) {
+                    isValid = false;
+                    alert("Please fill in the Patient Name for Form 2.");
+                }
+                if (!licNoValue2.trim()) {
+                    isValid = false;
+                    alert("Please fill in the License Number for Form 2.");
+                }
+            }
+
+            if (isValid) {
+                Swal.fire({
+                    title: "Success!",
+                    text: 'Document has been saved successfully.',
+                    icon: "success"
+                });
+            } else {
+                Swal.fire({
+                    title: "Error!",
+                    text: 'Failed to save the document.',
+                    icon: "error"
+                });
+            }
+        }
+    </script>
+@endpush

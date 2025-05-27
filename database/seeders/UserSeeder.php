@@ -18,10 +18,10 @@ class UserSeeder extends Seeder
         User::create([
             'first_name' => 'Admin',
             'last_name' => 'User',
-            'email' => 'admin@gmail.com',
+            'email' => 'superadmin@gmail.com',
             'email_verified_at' => now(),
-            'password' => Hash::make('admin123'),
-            'role' => 'admin',
+            'password' => Hash::make('superadmin123'),
+            'role' => 'superadmin',
             'created_at' => now(),
             'updated_at' => now(),
         ]);
@@ -37,16 +37,5 @@ class UserSeeder extends Seeder
             'updated_at' => now(),
         ]);
 
-        // for test only
-        User::create([
-            'first_name' => 'Mobaraq',
-            'last_name' => 'Camar',
-            'email' => 'mobaraqcamar@gmail.com',
-            'email_verified_at' => now(),
-            'password' => Hash::make('@.Admin123'),
-            'role' => 'standard',
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
     }
 }

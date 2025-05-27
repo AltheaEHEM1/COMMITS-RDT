@@ -23,7 +23,7 @@
     <div class="shape-circle1"></div>
     <div class="shape-circle2"></div>
 
-    <div class="max-w-lg w-full space-y-8 content-wrapper bg-white bg-opacity-90 p-8 rounded-xl shadow-xl">
+    <div class="max-w-lg w-full space-y-8 content-wrapper bg-white bg-opacity-90 p-10 rounded-xl shadow-xl">
         @yield('guest_content')
     </div>
 

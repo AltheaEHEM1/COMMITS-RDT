@@ -57,8 +57,10 @@ class MedicineController extends Controller
             'user_id' => $validated['user_id']
         ]);
 
-        return redirect()->route('inventory-medicines')
-            ->with('success', 'Medicine added successfully');
+        return redirect()->route('inventory-medicines')->with([
+            'action' => 'add',
+            'message' => "Medicine '{$validated['medicine_name']}' has been added successfully."
+        ]);
     }
 
     public function update(MedicineRequest $request, Medicine $medicine)
@@ -89,8 +91,10 @@ class MedicineController extends Controller
             'user_id' => $data['user_id']
         ]);
 
-        return redirect()->route('inventory-medicines')
-            ->with('success', 'Medicine updated successfully');
+        return redirect()->route('inventory-medicines')->with([
+            'action' => 'edit',
+            'message' => "Medicine '{$data['medicine_name']}' has been updated successfully."
+        ]);
     }
 
     private function calculateMedicineStatus($remaining, $initial)
@@ -115,38 +119,40 @@ class MedicineController extends Controller
                     ($medicine->remaining_quantity - $data['quantity'] <= ($medicine->initial_quantity * 0.2) ? 'Low Stock' : 'In Stock'))
         ]);
 
-        return redirect()->route('inventory-medicines')
-            ->with('success', 'Medicine quantity has been deducted');
+        return redirect()->route('inventory-medicines')->with([
+            'action' => 'edit',
+            'message' => "Medicine '{$medicine->medicine_name}' quantity has been deducted by {$data['quantity']} {$medicine->unit}."
+        ]);
     }
 
     public function destroy(Request $request, Medicine $medicine)
     {
         try {
-            $request->validate([
-                'password' => 'required',
-            ]);
-
-            if (!Hash::check($request->password, auth()->user()->password)) {
-                throw ValidationException::withMessages([
-                    'password' => ['The provided password is incorrect.']
-                ]);
+            // Store medicine name before deletion
+            $medicineName = $medicine->medicine_name;
+            
+            // Get box ID before deleting medicine
+            $boxId = $medicine->box_id;
+            
+            // Delete the medicine
+            $medicine->delete();
+            
+            // Check if there are no other medicines linked to this box
+            $box = Boxes::find($boxId);
+            if ($box && !$box->medicine()->exists()) {
+                $box->delete();
             }
 
-            $medicine->delete();
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Medicine deleted successfully'
+            return redirect()->route('inventory-medicines')->with([
+                'action' => 'delete',
+                'message' => "Medicine '{$medicineName}' has been deleted successfully."
             ]);
-
-        } catch (ValidationException $e) {
-            return response()->json([
-                'error' => $e->errors()['password'][0]
-            ], 422);
         } catch (\Exception $e) {
-            return response()->json([
-                'error' => 'An error occurred while deleting the medicine.'
-            ], 500);
+            // Log the error for debugging
+            \Log::error('Error deleting medicine: ' . $e->getMessage());
+            
+            return redirect()->route('inventory-medicines')
+                ->with('error', 'Failed to delete medicine: ' . $e->getMessage());
         }
     }
 
@@ -154,7 +160,9 @@ class MedicineController extends Controller
     {
         $medicine->box->update(['isReturned' => true]);
 
-        return redirect()->route('inventory-medicines')
-            ->with('success', 'Medicine marked as returned successfully');
+        return redirect()->back()->with([
+            'action' => 'return',
+            'message' => "Medicine '{$medicine->medicine_name}' has been returned successfully."
+        ]);
     }
 }

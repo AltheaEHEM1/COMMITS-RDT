@@ -1,0 +1,58 @@
+/* Adjusting for print */
+@media print {
+    header {
+        padding: 0;
+    }
+
+    @page {
+        size: A4;
+        margin: 0;
+    }
+
+    .page {
+        margin-top: 0;
+        /* Move the form up */
+        position: relative;
+        padding-top: 0;
+        top: -40px;
+        padding-left: 20px;
+        padding-right: 20px;
+        /* Adjust to move the form higher */
+    }
+
+    body {
+        font-family: Arial;
+        font-size: 12px;
+    }
+
+    /* Hide all content except the container */
+    body * {
+        visibility: hidden;
+    }
+
+    .container,
+    .container * {
+        visibility: visible;
+    }
+
+    .page {
+        padding-top: 0;
+        display: block;
+        height: 100%;
+    }
+
+    .flex-container {
+        flex-direction: column;
+        /* gap: 5px; */
+    }
+}
+
+/* Make the modal scrollable */
+.modal-content1 {
+    max-height: 80vh;
+    /* Limit the height to 80% of the viewport */
+    overflow-y: auto;
+    /* Enable vertical scrolling if content exceeds */
+    padding-right: 15px;
+    /* Add space for scrollbar */
+}

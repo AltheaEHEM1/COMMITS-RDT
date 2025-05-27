@@ -209,3 +209,94 @@
 
     {{ $supplies->links() }}
 @endsection
+
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Find all supply forms (both create and edit)
+    const supplyForms = document.querySelectorAll('form[action*="supplies"]');
+    
+    supplyForms.forEach(form => {
+        const dateReceived = form.querySelector('[name="date_received"]');
+        const expirationDate = form.querySelector('[name="expiration_date"]');
+        
+        if (dateReceived && expirationDate) {
+            // Initially disable expiration date if date_received is empty
+            if (!dateReceived.value) {
+                expirationDate.disabled = true;
+            } else {
+                // Set min date to date_received value
+                expirationDate.min = dateReceived.value;
+            }
+            
+            // Add helper text
+            const helperText = document.createElement('p');
+            helperText.className = 'text-xs text-gray-500 mt-1';
+            helperText.textContent = dateReceived.value ? 'Must be after date received' : 'Please select date received first';
+            expirationDate.parentNode.appendChild(helperText);
+            
+            // When date_received changes, update expiration_date constraints
+            dateReceived.addEventListener('change', function() {
+                if (this.value) {
+                    // Enable expiration date field
+                    expirationDate.disabled = false;
+                    
+                    // Set minimum date to date received
+                    expirationDate.min = this.value;
+                    
+                    // Update helper text
+                    helperText.textContent = 'Must be after date received';
+                    
+                    // Clear expiration date if it's now invalid
+                    if (expirationDate.value && expirationDate.value <= this.value) {
+                        expirationDate.value = '';
+                    }
+                } else {
+                    // If date received is cleared, disable expiration date
+                    expirationDate.disabled = true;
+                    expirationDate.value = '';
+                    helperText.textContent = 'Please select date received first';
+                }
+            });
+            
+            // Validate expiration date when it changes
+            expirationDate.addEventListener('change', function() {
+                if (dateReceived.value && this.value && this.value <= dateReceived.value) {
+                    this.value = '';
+                    alert('Expiration date must be after date received');
+                }
+            });
+            
+            // Prevent form submission if dates are invalid
+            form.addEventListener('submit', function(e) {
+                if (dateReceived.value && expirationDate.value) {
+                    if (expirationDate.value <= dateReceived.value) {
+                        e.preventDefault();
+                        alert('Expiration date must be after date received');
+                    }
+                }
+            });
+            
+            // Also validate initial and consumed quantities
+            const initialQuantity = form.querySelector('[name="initial_quantity"]');
+            const consumedQuantity = form.querySelector('[name="consumed_quantity"]');
+            
+            if (initialQuantity && consumedQuantity) {
+                initialQuantity.addEventListener('change', function() {
+                    consumedQuantity.max = this.value;
+                    if (parseInt(consumedQuantity.value) > parseInt(this.value)) {
+                        consumedQuantity.value = this.value;
+                    }
+                });
+                
+                consumedQuantity.addEventListener('input', function() {
+                    if (parseInt(this.value) > parseInt(initialQuantity.value)) {
+                        this.value = initialQuantity.value;
+                    }
+                });
+            }
+        }
+    });
+});
+</script>
+@endpush

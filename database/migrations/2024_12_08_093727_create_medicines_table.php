@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('medicines', function (Blueprint $table) {
             $table->id();
             $table->string('medicine_name', 100);
-            $table->string('unit', 100);
+            $table->string('unit', 100); 
             $table->double('initial_quantity'); // Add precision and scale
             $table->double('consumed_quantity')->default(0); // Add default
             $table->double('remaining_quantity'); // Add precision and scale
@@ -23,6 +23,7 @@ return new class extends Migration
             $table->string('status', 50); // Corrected `Status`
             $table->softDeletes();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->boolean('notified_quarterly')->default(false);
             $table->boolean('notified_monthly')->default(false);
             $table->boolean('notified_weekly')->default(false);
             $table->boolean('notified_today')->default(false);

@@ -1,83 +1,8 @@
 @extends('layouts.app-layout')
 
+@section('title', 'Waver for Pulmonary Case Form')
+
 @section('content')
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    <title>Waiver For Pulmonary Case Form</title>
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        /* Adjusting for print */
-        @media print {
-            header {
-                padding: 0;
-            }
-
-            @page {
-                size: A4;
-                margin: 0;
-
-            }
-
-            .page {
-                margin-top: 0;
-                /* Move the form up */
-                position: relative;
-                padding-top: 0;
-                top: -90px;
-                padding-left: 20px;
-                padding-right: 20px;
-                /* Adjust to move the form higher */
-
-            }
-
-            body {
-                font-family: Arial;
-                font-size: 12px;
-            }
-
-            /* Hide all content except the container */
-            body * {
-                visibility: hidden;
-            }
-
-            .container,
-            .container * {
-                visibility: visible;
-                margin-top: 0;
-                padding-top: 0;
-            }
-
-            .page {
-                display: block;
-                height: 100%;
-
-            }
-
-            .flex-container {
-                flex-direction: column;
-                /* gap: 5px; */
-            }
-        }
-
-        /* Make the modal scrollable */
-        .modal-content1 {
-            max-height: 80vh;
-            /* Limit the height to 80% of the viewport */
-            overflow-y: auto;
-            /* Enable vertical scrolling if content exceeds */
-            padding-right: 15px;
-            /* Add space for scrollbar */
-        }
-    </style>
-</head>
-
-<body class="bg-gray-100">
 
     <!-- Buttons (Optional for print view, you can hide them when printing) -->
     <div class="flex space-x-10 justify-between mb-5">
@@ -114,6 +39,13 @@
     <div class="container mx-auto bg-white md:py-20 md:px-20 w-[90%] md:w-[70%] lg:w-[70%]">
         <div class="page">
             <div class="container">
+                @foreach ($controlNumber->where('document_type', $documentType) as $control)
+                    <div class="flex flex-col items-end text-xs leading-tight text-gray-800">
+                        <p>{{ $control->control_number ?? '__________' }}</p>
+                        <p>Rev. {{ $control->revision ?? '_________'}}</p>
+                        <p>{{ \Carbon\Carbon::parse($control->date_issued)->format('F j, Y') ?? '__________' }} </p>
+                    </div>
+                @endforeach
                 <div class="flex items-center justify-center mb-5">
                     <div class="mr-5">
                         <img src="{{ asset('Logo_image/logopup.png') }}" alt="Logo" class="w-28 mb-5">
@@ -165,6 +97,13 @@
     <!-- Document 2 (duplicate the structure as needed) -->
     <div class="container mx-auto bg-white md:py-20 md:px-20 w-[90%] md:w-[70%] lg:w-[70%]">
         <div class="container2 mt-15">
+                @foreach ($controlNumber->where('document_type', $documentType) as $control)
+                    <div class="flex flex-col items-end text-xs leading-tight text-gray-800">
+                        <p>{{ $control->control_number ?? '__________' }}</p>
+                        <p>Rev. {{ $control->revision ?? '_________'}}</p>
+                        <p>{{ \Carbon\Carbon::parse($control->date_issued)->format('F j, Y') ?? '__________' }} </p>
+                    </div>
+                @endforeach
             <div class="flex items-center justify-center mb-5">
                 <div class="mr-5">
                     <img src="{{ asset('Logo_image/logopup.png') }}" alt="Logo" class="w-28 mb-5">
@@ -216,7 +155,9 @@
             </div>
         </div>
     </div>
-    </div>
+
+    @include('Documents.waiver_for_pulmonary_case.create-form')
+{{--
     <!-- Modal -->
     <div id="editFormModal" class="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50 hidden">
         <div class="modal-content1 bg-white rounded-lg shadow-lg p-6 w-full max-w-lg relative">
@@ -231,11 +172,15 @@
             <div id="formContainer" class="space-y-4">
                 <!-- Date Field -->
                 <!-- Form 1 Inputs -->
+        @foreach ($controlNumber->where('document_type', $documentType) as $control)
             <form action="{{ route('documents.waiver_for_pulmonary_case.store') }}" method="POST">
                 <h2 class="text-xl font-medium mb-4 mt-6 text-gray-700 text-center">Form 1</h2>
                 @csrf
                 <div class="form-group">
                     <input type="hidden" name="document_type" value="{{ request('document_type') }}">
+                    <input type="hidden" name="control_number" value="{{ $control->control_number }}">
+                    <input type="hidden" name="revision" value="{{ $control->revision }}">
+                    <input type="hidden" name="date_issued" value="{{ $control->date_issued }}">
                     <label class="block text-gray-600 font-medium mb-1">Date:</label>
                     <input type="date" id="editDate" class="w-full border rounded-md px-3 py-2" name="date" required>
                     <span id="editDateError" class="text-red-500 text-sm hidden">Date is required.</span>
@@ -313,6 +258,7 @@
                     </button>
                 </div>
             </form>
+        @endforeach
         </div>
     </div>
     <!-- Success Notification -->
@@ -329,10 +275,11 @@
             </div>
             <p class="text-lg font-semibold">Successfully Saved!</p>
         </div>
-    </div>
+    </div> --}}
 
+@endsection
 
-
+@push('scripts')
     <script>
         function printWaiver() {
             window.print();
@@ -342,24 +289,50 @@
             window.location.href = "{{ route('documents.index') }}";
         }
 
-        function openEditForm() {
-            document.getElementById("editFormModal").classList.remove("hidden");
+        // Function to close the edit form modal
+        function closeEditForm() {
+            // const modal = document.getElementById("editFormModal");
+            // modal.classList.add("hidden");
+
+            let modal = document.getElementById("editFormModal");
+            let modalContent = modal.querySelector("div.relative");
+
+            modal.classList.add("opacity-0");
+            modalContent.classList.remove("scale-100");
+            modalContent.classList.add("scale-95");
+
+            setTimeout(() => {
+                modal.classList.add("hidden");
+            }, 300); // Matches transition duration
         }
 
-        function closeEditForm() {
-            document.getElementById("editFormModal").classList.add("hidden");
+        // Function to open the edit form modal
+        function openEditForm() {
+            // const modal = document.getElementById("editFormModal");
+            // modal.classList.remove("hidden");
+
+            let modal = document.getElementById("editFormModal");
+            let modalContent = modal.querySelector("div.relative");
+
+            modal.classList.remove("hidden");
+            setTimeout(() => {
+                modal.classList.remove("opacity-0");
+                modalContent.classList.remove("scale-95");
+                modalContent.classList.add("scale-100");
+            }, 10); // Small delay to trigger animation
         }
 
         let formCount = 1;
 
         function addForm() {
-                formCount++;
-                const formContainer1 = document.getElementById("formContainer1");
-                formContainer1.classList.remove("hidden");
-                if (formCount === 2) {
-                        document.querySelector("button[onclick='addForm()']").style.display = 'none';
-                }
+            formCount++;
+            const formContainer1 = document.getElementById("formContainer1");
+            formContainer1.classList.remove("hidden");
+            if (formCount === 2) {
+                document.querySelector("button[onclick='addForm()']").style.display = 'none';
+            }
         }
+
         function validateField(fieldId, errorId) {
             const fieldValue = document.getElementById(fieldId).value;
             const errorElement = document.getElementById(errorId);
@@ -377,7 +350,7 @@
         function saveEdits() {
             let isValid = true;
 
-             // Validate the first form fields
+            // Validate the first form fields
             isValid &= validateField("editDate", "editDateError");
             isValid &= validateField("editPatientName", "editPatientNameError");
             isValid &= validateField("editschoolname", "editschoolnameError");
@@ -402,34 +375,19 @@
 
 
             if (isValid) {
-                    const successMessage = document.getElementById("successMessage");
-                    successMessage.classList.remove("hidden"); // Make the success message visible
-                    console.log("Success message is visible.");
-
-                                // Hide the success message after a short delay, close the modal, and trigger print preview
-                    setTimeout(() => {
-                        successMessage.classList.add("hidden"); // Hide success message after 3.5 seconds
-                        closeAddForm(); // Close the modal
-                        document.querySelector('form').submit(); // This submits the form to Laravel
-                        }, 3500);
-                } else {
-                    console.log("Form validation failed.");
-                }
-        }
-        // Function to close the edit form modal
-        function closeEditForm() {
-            const modal = document.getElementById("editFormModal");
-            modal.classList.add("hidden");
+                Swal.fire({
+                    title: "Success!",
+                    text: 'Document has been saved successfully.',
+                    icon: "success"
+                });
+            } else {
+                Swal.fire({
+                    title: "Error!",
+                    text: 'Failed to save the document.',
+                    icon: "error"
+                });
+            }
         }
 
-        // Function to open the edit form modal
-        function openEditForm() {
-            const modal = document.getElementById("editFormModal");
-            modal.classList.remove("hidden");
-        }
     </script>
-
-</body>
-
-</html>
-@endsection
+@endpush

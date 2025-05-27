@@ -1,5 +1,7 @@
 @extends('layouts.app-layout')
 
+@section('title', 'Excuse Letter')
+
 @section('content')
     <div class="flex space-x-10 justify-between mb-5 print:hidden">
         <button class="px-4 py-2 bg-gray-300 text-black rounded hover:bg-gray-400 flex items-center space-x-2"

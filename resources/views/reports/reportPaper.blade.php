@@ -1,16 +1,17 @@
 @extends('layouts.app-layout')
 
 @section('content')
-    <div class="flex flex-row">
-        <div class ="flex flex-row gap-3 pb-6">
-            <a href="{{ route('reports.index') }}">
-                <button>
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
-                    </svg>
-                </button>
-            </a>
-            <p class="text-lg">Back</p>
+    <div class="flex flex-row justify-between pb-6 pr-16 text-white gap-x-5">
+        <div>
+            <button class="flex items-center px-4 py-2 space-x-2 text-black bg-gray-200 rounded hover:bg-gray-300"
+                onclick="window.history.back()" aria-label="Go Back">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
+                    <path
+                        d="M3.82843 6.9999H16V8.9999H3.82843L9.1924 14.3638L7.7782 15.778L0 7.9999L7.7782 0.22168L9.1924 1.63589L3.82843 6.9999Z"
+                        fill="black" />
+                </svg>
+                <span>Back</span>
+            </button>
         </div>
     </div>
 
@@ -73,10 +74,11 @@
             <input type="hidden" name="bulletinUpdates" id="bulletinUpdates">
 
 
-            <button type="submit" class="px-4 py-2 bg-green-800 rounded-lg">
-                Export to Excel
-            </button>
-        </form>
+                <button type="submit" class="px-4 py-2 bg-blue-500 rounded-lg hover:bg-blue-600">
+                    Export to Excel
+                </button>
+            </form>
+        </div>
     </div>
 
     {{-- report paper --}}

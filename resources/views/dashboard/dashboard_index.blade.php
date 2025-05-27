@@ -1,17 +1,305 @@
 @extends('layouts.app-layout')
 
+@section('title', 'Dashboard')
+
 @section('content')
     <div class="container mx-auto">
         <div class="flex justify-center">
             <div class="w-full">
-                <x-page-title value="Dashboard" />
+                <h2 class="mb-3 text-2xl font-semibold text-gray-800">Dashboard</h2>
+                <form action="#" method="GET" class="flex items-center justify-start mb-4">
+                    <div class="w-full md:w-96">
+                        <label for="topbar-search" class="sr-only">Search</label>
+                        <div class="relative w-full">
+                            <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                                <svg class="w-5 h-5 text-gray-500" fill="currentColor" viewBox="0 0 20 20" 
+                                     xmlns="http://www.w3.org/2000/svg">
+                                    <path fill-rule="evenodd" clip-rule="evenodd"
+                                          d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z">
+                                    </path>
+                                </svg>
+                            </div>
+                            <input type="text" name="search" id="topbar-search"
+                                   class="bg-gray-200 border h-11 border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full pl-10 pr-16 py-2.5 truncate"
+                                   placeholder="Search patients, reports, medicines..." 
+                                   value="{{ $searchTerm ?? '' }}" />
+                            <div class="absolute inset-y-0 right-0 flex items-center pr-2">
+                                <button type="submit" class="p-1 mr-1 rounded-full focus:outline-none focus:shadow-outline hover:bg-gray-100">
+                                    <svg class="w-5 h-5 text-gray-500 hover:text-gray-700" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd"
+                                              d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
+                                              clip-rule="evenodd"></path>
+                                    </svg>
+                                </button>
+                                @if(request()->has('search'))
+                                    <a href="{{ url()->current() }}" 
+                                       class="p-1 rounded-full focus:outline-none focus:shadow-outline hover:bg-gray-100"
+                                       title="Clear search">
+                                        <svg class="w-5 h-5 text-gray-500 hover:text-gray-700" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
+                                        </svg>
+                                    </a>
+                                @endif
+                            </div>
+                        </div>
+                        @if(request()->has('search'))
+                            <div class="mt-1 text-xs text-gray-600">
+                                Searching for: <span class="font-medium">{{ request('search') }}</span>
+                            </div>
+                        @endif
+                    </div>
+                </form>
             </div>
         </div>
+
+        <!-- Search Results Section -->
+        @if(isset($searchResults) && $searchTerm)
+            <div class="mb-8 bg-white border rounded-xl shadow-lg overflow-hidden">
+                @if(!$searchResults['hasResults'])
+                    <!-- No results state -->
+                    <div class="flex flex-col items-center justify-center p-12">
+                        <div class="p-4 bg-gray-100 rounded-full mb-4">
+                            <svg class="w-16 h-16 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M12 14h.01M5.8 21h12.4a2 2 0 002-2V5a2 2 0 00-2-2H5.8a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                            </svg>
+                        </div>
+                        <p class="text-xl font-medium text-gray-700">No results found</p>
+                        <p class="mt-2 text-sm text-gray-500">Try adjusting your search terms or browse categories below</p>
+                    </div>
+                @else
+                    <div class="divide-y divide-gray-200">
+                        <!-- Patients Section -->
+                        @if($searchResults['patients']->count() > 0)
+                            <div class="p-5">
+                                <div class="flex items-center mb-4">
+                                    <div class="p-2 bg-blue-100 rounded-lg mr-3">
+                                        <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                                        </svg>
+                                    </div>
+                                    <h4 class="text-lg font-medium text-gray-800">
+                                        Patients <span class="ml-2 text-sm font-normal text-gray-500">({{ $searchResults['patients']->count() }})</span>
+                                    </h4>
+                                </div>
+                                
+                                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                                    @foreach($searchResults['patients'] as $patient)
+                                        <div class="border border-gray-200 rounded-xl hover:shadow-md transition-shadow bg-gradient-to-br from-white to-gray-50 p-4">
+                                            <div class="flex items-start">
+                                                <div class="flex-shrink-0">
+                                                    <div class="w-10 h-10 rounded-full flex items-center justify-center {{ $patient->sex === 'Male' ? 'bg-blue-100 text-blue-600' : 'bg-pink-100 text-pink-600' }}">
+                                                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                                                        </svg>
+                                                    </div>
+                                                </div>
+                                                <div class="ml-3">
+                                                    <h5 class="font-medium text-gray-900">{{ $patient->fullName }}</h5>
+                                                    <div class="flex flex-wrap gap-2 mt-2">
+                                                        @if($patient->student_number)
+                                                            <span class="inline-flex items-center px-2 py-0.5 rounded bg-blue-100 text-blue-800 text-xs font-medium">
+                                                                ID: {{ $patient->student_number }}
+                                                            </span>
+                                                        @endif
+                                                        <span class="inline-flex items-center px-2 py-0.5 rounded bg-gray-100 text-gray-800 text-xs font-medium">
+                                                            {{ $patient->patientType }}
+                                                        </span>
+                                                        @if($patient->year_course_dept)
+                                                            <span class="inline-flex items-center px-2 py-0.5 rounded bg-yellow-100 text-yellow-800 text-xs font-medium">
+                                                                {{ $patient->year_course_dept }}
+                                                            </span>
+                                                        @endif
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    @endforeach
+                                </div>
+                            </div>
+                        @endif
+
+                        <!-- Medicines Section -->
+                        @if($searchResults['medicines']->count() > 0)
+                            <div class="p-5">
+                                <div class="flex items-center mb-4">
+                                    <div class="p-2 bg-yellow-100 rounded-lg mr-3">
+                                        <svg class="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
+                                        </svg>
+                                    </div>
+                                    <h4 class="text-lg font-medium text-gray-800">
+                                        Medicines <span class="ml-2 text-sm font-normal text-gray-500">({{ $searchResults['medicines']->count() }})</span>
+                                    </h4>
+                                </div>
+                                
+                                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                                    @foreach($searchResults['medicines'] as $medicine)
+                                        <div class="border border-gray-200 rounded-xl hover:shadow-md transition-shadow bg-gradient-to-br from-white to-gray-50 p-4">
+                                            <h5 class="font-medium text-gray-900">{{ $medicine->medicine_name }}</h5>
+                                            <div class="mt-2 flex items-center text-sm text-gray-500">
+                                                <svg class="w-4 h-4 mr-1 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                                                </svg>
+                                                <span>{{ $medicine->formattedQuantity }}</span>
+                                            </div>
+                                            <div class="mt-1 flex items-center text-sm {{ Carbon\Carbon::parse($medicine->expiration_date) < now() ? 'text-red-500' : 'text-gray-500' }}">
+                                                <svg class="w-4 h-4 mr-1 {{ Carbon\Carbon::parse($medicine->expiration_date) < now() ? 'text-red-400' : 'text-gray-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                                </svg>
+                                                <span>Expires: {{ $medicine->formattedExpiry }}</span>
+                                            </div>
+                                            <div class="mt-3 flex justify-between items-center">
+                                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ $medicine->status === 'Available' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
+                                                    {{ $medicine->status }}
+                                                </span>
+                                            </div>
+                                        </div>
+                                    @endforeach
+                                </div>
+                            </div>
+                        @endif
+
+                        <!-- Supplies Section -->
+                        @if($searchResults['supplies']->count() > 0)
+                            <div class="p-5">
+                                <div class="flex items-center mb-4">
+                                    <div class="p-2 bg-green-100 rounded-lg mr-3">
+                                        <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+                                        </svg>
+                                    </div>
+                                    <h4 class="text-lg font-medium text-gray-800">
+                                        Supplies <span class="ml-2 text-sm font-normal text-gray-500">({{ $searchResults['supplies']->count() }})</span>
+                                    </h4>
+                                </div>
+                                
+                                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                                    @foreach($searchResults['supplies'] as $supply)
+                                        <div class="border border-gray-200 rounded-xl hover:shadow-md transition-shadow bg-gradient-to-br from-white to-gray-50 p-4">
+                                            <h5 class="font-medium text-gray-900">{{ $supply->supply_name }}</h5>
+                                            <div class="mt-2 flex items-center text-sm text-gray-500">
+                                                <svg class="w-4 h-4 mr-1 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                                                </svg>
+                                                <span>{{ $supply->formattedQuantity }}</span>
+                                            </div>
+                                            <div class="mt-1 flex items-center text-sm {{ Carbon\Carbon::parse($supply->expiration_date) < now() ? 'text-red-500' : 'text-gray-500' }}">
+                                                <svg class="w-4 h-4 mr-1 {{ Carbon\Carbon::parse($supply->expiration_date) < now() ? 'text-red-400' : 'text-gray-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                                </svg>
+                                                <span>Expires: {{ $supply->formattedExpiry }}</span>
+                                            </div>
+                                            <div class="mt-3 flex justify-between items-center">
+                                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ $supply->status === 'Available' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
+                                                    {{ $supply->status }}
+                                                </span>
+                                            </div>
+                                        </div>
+                                    @endforeach
+                                </div>
+                            </div>
+                        @endif
+
+                        <!-- Reports Section -->
+                        @if($searchResults['reports']->count() > 0)
+                            <div class="p-5">
+                                <div class="flex items-center mb-4">
+                                    <div class="p-2 bg-indigo-100 rounded-lg mr-3">
+                                        <svg class="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                        </svg>
+                                    </div>
+                                    <h4 class="text-lg font-medium text-gray-800">
+                                        Reports <span class="ml-2 text-sm font-normal text-gray-500">({{ $searchResults['reports']->count() }})</span>
+                                    </h4>
+                                </div>
+                                
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    @foreach($searchResults['reports'] as $report)
+                                        <div class="border border-gray-200 rounded-xl hover:shadow-md transition-shadow bg-gradient-to-br from-white to-gray-50 p-4">
+                                            <div class="flex justify-between items-start">
+                                                <h5 class="font-medium text-gray-900">{{ $report->title }}</h5>
+                                                <span class="px-2.5 py-0.5 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800">
+                                                    {{ $report->category }}
+                                                </span>
+                                            </div>
+                                            <p class="mt-2 text-sm text-gray-600">Patient: <span class="font-medium">{{ $report->patientInfo }}</span></p>
+                                            <p class="mt-1 text-sm text-gray-500 line-clamp-2">{{ $report->complaintPreview }}</p>
+                                            <p class="mt-2 text-xs text-gray-400">{{ $report->formattedDate }}</p>
+                                        </div>
+                                    @endforeach
+                                </div>
+                            </div>
+                        @endif
+
+                        <!-- Documents Section -->
+                        @if($searchResults['documents']->count() > 0)
+                            <div class="p-5">
+                                <div class="flex items-center mb-4">
+                                    <div class="p-2 bg-purple-100 rounded-lg mr-3">
+                                        <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                                        </svg>
+                                    </div>
+                                    <h4 class="text-lg font-medium text-gray-800">
+                                        Documents <span class="ml-2 text-sm font-normal text-gray-500">({{ $searchResults['documents']->count() }})</span>
+                                    </h4>
+                                </div>
+                                
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    @foreach($searchResults['documents'] as $document)
+                                        <div class="border border-gray-200 rounded-xl hover:shadow-md transition-shadow bg-gradient-to-br from-white to-gray-50 p-4">
+                                            <div class="flex">
+                                                <div class="flex-shrink-0">
+                                                    @switch($document->document_type)
+                                                        @case('excuseletter')
+                                                            <div class="w-12 h-12 rounded-lg bg-green-100 flex items-center justify-center">
+                                                                <svg class="w-7 h-7 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                                                </svg>
+                                                            </div>
+                                                            @break
+                                                        @case('medical_certificate')
+                                                            <div class="w-12 h-12 rounded-lg bg-blue-100 flex items-center justify-center">
+                                                                <svg class="w-7 h-7 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                                                                </svg>
+                                                            </div>
+                                                            @break
+                                                        @default
+                                                            <div class="w-12 h-12 rounded-lg bg-purple-100 flex items-center justify-center">
+                                                                <svg class="w-7 h-7 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                                                                </svg>
+                                                            </div>
+                                                    @endswitch
+                                                </div>
+                                                <div class="ml-4">
+                                                    <h5 class="font-medium text-gray-900">{{ $document->documentTypeFormatted }}</h5>
+                                                    @if($document->patientName)
+                                                        <p class="mt-1 text-sm text-gray-600">Patient: <span class="font-medium">{{ $document->patientName }}</span></p>
+                                                    @endif
+                                                    @if($document->doctorName)
+                                                        <p class="text-sm text-gray-500">Doctor: {{ $document->doctorName }}</p>
+                                                    @endif
+                                                    <p class="mt-1 text-xs text-gray-400">{{ isset($document->documentDate) ? $document->documentDate : $document->formattedDate }}</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    @endforeach
+                                </div>
+                            </div>
+                        @endif
+                    </div>
+                @endif
+            </div>
+        @endif
+
         <div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
             <!-- Rectangle 1 -->
-            <div class="flex items-center justify-center p-4 min-w-fit bg-white rounded-lg shadow-md space-x-3">
+            <div class="flex items-center justify-center p-4 space-x-3 bg-white rounded-lg shadow-md min-w-fit">
                 <div class="flex-shrink-0">
-                    <div class="flex items-center justify-center text-blue-500 bg-blue-50 rounded-full w-14 h-14">
+                    <div class="flex items-center justify-center text-blue-500 rounded-full bg-blue-50 w-14 h-14">
                         <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor"
                             class="bi bi-person-fill" viewBox="0 0 16 16">
                             <path d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6" />
@@ -20,18 +308,18 @@
                 </div>
                 <div class="flex-1">
                     <p class="text-4xl font-semibold">{{ $totalPatients }}</p>
-                    <h2 class="text-base font-regular text-gray-600 text-wrap mt-1">Total Patient Records</h2>
+                    <h2 class="mt-1 text-base text-gray-600 font-regular text-wrap">Total Patient Records</h2>
                 </div>
             </div>
 
             <!-- Rectangle 2 -->
-            <div class="flex items-center justify-center p-4 min-w-fit bg-white rounded-lg shadow-md space-x-3">
+            <div class="flex items-center justify-center p-4 space-x-3 bg-white rounded-lg shadow-md min-w-fit">
                 <div class="flex-shrink-0">
-                    <div class="flex items-center justify-center text-green-500 bg-green-50 rounded-full w-14 h-14">
+                    <div class="flex items-center justify-center text-green-500 rounded-full bg-green-50 w-14 h-14">
                         <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" fill="currentColor"
                             class="bi bi-receipt" viewBox="0 0 16 16">
                             <path
-                                d="M1.92.506a.5.5 0 0 1 .434.14L3 1.293l.646-.647a.5.5 0 0 1 .708 0L5 1.293l.646-.647a.5.5 0 0 1 .708 0L7 1.293l.646-.647a.5.5 0 0 1 .708 0L9 1.293l.646-.647a.5.5 0 0 1 .708 0l.646.647.646-.647a.5.5 0 0 1 .708 0l.646.647.646-.647a.5.5 0 0 1 .801.13l.5 1A.5.5 0 0 1 15 2v12a.5.5 0 0 1-.053.224l-.5 1a.5.5 0 0 1-.8.13L13 14.707l-.646.647a.5.5 0 0 1-.708 0L11 14.707l-.646.647a.5.5 0 0 1-.708 0L9 14.707l-.646.647a.5.5 0 0 1-.708 0L7 14.707l-.646.647a.5.5 0 0 1-.708 0L5 14.707l-.646.647a.5.5 0 0 1-.708 0L3 14.707l-.646.647a.5.5 0 0 1-.801-.13l-.5-1A.5.5 0 0 1 1 14V2a.5.5 0 0 1 .053-.224l.5-1a.5.5 0 0 1 .367-.27m.217 1.338L2 2.118v11.764l.137.274.51-.51a.5.5 0 0 1 .707 0l.646.647.646-.646a.5.5 0 0 1 .708 0l.646.646.646-.646a.5.5 0 0 1 .708 0l.646.646.646-.646a.5.5 0 0 1 .708 0l.646.646.646-.646a.5.5 0 0 1 .708 0l.646.646.646-.646a.5.5 0 0 1 .708 0l.509.509.137-.274V2.118l-.137-.274-.51.51a.5.5 0 0 1-.707 0L12 1.707l-.646.647a.5.5 0 0 1-.708 0L10 1.707l-.646.647a.5.5 0 0 1-.708 0L8 1.707l-.646.647a.5.5 0 0 1-.708 0L6 1.707l-.646.647a.5.5 0 0 1-.708 0L4 1.707l-.646.647a.5.5 0 0 1-.708 0z" />
+                                d="M1.92.506a.5.5 0 0 1 .434.14L3 1.293l.646-.647a.5.5 0 0 1 .708 0L5 1.293l.646-.647a.5.5 0 0 1 .708 0L7 1.293l.646-.647a.5.5 0 0 1 .708 0L9 1.293l.646-.647a.5.5 0 0 1 .801.13l.5 1A.5.5 0 0 1 15 2v12a.5.5 0 0 1-.053.224l-.5 1a.5.5 0 0 1-.8.13L13 14.707l-.646.647a.5.5 0 0 1-.708 0L11 14.707l-.646.647a.5.5 0 0 1-.708 0L9 14.707l-.646.647a.5.5 0 0 1-.708 0L7 14.707l-.646.647a.5.5 0 0 1-.708 0L5 14.707l-.646.647a.5.5 0 0 1-.708 0L3 14.707l-.646.647a.5.5 0 0 1-.801-.13l-.5-1A.5.5 0 0 1 1 14V2a.5.5 0 0 1 .053-.224l.5-1a.5.5 0 0 1 .367-.27m.217 1.338L2 2.118v11.764l.137.274.51-.51a.5.5 0 0 1 .707 0l.646.647.646-.646a.5.5 0 0 1 .708 0l.646.646.646-.646a.5.5 0 0 1 .708 0l.646.646.646-.646a.5.5 0 0 1 .708 0l.646.646.646-.646a.5.5 0 0 1 .708 0l.509.509.137-.274V2.118l-.137-.274-.51.51a.5.5 0 0 1-.707 0L12 1.707l-.646.647a.5.5 0 0 1-.708 0L10 1.707l-.646.647a.5.5 0 0 1-.708 0L8 1.707l-.646.647a.5.5 0 0 1-.708 0L6 1.707l-.646.647a.5.5 0 0 1-.708 0L4 1.707l-.646.647a.5.5 0 0 1-.708 0z" />
                             <path
                                 d="M3 4.5a.5.5 0 0 1 .5-.5h6a.5.5 0 1 1 0 1h-6a.5.5 0 0 1-.5-.5m0 2a.5.5 0 0 1 .5-.5h6a.5.5 0 1 1 0 1h-6a.5.5 0 0 1-.5-.5m0 2a.5.5 0 0 1 .5-.5h6a.5.5 0 1 1 0 1h-6a.5.5 0 0 1-.5-.5m0 2a.5.5 0 0 1 .5-.5h6a.5.5 0 0 1 0 1h-6a.5.5 0 0 1-.5-.5m8-6a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 0 1h-1a.5.5 0 0 1-.5-.5m0 2a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 0 1h-1a.5.5 0 0 1-.5-.5m0 2a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 0 1h-1a.5.5 0 0 1-.5-.5m0 2a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 0 1h-1a.5.5 0 0 1-.5-.5" />
                         </svg>
@@ -39,14 +327,14 @@
                 </div>
                 <div class="flex-1">
                     <p class="text-4xl font-semibold">{{ $totalDocuments }}</p>
-                    <h2 class="text-base font-regular text-gray-600 text-wrap mt-1">Total Documents</h2>
+                    <h2 class="mt-1 text-base text-gray-600 font-regular text-wrap">Total Documents</h2>
                 </div>
             </div>
 
             <!-- Rectangle 3 -->
-            <div class="flex items-center justify-center p-4 min-w-fit bg-white rounded-lg shadow-md space-x-3">
+            <div class="flex items-center justify-center p-4 space-x-3 bg-white rounded-lg shadow-md min-w-fit">
                 <div class="flex-shrink-0">
-                    <div class="flex items-center justify-center text-indigo-500 bg-indigo-50 rounded-full w-14 h-14">
+                    <div class="flex items-center justify-center text-indigo-500 rounded-full bg-indigo-50 w-14 h-14">
                         <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" fill="currentColor"
                             class="bi bi-file-earmark-spreadsheet-fill" viewBox="0 0 16 16">
                             <path d="M6 12v-2h3v2z" />
@@ -57,14 +345,14 @@
                 </div>
                 <div class="flex-1">
                     <p class="text-4xl font-semibold">{{ $totalReports }}</p>
-                    <h2 class="text-base font-regular text-gray-600 text-wrap mt-1">Total Reports</h2>
+                    <h2 class="mt-1 text-base text-gray-600 font-regular text-wrap">Total Reports</h2>
                 </div>
             </div>
 
             <!-- Rectangle 4 -->
-            <div class="flex items-center justify-center p-4 min-w-fit bg-white rounded-lg shadow-md space-x-3">
+            <div class="flex items-center justify-center p-4 space-x-3 bg-white rounded-lg shadow-md min-w-fit">
                 <div class="flex-shrink-0">
-                    <div class="flex items-center justify-center text-yellow-500 bg-yellow-50 rounded-full w-14 h-14">
+                    <div class="flex items-center justify-center text-yellow-500 rounded-full bg-yellow-50 w-14 h-14">
                         <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" fill="currentColor"
                             class="bi bi-capsule" viewBox="0 0 16 16">
                             <path
@@ -74,7 +362,7 @@
                 </div>
                 <div class="flex-1">
                     <p class="text-4xl font-semibold">{{ $totalMedicines }}</p>
-                    <h2 class="text-base font-regular text-gray-600 text-wrap mt-1">Total Medicines</h2>
+                    <h2 class="mt-1 text-base text-gray-600 font-regular text-wrap">Total Medicines</h2>
                 </div>
             </div>
         </div>

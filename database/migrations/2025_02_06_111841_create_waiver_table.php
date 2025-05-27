@@ -22,6 +22,9 @@ return new class extends Migration
             $table->string('diagnosedIllness');
             $table->date('followUpDate');
             $table->string('doctorName');
+            $table->string('control_number');
+            $table->string('revision');
+            $table->date('date_issued'); // Date the contruct was issued
             $table->timestamps();
             $table->softDeletes();
             $table->string('document_type')->default('waiver');

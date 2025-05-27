@@ -1,5 +1,7 @@
 @extends('layouts.profile')
 
+@section('title', 'Settings')
+
 @section('content')
     <div class="container mx-auto p-0 bg-white shadow-md rounded-lg">
 

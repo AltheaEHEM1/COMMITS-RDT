@@ -56,7 +56,7 @@
                 <x-sidebar-link :href="route('patients')" :active="request()->is('patients*') || request()->is('/')" :icon="'fas fa-user-injured'">Patients</x-sidebar-link>
             </li>
             <li>
-                <x-sidebar-link :href="'history'" :active="request()->is('history*')" :icon="'fas fa-history'">History</x-sidebar-link>
+                <x-sidebar-link :href="route('History.all')" :active="request()->is('history*')" :icon="'fas fa-history'">History</x-sidebar-link>
             </li>
             <li>
                 <x-sidebar-link :href="route('inventory')" :active="request()->is('inventory*')" :icon="'fas fa-boxes'">Inventory</x-sidebar-link>

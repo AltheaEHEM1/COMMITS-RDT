@@ -6,9 +6,12 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
 
 class Document extends Model
 {
+    use LogsActivity;
     use HasFactory, SoftDeletes;
 
     protected $fillable = [
@@ -24,6 +27,14 @@ class Document extends Model
         } while (self::where('document_id', $documentId)->exists());
 
         return $documentId;
+    }
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logAll() // logs all fillable attributes
+            ->useLogName('document')
+            ->logOnlyDirty(); // only logs changes
     }
 
     public function excuseletter()

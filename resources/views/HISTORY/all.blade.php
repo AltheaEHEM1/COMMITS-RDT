@@ -1,57 +1,121 @@
 @extends('layouts.app-layout')
 
+@section('title', 'History')
+
 @section('content')
     <div class="container px-4 mx-auto">
         <x-page-title class="mb-2" value="History" />
 
-        <div class="flex flex-wrap items-center justify-end w-full gap-2 mb-3">
-            <!-- Filter Dropdowns -->
-            <div class="flex space-x-2 flex-wrap">
-                <!-- Month Dropdown -->
-                <div class="relative
-                inline-block text-left">
-                    <button onclick="toggleDropdown('month-dropdown')"
-                        class="flex items-center px-4 py-2 text-white bg-yellow-400 rounded-md hover:bg-yellow-500">
-                        <p class="px-2">{{ $selectedMonth ?? 'All Month' }}</p>
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="white"
-                            viewBox="0 0 24 24">
-                            <path d="M7 10l5 5 5-5H7z" />
-                        </svg>
-                    </button>
-                    <div id="month-dropdown"
-                        class="absolute left-0 hidden w-40 mt-2 bg-white border border-gray-200 rounded shadow-lg dropdown-content">
-                        <ul class="py-1">
-                            <li><a href="{{ route('History.all') }}"
-                                    class="block px-4 py-2 text-gray-700 hover:bg-gray-100">All</a></li>
-                            @foreach ($months as $month)
-                                <li><a href="{{ route('History.all', ['month' => $month]) }}"
-                                        class="block px-4 py-2 text-gray-700 hover:bg-gray-100">{{ $month }}</a></li>
-                            @endforeach
-                        </ul>
-                    </div>
+        <div class="w-full mb-3">
+            <div class="flex flex-col gap-4 md:flex-row md:justify-between md:items-center">
+                <!-- Search Form (Left-aligned) -->
+                <div class="w-full md:w-96">
+                    <form action="{{ route('History.all') }}" method="GET" class="m-0">
+                        <!-- Preserve existing filters when searching -->
+                        @if(request()->has('month'))
+                            <input type="hidden" name="month" value="{{ request('month') }}">
+                        @endif
+                        @if(request()->has('week'))
+                            <input type="hidden" name="week" value="{{ request('week') }}">
+                        @endif
+                        
+                        <label for="topbar-search" class="sr-only">Search</label>
+                        <div class="relative w-full">
+                            <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                                <svg class="w-5 h-5 text-gray-500" fill="currentColor" viewBox="0 0 20 20"
+                                     xmlns="http://www.w3.org/2000/svg">
+                                    <path fill-rule="evenodd" clip-rule="evenodd"
+                                        d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z">
+                                    </path>
+                                </svg>
+                            </div>
+                            <input type="text" name="search" id="topbar-search"
+                                class="bg-gray-200 border h-11 border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full pl-10 pr-16 py-2.5 truncate"
+                                placeholder="Search patient name, ID..." 
+                                value="{{ $searchTerm ?? '' }}" />
+                            <div class="absolute inset-y-0 right-0 flex items-center pr-2">
+                                <button type="submit" class="p-1 mr-1 rounded-full focus:outline-none focus:shadow-outline hover:bg-gray-100">
+                                    <svg class="w-5 h-5 text-gray-500 hover:text-gray-700" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd"
+                                            d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
+                                            clip-rule="evenodd"></path>
+                                    </svg>
+                                </button>
+                                @if(request()->has('search'))
+                                    <a href="{{ route('History.all', array_filter(request()->except('search'))) }}" 
+                                       class="p-1 rounded-full focus:outline-none focus:shadow-outline hover:bg-gray-100"
+                                       title="Clear search">
+                                        <svg class="w-5 h-5 text-gray-500 hover:text-gray-700" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
+                                        </svg>
+                                    </a>
+                                @endif
+                            </div>
+                        </div>
+                        @if($searchTerm ?? false)
+                            <div class="mt-1 text-xs text-gray-600">
+                                Searching for: <span class="font-medium">{{ $searchTerm }}</span>
+                            </div>
+                        @endif
+                    </form>
                 </div>
 
-                <!-- Week Dropdown -->
-                <div class="relative inline-block text-left">
-                    <button onclick="toggleDropdown('week-dropdown')"
-                        class="flex items-center px-4 py-2 text-white bg-red-900 rounded-md hover:bg-red-1000">
-                        <p class="px-2"> {{ $selectedWeek ? 'Week ' . $selectedWeek : 'All Week' }}</p>
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="white"
-                            viewBox="0 0 24 24">
-                            <path d="M7 10l5 5 5-5H7z" />
-                        </svg>
-                    </button>
-                    <div id="week-dropdown"
-                        class="absolute left-0 hidden w-40 mt-2 bg-white border border-gray-200 rounded shadow-lg dropdown-content">
-                        <ul class="py-1">
-                            <li><a href="{{ route('History.all') }}"
-                                    class="block px-4 py-2 text-gray-700 hover:bg-gray-100">All</a></li>
-                            @foreach ($weeks as $week)
-                                <li><a href="{{ route('History.all', ['week' => $week]) }}"
-                                        class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Week {{ $week }}</a>
+                <!-- Filter Dropdowns (Right-aligned) -->
+                <div class="flex flex-wrap items-center justify-end gap-2">
+                    <!-- Month Dropdown -->
+                    <div class="relative inline-block text-left">
+                        <button onclick="toggleDropdown('month-dropdown')"
+                            class="flex items-center px-4 py-2 text-white bg-yellow-400 rounded-md hover:bg-yellow-500">
+                            <p class="px-2">{{ $selectedMonth ?? 'All Month' }}</p>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="white"
+                                viewBox="0 0 24 24">
+                                <path d="M7 10l5 5 5-5H7z" />
+                            </svg>
+                        </button>
+                        <div id="month-dropdown"
+                            class="absolute right-0 hidden w-40 mt-2 bg-white border border-gray-200 rounded shadow-lg dropdown-content">
+                            <ul class="py-1">
+                                <!-- All Months -->
+                                <li>
+                                    <a href="{{ route('History.all', request()->only('search')) }}"
+                                        class="block px-4 py-2 text-gray-700 hover:bg-gray-100">All</a>
                                 </li>
-                            @endforeach
-                        </ul>
+                                @foreach ($months as $month)
+                                    <li>
+                                        <a href="{{ route('History.all', array_merge(request()->only('search'), ['month' => $month])) }}"
+                                            class="block px-4 py-2 text-gray-700 hover:bg-gray-100">{{ $month }}</a>
+                                    </li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Week Dropdown -->
+                    <div class="relative inline-block text-left">
+                        <button onclick="toggleDropdown('week-dropdown')"
+                            class="flex items-center px-4 py-2 text-white bg-red-900 rounded-md hover:bg-red-1000">
+                            <p class="px-2"> {{ $selectedWeek ? 'Week ' . $selectedWeek : 'All Week' }}</p>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="white"
+                                viewBox="0 0 24 24">
+                                <path d="M7 10l5 5 5-5H7z" />
+                            </svg>
+                        </button>
+                        <div id="week-dropdown"
+                            class="absolute right-0 hidden w-40 mt-2 bg-white border border-gray-200 rounded shadow-lg dropdown-content">
+                            <ul class="py-1">
+                                <!-- All Weeks -->
+                                <li>
+                                    <a href="{{ route('History.all', array_merge(request()->only('search', 'month'))) }}"
+                                        class="block px-4 py-2 text-gray-700 hover:bg-gray-100">All</a>
+                                </li>
+                                @foreach ($weeks as $week)
+                                    <li>
+                                        <a href="{{ route('History.all', array_merge(request()->only('search', 'month'), ['week' => $week])) }}"
+                                            class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Week {{ $week }}</a>
+                                    </li>
+                                @endforeach
+                            </ul>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -67,15 +131,15 @@
             @endphp
 
             @if ($groupedRecords->isEmpty())
-                <p class="text-gray-600 text-center">No records found.</p>
+                <p class="text-center text-gray-600">No records found.</p>
             @else
                 @foreach ($groupedRecords as $date => $dateRecords)
-                    <div class="mb-6 p-4 bg-white border border-gray-200 rounded shadow-lg">
-                        <h2 class="text-lg font-semibold text-gray-700 mb-2">{{ $date }}</h2>
+                    <div class="p-4 mb-6 bg-white border border-gray-200 rounded shadow-lg">
+                        <h2 class="mb-2 text-lg font-semibold text-gray-700">{{ $date }}</h2>
                         <ul class="space-y-2">
                             @foreach ($dateRecords as $record)
                                 <li class="flex items-center space-x-4 history-item">
-                                    <span class="font-normal text-gray-700 text-sm underline">{{ $record->fullname }}</span>
+                                    <span class="text-sm font-normal text-gray-700 underline">{{ $record->fullname }}</span>
                                 </li>
                             @endforeach
                         </ul>

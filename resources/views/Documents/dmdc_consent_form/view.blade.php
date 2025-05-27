@@ -1,5 +1,7 @@
 @extends('layouts.app-layout')
 
+@section('title', 'DMDC Consent Form')
+
 @section('content')
 <!DOCTYPE html>
 <html lang="en">
@@ -110,6 +112,11 @@
         <div class="page">
             <!-- Document 2 (duplicate the structure as needed) -->
             <div class="container">
+                    <div class="flex flex-col items-end text-xs leading-tight text-gray-800">
+                        <p>{{ $specificDocument->control_number ?? '__________' }}</p>
+                        <p>Rev. {{ $specificDocument->revision ?? '_________'}}</p>
+                        <p>{{ \Carbon\Carbon::parse($specificDocument->date_issued)->format('F j, Y') ?? '__________' }} </p>
+                    </div>
                 <div class="flex items-center">
                     <div class="mr-5">
                         <img src="{{ asset('Logo_image/logopup.png') }}" alt="Logo" class="w-24 ">

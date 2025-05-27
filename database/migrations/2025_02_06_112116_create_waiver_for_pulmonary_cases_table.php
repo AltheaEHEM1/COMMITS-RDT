@@ -19,6 +19,9 @@ return new class extends Migration
             $table->string('year');
             $table->date('followUpDate');
             $table->date('date');
+            $table->string('control_number');
+            $table->string('revision');
+            $table->date('date_issued'); // Date the contruct was issued
             $table->timestamps();
             $table->string('document_type')->default('waiver_for_pulmonary_cases');
             $table->string('additional_patient_name')->nullable();

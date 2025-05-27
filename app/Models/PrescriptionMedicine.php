@@ -5,9 +5,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
 
 class PrescriptionMedicine extends Model
 {
+    use LogsActivity;
     use HasFactory, SoftDeletes;
 
     protected $table = 'prescription_medicine';
@@ -17,6 +20,14 @@ class PrescriptionMedicine extends Model
         'medicine_id',
         'quantity'
     ];
+    
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logAll() // logs all fillable attributes
+            ->useLogName('patient')
+            ->logOnlyDirty(); // only logs changes
+    }
 
     /**
      * Get the patient that owns the prescription medicine.

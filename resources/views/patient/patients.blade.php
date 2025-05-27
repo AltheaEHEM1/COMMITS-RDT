@@ -1,8 +1,10 @@
 @extends('layouts.app-layout')
 
+@section('title', 'Patients Records')
+
 @section('content')
     <div class="container mx-auto">
-        <x-page-title class="mb-2" value="Patients Record" />
+        <x-page-title class="mb-2" value="Patients Records" />
 
         <div class="flex flex-wrap items-center justify-end w-full gap-4 mb-3">
             <!-- Add Button -->
@@ -14,38 +16,38 @@
             </button>
         </div>
 
-        <div class="bg-white p-4 shadow rounded-lg">
+        <div class="p-4 bg-white rounded-lg shadow">
             <!-- Tab Navigation -->
             <div class="">
                 <nav class="flex -mb-px space-x-3 overflow-x-auto" aria-label="Tabs">
                     <!-- Tab buttons for filtering patients -->
                     <button type="button"
-                        class="px-4 py-2 text-base rounded text-gray-800 border-b-2 rounded-t border-blue-500 bg-blue-50 tab-btn whitespace-nowrap active hover:text-gray-700"
+                        class="px-4 py-2 text-base text-gray-800 border-b-2 border-blue-500 rounded rounded-t bg-blue-50 tab-btn whitespace-nowrap active hover:text-gray-700"
                         data-filter="all">
                         All Patients
                     </button>
                     <button type="button"
-                        class="text-base text-gray-500 px-4 py-2 border-b-2 border-gray-300 rounded cursor-pointer tab-btn whitespace-nowrap hover:text-gray-700"
+                        class="px-4 py-2 text-base text-gray-500 border-b-2 border-gray-300 rounded cursor-pointer tab-btn whitespace-nowrap hover:text-gray-700"
                         data-filter="Student">
                         Students
                     </button>
                     <button type="button"
-                        class="text-base text-gray-500 px-4 py-2 border-b-2 border-gray-300 rounded cursor-pointer tab-btn whitespace-nowrap hover:text-gray-700"
+                        class="px-4 py-2 text-base text-gray-500 border-b-2 border-gray-300 rounded cursor-pointer tab-btn whitespace-nowrap hover:text-gray-700"
                         data-filter="Faculty">
                         Faculty
                     </button>
                     <button type="button"
-                        class="text-base text-gray-500 px-4 py-2 border-b-2 border-gray-300 rounded cursor-pointer tab-btn whitespace-nowrap hover:text-gray-700"
+                        class="px-4 py-2 text-base text-gray-500 border-b-2 border-gray-300 rounded cursor-pointer tab-btn whitespace-nowrap hover:text-gray-700"
                         data-filter="Admin">
                         Administrative
                     </button>
                     <button type="button"
-                        class="text-base text-gray-500 px-4 py-2 border-b-2 border-gray-300 rounded cursor-pointer tab-btn whitespace-nowrap hover:text-gray-700"
+                        class="px-4 py-2 text-base text-gray-500 border-b-2 border-gray-300 rounded cursor-pointer tab-btn whitespace-nowrap hover:text-gray-700"
                         data-filter="Visitor">
                         Visitors
                     </button>
                     <button type="button"
-                        class="text-base text-gray-500 px-4 py-2 border-b-2 border-gray-300 rounded cursor-pointer tab-btn whitespace-nowrap hover:text-gray-700"
+                        class="px-4 py-2 text-base text-gray-500 border-b-2 border-gray-300 rounded cursor-pointer tab-btn whitespace-nowrap hover:text-gray-700"
                         data-filter="Dependent">
                         Dependents
                     </button>
@@ -54,10 +56,10 @@
 
             <!-- Table Container -->
             <div class="mt-4">
-                <div class="overflow-x-auto shadow-sm rounded-lg">
+                <div class="overflow-x-auto rounded-lg shadow-sm">
                     <table class="min-w-full bg-white">
                         <thead>
-                            <tr class="border-b border-gray-200 bg-gray-100">
+                            <tr class="bg-gray-100 border-b border-gray-200">
                                 <!-- Table headers -->
                                 <th class="px-6 py-3 text-left group">
                                     <div class="flex items-center gap-x-2">
@@ -190,8 +192,7 @@
                                                 <div class="overflow-y-auto max-h-[400px]">
                                                     @if ($patient->prescriptionMedicines->count() > 0)
                                                         @foreach ($patient->prescriptionMedicines as $prescription)
-                                                            <div
-                                                                class="p-4 mb-4 bg-white border border-gray-200 rounded-lg hover:bg-gray-50">
+                                                            <div class="p-4 mb-4 bg-white border border-gray-200 rounded-lg hover:bg-gray-50">
                                                                 <div class="flex items-center justify-between mb-2">
                                                                     <div class="flex items-center gap-x-2">
                                                                         <span class="text-sm font-medium text-gray-900">
@@ -207,15 +208,20 @@
                                                                             {{ $prescription->quantity }} units
                                                                         </span>
                                                                     </div>
-                                                                    <span class="text-xs text-gray-500">
-                                                                        {{ $prescription->created_at->format('M d, Y') }}
-                                                                    </span>
+                                                                    <div class="flex items-center gap-2">
+                                                                        <span class="text-xs text-gray-500">
+                                                                            {{ $prescription->created_at->format('M d, Y') }}
+                                                                        </span>
+                                                                        <button type="button" 
+                                                                            class="px-3 py-1.5 text-sm text-white transition-colors duration-200 bg-blue-500 rounded-lg hover:bg-blue-600"
+                                                                            onclick="printPrescription({{ $prescription->id }}, '{{ $patient->fullname }}', '{{ $patient->sex }}', '{{ $patient->age ?? '' }}', '{{ $prescription->medicine ? $prescription->medicine->medicine_name : 'Medicine unavailable' }}', {{ $prescription->quantity }}, '{{ $prescription->medicine ? $prescription->medicine->unit : '' }}', '{{ $prescription->created_at->format('M d, Y') }}', '{{ $patient->physician ? $patient->physician->first_name . ' ' . $patient->physician->last_name : 'Not assigned' }}', '{{ $patient->physician ? $patient->physician->license_number ?? '' : '' }}')">
+                                                                            <i class="mr-1 fas fa-print"></i> Print
+                                                                        </button>
+                                                                    </div>
                                                                 </div>
                                                                 @if ($prescription->medicine)
                                                                     <p class="text-sm text-gray-600">
-                                                                        Available:
-                                                                        {{ $prescription->medicine->remaining_quantity }}
-                                                                        {{ $prescription->medicine->unit }}
+                                                                        Available: {{ $prescription->medicine->remaining_quantity }} {{ $prescription->medicine->unit }}
                                                                     </p>
                                                                 @endif
                                                             </div>
@@ -359,21 +365,21 @@
                             <div class="grid grid-cols-3 gap-2">
                                 <div>
                                     <div class="flex"><x-input-label value="First Name " /><span
-                                            class="text-red-500 ml-1">*</span></div>
-                                    <input type="text" name="firstName"
+                                            class="ml-1 text-red-500">*</span></div>
+                                    <input type="text" name="firstName" id="firstName"
                                         class="w-full px-2 py-2.5 text-sm rounded-lg border border-gray-300 focus:border-blue-500 focus:ring focus:ring-blue-200 transition-all"
                                         placeholder="First Name" required>
                                 </div>
                                 <div>
                                     <x-input-label class="mb-1" value="Middle Name " />
-                                    <input type="text" name="middleName"
+                                    <input type="text" name="middleName" id="middleName"
                                         class="w-full px-2 py-2.5 text-sm rounded-lg border border-gray-300 focus:border-blue-500 focus:ring focus:ring-blue-200 transition-all"
                                         placeholder="Middle Name">
                                 </div>
                                 <div>
                                     <div class="flex"><x-input-label value="Last Name " /><span
-                                            class="text-red-500 ml-1">*</span></div>
-                                    <input type="text" name="lastName"
+                                            class="ml-1 text-red-500">*</span></div>
+                                    <input type="text" name="lastName" id="lastName"
                                         class="w-full px-2 py-2.5 text-sm rounded-lg border border-gray-300 focus:border-blue-500 focus:ring focus:ring-blue-200 transition-all"
                                         placeholder="Last Name" required>
                                 </div>
@@ -381,7 +387,7 @@
                             <div class="grid grid-cols-2 gap-4">
                                 <div>
                                     <div class="flex"><x-input-label value="Sex " /><span
-                                            class="text-red-500 ml-1">*</span></div>
+                                            class="ml-1 text-red-500">*</span></div>
                                     <select name="sex"
                                         class="w-full px-2 py-2.5 text-sm rounded-lg border border-gray-300 focus:border-blue-500 focus:ring focus:ring-blue-200 transition-all"
                                         required>
@@ -392,7 +398,7 @@
                                 </div>
                                 <div>
                                     <div class="flex"><x-input-label value="Contact Number " /><span
-                                            class="text-red-500 ml-1">*</span></div>
+                                            class="ml-1 text-red-500">*</span></div>
                                     <input type="tel" name="contactDetails"
                                         class="w-full px-2 py-2.5 text-sm rounded-lg border border-gray-300 focus:border-blue-500 focus:ring focus:ring-blue-200 transition-all"
                                         placeholder="Contact Number" pattern="[0-9]{11}"
@@ -404,7 +410,7 @@
                             <div class="grid grid-cols-2 gap-4">
                                 <div>
                                     <div class="flex"><x-input-label value="Patient Type" /><span
-                                            class="text-red-500 ml-1">*</span></div>
+                                            class="ml-1 text-red-500">*</span></div>
                                     <select name="patientType"
                                         class="w-full px-2 py-2.5 text-sm rounded-lg border border-gray-300 focus:border-blue-500 focus:ring focus:ring-blue-200 transition-all"
                                         required>
@@ -418,14 +424,14 @@
                                 </div>
                                 <div>
                                     <div class="flex"><x-input-label value="Year/Course/Dept" /><span
-                                            class="text-red-500 ml-1">*</span></div>
+                                            class="ml-1 text-red-500">*</span></div>
                                     <input type="text" name="year_course_dept"
                                         class="w-full px-2 py-2.5 text-sm rounded-lg border border-gray-300 focus:border-blue-500 focus:ring focus:ring-blue-200 transition-all"
                                         placeholder="Year/Course/Dept">
                                 </div>
                                 <div class="col-span-2">
                                     <div class="flex"><x-input-label value="Student Number" /><span
-                                            class="text-red-500 ml-1">*</span></div>
+                                            class="ml-1 text-red-500">*</span></div>
                                     <input type="text" name="student_number"
                                         class="w-full px-2 py-2.5 text-sm rounded-lg border border-gray-300 focus:border-blue-500 focus:ring focus:ring-blue-200 transition-all"
                                         placeholder="Enter student number">
@@ -436,14 +442,14 @@
                             <div class="grid grid-cols-2 gap-4">
                                 <div>
                                     <div class="flex"><x-input-label value="Patient Status" /><span
-                                            class="text-red-500 ml-1">*</span></div>
+                                            class="ml-1 text-red-500">*</span></div>
                                     <input type="text" name="patient_status"
                                         class="w-full px-2 py-2.5 text-sm rounded-lg border border-gray-300 focus:border-blue-500 focus:ring focus:ring-blue-200 transition-all"
                                         placeholder="Enter patient status" required>
                                 </div>
                                 <div>
                                     <div class="flex"><x-input-label value="Physician" /><span
-                                            class="text-red-500 ml-1">*</span></div>
+                                            class="ml-1 text-red-500">*</span></div>
                                     <select name="physician_id"
                                         class="w-full px-2 py-2.5 text-sm rounded-lg border border-gray-300 focus:border-blue-500 focus:ring focus:ring-blue-200 transition-all"
                                         required>
@@ -459,7 +465,7 @@
 
                             <!-- Action Buttons -->
                             <div class="flex gap-3 pt-4">
-                                <button type="submit"
+                                <button type="button" id="savePatientBtn" disabled
                                     class="flex-1 px-6 py-2.5 bg-green-600 text-white text-sm font-semibold rounded-lg
                                 hover:bg-green-700 focus:ring focus:ring-red-200 transition-all">
                                     <span class="spinner-border spinner-border-sm d-none me-2" role="status"></span>
@@ -478,6 +484,31 @@
             </div>
         </div>
     </div>
+
+    {{-- <div class="modal fade" id="similarPatientsModal" tabindex="-1" role="dialog" aria-labelledby="similarPatientsModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="similarPatientsModalLabel">Similar Patients Found</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="alert alert-warning">
+                <i class="fas fa-exclamation-triangle"></i> 
+                The following similar patients were found in the database:
+                </div>
+                <div class="patient-list"></div>
+                <p class="mt-3">Are you sure you want to add this patient anyway?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" id="cancelAddPatient">Cancel</button>
+                <button type="button" class="btn btn-primary" id="confirmAddPatient">Add Anyway</button>
+            </div>
+            </div>
+        </div>
+    </div> --}}
 
     @foreach ($patients as $patient)
         <div class="modal fade" id="viewPatient-{{ $patient->id }}" tabindex="-1" role="dialog" aria-hidden="true">
@@ -512,7 +543,7 @@
                                 <div class="grid grid-cols-3 gap-2">
                                     <div>
                                         <div class="flex"><x-input-label value="First Name" /><span
-                                                class="text-red-500 ml-1">*</span></div>
+                                                class="ml-1 text-red-500">*</span></div>
                                         <input type="text" name="firstName"
                                             class="w-full px-2 py-2.5 text-sm rounded-lg border border-gray-300 focus:border-blue-500 focus:ring focus:ring-blue-200 transition-all"
                                             value="{{ $patient->firstName }}" placeholder="First Name" disabled required>
@@ -525,7 +556,7 @@
                                     </div>
                                     <div>
                                         <div class="flex"><x-input-label value="Last Name" /><span
-                                                class="text-red-500 ml-1">*</span></div>
+                                                class="ml-1 text-red-500">*</span></div>
                                         <input type="text" name="lastName"
                                             class="w-full px-2 py-2.5 text-sm rounded-lg border border-gray-300 focus:border-blue-500 focus:ring focus:ring-blue-200 transition-all"
                                             value="{{ $patient->lastName }}" placeholder="Last Name" disabled required>
@@ -534,7 +565,7 @@
                                 <div class="grid grid-cols-2 gap-4">
                                     <div>
                                         <div class="flex"><x-input-label value="Sex" /><span
-                                                class="text-red-500 ml-1">*</span></div>
+                                                class="ml-1 text-red-500">*</span></div>
                                         <select name="sex"
                                             class="w-full px-2 py-2.5 text-sm rounded-lg border border-gray-300 focus:border-blue-500 focus:ring focus:ring-blue-200 transition-all"
                                             disabled required>
@@ -546,7 +577,7 @@
                                     </div>
                                     <div>
                                         <div class="flex"><x-input-label value="Contact Number" /><span
-                                                class="text-red-500 ml-1">*</span></div>
+                                                class="ml-1 text-red-500">*</span></div>
                                         <input type="tel" name="contactDetails"
                                             class="w-full px-2 py-2.5 text-sm rounded-lg border border-gray-300 focus:border-blue-500 focus:ring focus:ring-blue-200 transition-all"
                                             value="{{ $patient->contactDetails }}" placeholder="Contact Number *"
@@ -558,7 +589,7 @@
                                 <div class="grid grid-cols-2 gap-4">
                                     <div>
                                         <div class="flex"><x-input-label value="Patient Type" /><span
-                                                class="text-red-500 ml-1">*</span></div>
+                                                class="ml-1 text-red-500">*</span></div>
                                         <select name="patientType"
                                             class="w-full px-2 py-2.5 text-sm rounded-lg border border-gray-300 focus:border-blue-500 focus:ring focus:ring-blue-200 transition-all"
                                             disabled required>
@@ -577,7 +608,7 @@
                                     </div>
                                     <div>
                                         <div class="flex"><x-input-label value="Year/Course/Dept" /><span
-                                                class="text-red-500 ml-1">*</span></div>
+                                                class="ml-1 text-red-500">*</span></div>
                                         <input type="text" name="year_course_dept"
                                             class="w-full px-2 py-2.5 text-sm rounded-lg border border-gray-300 focus:border-blue-500 focus:ring focus:ring-blue-200 transition-all"
                                             value="{{ $patient->year_course_dept }}" placeholder="Year/Course/Dept"
@@ -585,7 +616,7 @@
                                     </div>
                                     <div class="col-span-2">
                                         <div class="flex"><x-input-label value="Student Number" /><span
-                                                class="text-red-500 ml-1">*</span></div>
+                                                class="ml-1 text-red-500">*</span></div>
                                         <input type="text" name="student_number"
                                             class="w-full px-2 py-2.5 text-sm rounded-lg border border-gray-300 focus:border-blue-500 focus:ring focus:ring-blue-200 transition-all"
                                             value="{{ $patient->student_number }}" placeholder="Student Number" disabled>
@@ -596,7 +627,7 @@
                                 <div class="grid grid-cols-2 gap-4">
                                     <div>
                                         <div class="flex"><x-input-label value="Patient Status" /><span
-                                                class="text-red-500 ml-1">*</span></div>
+                                                class="ml-1 text-red-500">*</span></div>
                                         <input type="text" name="patient_status"
                                             class="w-full px-2 py-2.5 text-sm rounded-lg border border-gray-300 focus:border-blue-500 focus:ring focus:ring-blue-200 transition-all"
                                             placeholder="Patient Status *" value="{{ $patient->patient_status }}"
@@ -604,7 +635,7 @@
                                     </div>
                                     <div>
                                         <div class="flex"><x-input-label value="Physician" /><span
-                                                class="text-red-500 ml-1">*</span></div>
+                                                class="ml-1 text-red-500">*</span></div>
                                         <select name="physician_id"
                                             class="w-full px-2 py-2.5 text-sm rounded-lg border border-gray-300 focus:border-blue-500 focus:ring focus:ring-blue-200 transition-all"
                                             disabled>
@@ -647,9 +678,7 @@
     <style>
         .content-wrapper {
             margin-left: 16rem;
-            /* 256px - matches sidebar width */
             margin-top: 4rem;
-            /* 64px - matches header height */
             min-height: calc(100vh - 4rem);
             background-color: #f1f5f9;
         }
@@ -659,12 +688,247 @@
                 margin-left: 0;
             }
         }
+
+        @media print {
+            body * {
+                visibility: hidden;
+            }
+            
+            #prescriptionPrintModal,
+            #prescriptionPrintModal * {
+                visibility: visible;
+            }
+            
+            #prescriptionPrintModal {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                height: 100%;
+                background: white;
+                margin: 0;
+                padding: 0;
+            }
+
+            .no-print {
+                display: none !important;
+            }
+
+            .prescription-form {
+                border: none;
+                box-shadow: none;
+                font-size: 65%; 
+            }
+        }
+        
+        .prescription-form {
+            font-family: Arial, sans-serif;
+            width: 8.5in;
+            max-width: 100%;
+            margin: 0 auto;
+            padding: 0.5in;
+            border: 1px solid #ddd;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            background: white;
+            position: relative;
+            font-size: 80%; 
+        }
+        
+        .prescription-control-section {
+            top: 0.3in;
+            right: 0.5in;
+            bottom: 0.5in;
+            text-align: right;
+            font-size: 80%;
+        }
+        
+        .control-number-box {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            margin-bottom: 0.4in;
+        }
+        
+        .control-number-row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+        
+        .control-number-input {
+            border: none;
+            border-bottom: 1px solid #000;
+            background: transparent;
+            margin-left: 0.1in;
+            width: 1.5in;
+            text-align: center;
+            font-size: 90%;
+        }
+        
+        .prescription-header {
+            text-align: center;
+            margin-bottom: 0.5in;
+        }
+        
+        .prescription-header h1 {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .prescription-header h2 {
+            font-size: 16px;
+            margin-bottom: 5px;
+        }
+        
+        .prescription-header p {
+            font-size: 14px;
+            margin-bottom: 0;
+        }
+        
+        .prescription-body {
+            margin-bottom: 0.5in;
+        }
+        
+        .prescription-body .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .prescription-body label {
+            font-weight: bold;
+            margin-right: 10px;
+        }
+        
+        .prescription-body .value {
+            border-bottom: 1px solid #000;
+            padding-bottom: 2px;
+            min-width: 200px;
+            display: inline-block;
+        }
+        .prescription-footer {
+            margin-top: 1in;
+            text-align: right;
+        }
+        
+        .rx-symbol {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
     </style>
 @endpush
 
 @section('scripts')
     <script>
-        // Existing patient form functionality
+        // send an AJAX request to check for duplicate patients
+        $(document).ready(function() {
+            let formSubmitting = false;
+
+            // Reload the page when the modal is closed (to update the table)
+            $('#addPatientModal').on('hidden.bs.modal', function () {
+                window.location.reload();
+            });
+
+            // Click handler for the Save Patient button
+            $('#savePatientBtn').on('click', function(e) {
+                e.preventDefault();
+
+                if (formSubmitting) {
+                    return;
+                }
+
+                // Reference the form and clear any previous error
+                const form = $('#addPatientForm');
+                $('#addErrorAlert').addClass('d-none').html('');
+
+                // Retrieve trimmed values from input fields.
+                const firstName  = form.find('input[name="firstName"]').val().trim();
+                const middleName = form.find('input[name="middleName"]').val().trim();
+                const lastName   = form.find('input[name="lastName"]').val().trim();
+
+                // First, perform duplicate check via the check-similar route.
+                $.ajax({
+                    url: "{{ route('patients.check-similar') }}",
+                    type: 'POST',
+                    dataType: 'json',
+                    data: {
+                        _token: "{{ csrf_token() }}",
+                        firstName: firstName,
+                        middleName: middleName,
+                        lastName: lastName
+                    },
+                    success: function(response) {
+                        console.log("Duplicate check response:", response);
+                        if (response.similarFound && response.similarPatients.length > 0) {
+                            console.log("Duplicate detected, preventing submission.");
+                            // Show error alert at the top.
+                            $('#addErrorAlert')
+                                .html('A patient with this name already exists. Please check before proceeding.')
+                                .removeClass('d-none')
+                                .removeClass('alert-success')
+                                .addClass('alert alert-danger');
+                            // Disable the Save button
+                            $('#savePatientBtn')
+                                .prop('disabled', true)
+                            formSubmitting = false;
+                            return; // Stop further processing
+                        } else {
+                            formSubmitting = true;
+                            // Proceed to save the patient via the store route.
+                            $.ajax({
+                                url: form.attr('action'),
+                                type: form.attr('method'),
+                                data: form.serialize(),
+                                success: function(resp) {
+                                    $('#addErrorAlert')
+                                        .html('Patient added successfully.')
+                                        .removeClass('d-none')
+                                        .removeClass('alert-danger')
+                                        .addClass('alert alert-success');
+                                    // Close the modal and reset the form.
+                                    $('#addPatientModal').modal('hide');
+                                    form.trigger('reset');
+                                    // Re-enable the Save button (restore green button)
+                                    $('#savePatientBtn')
+                                        .prop('disabled', false)
+                                    formSubmitting = false;
+                                },
+                                error: function(xhr, status, error) {
+                                    // If the server returns a 422, try to extract the JSON message.
+                                    let msg = error;
+                                    if (xhr.status === 422 && xhr.responseJSON && xhr.responseJSON.message) {
+                                        msg = xhr.responseJSON.message;
+                                    }
+                                    $('#addErrorAlert')
+                                        .html('Error while saving patient: ' + msg)
+                                        .removeClass('d-none')
+                                        .removeClass('alert-success')
+                                        .addClass('alert alert-danger');
+                                    formSubmitting = false;
+                                }
+                            });
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        $('#addErrorAlert')
+                            .html('Error while checking duplicates: ' + error)
+                            .removeClass('d-none')
+                            .removeClass('alert-success')
+                            .addClass('alert alert-danger');
+                        formSubmitting = false;
+                    }
+                });
+            });
+
+            // When any name field is modified, clear error messages and re-enable the Save button.
+            $('#firstName, #middleName, #lastName').on('input', function() {
+                $('#addErrorAlert').addClass('d-none').html('');
+                $('#savePatientBtn')
+                    .prop('disabled', false)
+            });
+        });
+
         function toggleEdit(patientID) {
             const patientForm = document.getElementById('patientForm-' + patientID);
             const patientInputs = patientForm.querySelectorAll('input:not([type="hidden"]), select, textarea');
@@ -679,11 +943,9 @@
                 }
             });
 
-            // Reset error alert
             errorAlert.classList.add('d-none');
             errorAlert.textContent = '';
 
-            // Toggle button text and styles
             const buttonIcon = editButton.querySelector('i');
             const buttonText = editButton.querySelector('span');
 
@@ -700,9 +962,117 @@
                 buttonIcon.classList.add('fa-edit');
                 editButton.classList.remove('bg-gray-100', 'text-gray-700');
                 editButton.classList.add('bg-yellow-100', 'text-yellow-700');
-                submitBtn.disabled = true; // Disable submit button
-                patientForm.reset(); // Reset form to original values
+                submitBtn.disabled = true; 
+                patientForm.reset();
             }
+        }
+
+        // Add prescription print modal to the DOM
+        document.body.insertAdjacentHTML('beforeend', `
+            <div id="prescriptionPrintModal" class="fixed inset-0 z-50 hidden overflow-y-auto">
+                <div class="flex min-h-screen text-center sm:block">
+                    <div class="fixed inset-0 transition-opacity bg-gray-500 bg-opacity-75"></div>
+                    <div class="inline-block overflow-hidden text-left align-bottom transition-all transform bg-white rounded-lg shadow-xl sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+                        <div class="px-4 pt-5 pb-4 bg-white sm:p-6 sm:pb-4">
+                            <div class="prescription-form">
+                                <div class="prescription-control-section no-print">
+                                    <div class="control-number-box">
+                                        <div class="control-number-row">
+                                            <span>Control No:</span>
+                                            <input type="text" id="print-control-number" class="control-number-input" value="PUP-MEPF-6-MEDS-001">
+                                        </div>
+                                        <div class="control-number-row">
+                                            <span>Rev.</span>
+                                            <input type="text" id="print-revision-number" class="control-number-input" value="0">
+                                        </div>
+                                        <div class="control-number-row">
+                                            <input type="text" id="print-revision-date" class="control-number-input" value="May 15, 2018">
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="prescription-header">
+                                    <h1>POLYTECHNIC UNIVERSITY OF THE PHILIPPINES</h1>
+                                    <h2>Manila</h2>
+                                </div>
+                                <div class="prescription-body">
+                                    <div class="form-group">
+                                        <label>Patient Name:</label>
+                                        <span class="value" id="print-patient-name"></span>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Age:</label>
+                                        <input type="text" id="print-age">
+                                        <label style="margin-left: 10px;">Date:</label>
+                                        <input type="text" id="print-date">
+                                    </div>
+                                    <div class="rx-symbol">Rx</div>
+                                    <div class="medication" id="print-medication">
+                                        <!-- Will be populated with medication details -->
+                                    </div>
+                                </div>
+                                <div class="prescription-footer">
+                                    <div class="doctor-info" id="print-doctor-info">
+                                        <span id="print-doctor-name"></span><span> M.D.</span>
+                                        <p>Lic No. <span id="print-license-number"></span></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="px-4 py-4 bg-gray-50 sm:px-6 sm:flex sm:flex-row-reverse no-print">
+                            <button type="button" onclick="window.print()" aria-label="Print Prescription" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2.5 bg-blue-600 text-base font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:ml-3 sm:w-auto sm:text-sm">
+                                <i class="mr-2 fas fa-print" aria-hidden="true"></i> Print
+                            </button>
+                            <button type="button" onclick="closePrintModal()" aria-label="Close Modal" class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2.5 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
+                                <i class="mr-2 fas fa-times" aria-hidden="true"></i> Close
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `);
+
+        function printPrescription(prescriptionId, patientName, patientSex, patientAge, medicineName, quantity, unit, date, doctorName, licenseNumber) {
+            // Close the prescription list modal first
+            // Find the currently open modal and close it
+            const openModalId = document.querySelector('.modal.show')?.id;
+            if (openModalId) {
+                const modalInstance = bootstrap.Modal.getInstance(document.getElementById(openModalId));
+                if (modalInstance) {
+                    modalInstance.hide();
+                }
+            }
+            
+            // Get today's date in the format: Apr 20, 2025
+            const today = new Date().toLocaleDateString('en-US', {
+                month: 'short',
+                day: 'numeric',
+                year: 'numeric'
+            });
+            
+            // Fill in the prescription form
+            document.getElementById('print-patient-name').textContent = patientName;
+            document.getElementById('print-age').value = patientAge ? patientAge : '';
+            document.getElementById('print-date').value = today;
+            
+            // Set medication details
+            document.getElementById('print-medication').innerHTML = `
+                <p style="margin-bottom: 10px;"><strong>${medicineName}</strong></p>
+                <p style="margin-left: 20px;">Quantity: ${quantity} ${unit}</p>
+            `;
+            
+            // Set doctor info
+            document.getElementById('print-doctor-name').textContent = doctorName;
+            document.getElementById('print-license-number').textContent = licenseNumber;
+            
+            // Show the print modal after a short delay to ensure the previous modal is fully closed
+            setTimeout(() => {
+                document.getElementById('prescriptionPrintModal').classList.remove('hidden');
+            }, 150);
+        }
+        
+        function closePrintModal() {
+            document.getElementById('prescriptionPrintModal').classList.add('hidden');
         }
 
         // Form submission handlers
@@ -743,13 +1113,11 @@
                     const contentType = response.headers.get('content-type');
                     if (contentType && contentType.includes('application/json')) {
                         const data = await response.json();
-                        console.log('Response data:', data); // Log response data for debugging
+                        console.log('Response data:', data); 
 
                         if (data.success) {
-                            // Hide modal
                             bootstrap.Modal.getInstance(modal).hide();
 
-                            // Show success message
                             Swal.fire({
                                 icon: 'success',
                                 title: 'Success!',
@@ -760,10 +1128,8 @@
                                 window.location.reload();
                             });
                         } else {
-                            // Show validation errors
                             errorAlert.classList.remove('d-none');
 
-                            // Display the main error message
                             const errorHeader = document.createElement('div');
                             errorHeader.className = 'font-medium text-red-600 mb-2';
                             errorHeader.textContent = data.message ||
@@ -779,14 +1145,11 @@
                                     if (input) {
                                         input.classList.add('is-invalid');
 
-                                        // Add error message below input
                                         const feedback = document.createElement('div');
                                         feedback.className = 'text-red-500 text-xs mt-1';
                                         feedback.textContent = errors[0];
                                         input.parentNode.appendChild(feedback);
                                     }
-
-                                    // Add to error list
                                     const li = document.createElement('li');
                                     li.className = 'text-red-500';
                                     li.textContent = errors[0];
@@ -795,8 +1158,6 @@
 
                                 errorAlert.appendChild(errorList);
                             }
-
-                            // Show error toast
                             Swal.fire({
                                 icon: 'error',
                                 title: 'Form Error',
@@ -816,14 +1177,12 @@
                         confirmButtonColor: '#9F1239'
                     });
                 } finally {
-                    // Reset loading state
                     submitBtn.disabled = false;
                     spinner.classList.add('d-none');
                 }
             });
         });
 
-        // Add patient form handler
         document.getElementById('addPatientForm').addEventListener('submit', async function(e) {
             e.preventDefault();
 
@@ -832,21 +1191,17 @@
             const errorAlert = document.getElementById('addErrorAlert');
             const modal = this.closest('.modal');
 
-            // Reset previous errors
             errorAlert.classList.add('d-none');
             errorAlert.innerHTML = '';
 
-            // Remove previous validation classes
             this.querySelectorAll('.is-invalid').forEach(el => {
                 el.classList.remove('is-invalid');
             });
 
-            // Remove previous error messages
             this.querySelectorAll('.text-red-500').forEach(el => {
                 el.remove();
             });
 
-            // Show loading state
             submitBtn.disabled = true;
             spinner.classList.remove('d-none');
 
@@ -863,10 +1218,8 @@
                 const data = await response.json();
 
                 if (data.success) {
-                    // Hide modal
                     bootstrap.Modal.getInstance(modal).hide();
 
-                    // Show success message
                     Swal.fire({
                         icon: 'success',
                         title: 'Success!',
@@ -877,10 +1230,8 @@
                         window.location.reload();
                     });
                 } else {
-                    // Show validation errors
                     errorAlert.classList.remove('d-none');
 
-                    // Display the main error message
                     const errorHeader = document.createElement('div');
                     errorHeader.className = 'font-medium text-red-600 mb-2';
                     errorHeader.textContent = data.message || 'Please correct the following errors:';
@@ -895,15 +1246,12 @@
                             if (input) {
                                 input.classList.add('is-invalid');
                                 input.classList.add('border-red-500');
-
-                                // Add error message below input
                                 const feedback = document.createElement('div');
                                 feedback.className = 'text-red-500 text-xs mt-1';
                                 feedback.textContent = errors[0];
                                 input.parentNode.appendChild(feedback);
                             }
 
-                            // Add to error list
                             const li = document.createElement('li');
                             li.className = 'text-red-500';
                             li.textContent = errors[0];
@@ -913,7 +1261,6 @@
                         errorAlert.appendChild(errorList);
                     }
 
-                    // Scroll to the top of the modal where errors are displayed
                     modal.scrollTop = 0;
                 }
             } catch (error) {
@@ -929,13 +1276,11 @@
                     confirmButtonColor: '#9F1239'
                 });
             } finally {
-                // Reset loading state
                 submitBtn.disabled = false;
                 spinner.classList.add('d-none');
             }
         });
 
-        // Student number field toggle functionality
         function toggleStudentNumberField(selectElement, formType) {
             const formId = formType === 'add' ? 'addPatientForm' : selectElement.closest('form').id;
             const studentNumberInput = document.querySelector(`#${formId} [name="student_number"]`);
@@ -955,7 +1300,6 @@
             }
         }
 
-        // Delete confirmation
         function confirmDelete(form) {
             Swal.fire({
                 title: 'Are you sure?',
@@ -973,9 +1317,7 @@
             });
         }
 
-        // Initialize all functionality when DOM is loaded
         document.addEventListener('DOMContentLoaded', function() {
-            // Tab filtering
             const tabButtons = document.querySelectorAll('.tab-btn');
             const patientRows = document.querySelectorAll('tr[data-patient-type]');
 
@@ -989,7 +1331,6 @@
                 });
             }
 
-            // Tab button handlers
             tabButtons.forEach(button => {
                 button.addEventListener('click', () => {
                     tabButtons.forEach(btn => {
@@ -1002,7 +1343,6 @@
                 });
             });
 
-            // Prescription form handlers
             const prescriptionForms = document.querySelectorAll('form[action*="prescriptions"]');
             prescriptionForms.forEach(form => {
                 form.addEventListener('submit', function(e) {
@@ -1011,7 +1351,6 @@
                 });
             });
 
-            // Medicine selection handlers
             const medicineSelects = document.querySelectorAll('select[id^="medicine-select-"]');
             medicineSelects.forEach(select => {
                 select.addEventListener('change', function() {
@@ -1019,7 +1358,6 @@
                 });
             });
 
-            // Initialize student number fields
             document.querySelector('#addPatientForm [name="patientType"]')?.addEventListener('change', function() {
                 toggleStudentNumberField(this, 'add');
             });
@@ -1031,10 +1369,8 @@
             });
         });
 
-        // Helper function for prescription submission
         async function handlePrescriptionSubmit(form) {
             try {
-                // Remove previous error messages
                 form.querySelectorAll('.text-red-500').forEach(el => {
                     el.remove();
                 });
@@ -1052,7 +1388,6 @@
                 const data = await response.json();
 
                 if (data.success) {
-                    // Update medicine quantities in dropdowns
                     if (data.medicine) {
                         updateMedicineQuantities(
                             data.medicine.id,
@@ -1061,7 +1396,6 @@
                         );
                     }
 
-                    // Close modal and show success message
                     const patientId = formData.get('patient_id');
                     bootstrap.Modal.getInstance(document.querySelector(`#prescriptionModal-${patientId}`)).hide();
 
@@ -1071,7 +1405,6 @@
                         icon: 'success',
                         confirmButtonColor: '#dc2626'
                     }).then(() => {
-                        // Update prescriptions list if needed
                         const prescriptionsList = document.querySelector(
                             `#prescriptionListModal-${patientId} .overflow-y-auto`);
                         if (prescriptionsList) {
@@ -1079,22 +1412,17 @@
                             prescriptionsList.insertAdjacentHTML('afterbegin', newPrescription);
                         }
 
-                        // Reset form
                         form.reset();
                     });
                 } else {
-                    // Display specific error message
                     let errorMessage = data.message || 'An error occurred while creating the prescription.';
 
-                    // Handle validation errors
                     if (data.errors) {
-                        // Create error messages under inputs
                         Object.entries(data.errors).forEach(([field, errors]) => {
                             const input = form.querySelector(`[name="${field}"]`);
                             if (input) {
                                 input.classList.add('border-red-500');
 
-                                // Add error message below input
                                 const feedback = document.createElement('div');
                                 feedback.className = 'text-red-500 text-xs mt-1';
                                 feedback.textContent = errors[0];
@@ -1121,25 +1449,19 @@
             }
         }
 
-        // Function to update medicine quantities in all dropdowns
         function updateMedicineQuantities(medicineId, newQuantity, unit) {
-            // Get all medicine select elements
             const medicineSelects = document.querySelectorAll('select[id^="medicine-select-"]');
 
             medicineSelects.forEach(select => {
-                // Find the option with the matching medicine ID
                 const option = select.querySelector(`option[value="${medicineId}"]`);
                 if (option) {
                     const medicineName = option.textContent.split('(')[0].trim();
                     option.textContent = `${medicineName} (Available: ${newQuantity} ${unit})`;
-
-                    // If this option is currently selected, update the quantity input max value
                     if (option.selected) {
                         const patientId = select.id.split('-').pop();
                         const quantityInput = document.getElementById(`quantity-${patientId}`);
                         if (quantityInput) {
                             quantityInput.max = newQuantity;
-                            // If current value is greater than new max, update it
                             if (parseInt(quantityInput.value) > newQuantity) {
                                 quantityInput.value = newQuantity;
                             }
@@ -1149,7 +1471,6 @@
             });
         }
 
-        // Helper function for medicine selection
         function handleMedicineSelection(select) {
             const patientId = select.id.split('-').pop();
             const quantityInput = document.getElementById(`quantity-${patientId}`);
@@ -1169,7 +1490,6 @@
             }
         }
 
-        // Prescription element creator
         function createPrescriptionElement(prescription) {
             return `
         <div class="p-4 mb-4 bg-white border border-gray-200 rounded-lg hover:bg-gray-50">
