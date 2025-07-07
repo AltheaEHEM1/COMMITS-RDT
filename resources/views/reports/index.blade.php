@@ -63,7 +63,7 @@
             data-filter="Faculty">Faculty</button>
 
         <button type="button" class="px-3 py-2 text-base text-gray-500 border-b-2 border-gray-300 rounded tab-btn whitespace-nowrap hover:text-gray-700" 
-            data-filter="Admin">Administrative</button>
+            data-filter="Administrative">Administrative</button>
 
         <button type="button" class="px-3 py-2 text-base text-gray-500 border-b-2 border-gray-300 rounded tab-btn whitespace-nowrap hover:text-gray-700" 
             data-filter="Visitors">Visitors</button>
@@ -395,8 +395,17 @@
             tabButtons.forEach(button => {
                 button.addEventListener('click', () => {
                     const filterValue = button.getAttribute('data-filter');
+                    
+                    // Option 1: Client-side filtering (current behavior)
                     filterReports(filterValue);
                     setActiveTab(button);
+                    
+                    // Option 2: Backend filtering (uncomment to enable)
+                    // if (filterValue === 'all') {
+                    //     window.location.href = '{{ route("reports.index") }}';
+                    // } else {
+                    //     window.location.href = '{{ route("reports.index") }}?category=' + filterValue;
+                    // }
                 });
             });
 
