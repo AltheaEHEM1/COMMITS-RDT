@@ -7,7 +7,7 @@ use App\Models\Patient;
 use App\Models\Medicine;
 use App\Models\Supply;
 use App\Models\Equipment;
-use App\Models\Document;  
+use App\Models\Document;
 use App\Models\Report;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -21,168 +21,168 @@ class DashboardController extends Controller
     {
         // Check for expiring medicines first
         $this->checkExpiringMedicines();
-        
+
         // Handle search functionality
         $searchTerm = $request->input('search');
         $searchResults = null;
-        
+
         if ($searchTerm) {
             // Initialize collections for different types of results
             // Patient search
-            $patients = Patient::where(function($q) use ($searchTerm) {
+            $patients = Patient::where(function ($q) use ($searchTerm) {
                 $q->where('firstName', 'LIKE', "%{$searchTerm}%")
-                  ->orWhere('lastName', 'LIKE', "%{$searchTerm}%")
-                  ->orWhere('middleName', 'LIKE', "%{$searchTerm}%")
-                  ->orWhere('student_number', 'LIKE', "%{$searchTerm}%")
-                  ->orWhere('contactDetails', 'LIKE', "%{$searchTerm}%")
-                  ->orWhere('patientType', 'LIKE', "%{$searchTerm}%")
-                  ->orWhere('year_course_dept', 'LIKE', "%{$searchTerm}%")
-                  ->orWhereRaw("CONCAT(firstName, ' ', lastName) LIKE ?", ["%{$searchTerm}%"])
-                  ->orWhereRaw("CONCAT(lastName, ', ', firstName) LIKE ?", ["%{$searchTerm}%"]);
+                    ->orWhere('lastName', 'LIKE', "%{$searchTerm}%")
+                    ->orWhere('middleName', 'LIKE', "%{$searchTerm}%")
+                    ->orWhere('student_number', 'LIKE', "%{$searchTerm}%")
+                    ->orWhere('contactDetails', 'LIKE', "%{$searchTerm}%")
+                    ->orWhere('patientType', 'LIKE', "%{$searchTerm}%")
+                    ->orWhere('year_course_dept', 'LIKE', "%{$searchTerm}%")
+                    ->orWhereRaw("CONCAT(firstName, ' ', lastName) LIKE ?", ["%{$searchTerm}%"])
+                    ->orWhereRaw("CONCAT(lastName, ', ', firstName) LIKE ?", ["%{$searchTerm}%"]);
             })
-            ->orderBy('created_at', 'desc')
-            ->take(5)
-            ->get()
-            ->map(function($patient) {
-                // Add a formatted full name for display
-                $patient->fullName = $patient->lastName . ', ' . $patient->firstName . 
-                    ($patient->middleName ? ' ' . $patient->middleName : '');
-                return $patient;
-            });
-            
+                ->orderBy('created_at', 'desc')
+                ->take(5)
+                ->get()
+                ->map(function ($patient) {
+                    // Add a formatted full name for display
+                    $patient->fullName = $patient->lastName . ', ' . $patient->firstName .
+                        ($patient->middleName ? ' ' . $patient->middleName : '');
+                    return $patient;
+                });
+
             // Medicine search
-            $medicines = Medicine::where(function($q) use ($searchTerm) {
+            $medicines = Medicine::where(function ($q) use ($searchTerm) {
                 $q->where('medicine_name', 'LIKE', "%{$searchTerm}%")
-                  ->orWhere('status', 'LIKE', "%{$searchTerm}%")
-                  ->orWhere('unit', 'LIKE', "%{$searchTerm}%");
+                    ->orWhere('status', 'LIKE', "%{$searchTerm}%")
+                    ->orWhere('unit', 'LIKE', "%{$searchTerm}%");
             })
-            ->orderBy('created_at', 'desc')
-            ->take(5)
-            ->get()
-            ->map(function($medicine) {
-                // Format remaining quantity for display
-                $medicine->formattedQuantity = number_format($medicine->remaining_quantity, 2) . ' ' . $medicine->unit;
-                // Format expiration date
-                $medicine->formattedExpiry = Carbon::parse($medicine->expiration_date)->format('M d, Y');
-                return $medicine;
-            });
-                
+                ->orderBy('created_at', 'desc')
+                ->take(5)
+                ->get()
+                ->map(function ($medicine) {
+                    // Format remaining quantity for display
+                    $medicine->formattedQuantity = number_format($medicine->remaining_quantity, 2) . ' ' . $medicine->unit;
+                    // Format expiration date
+                    $medicine->formattedExpiry = Carbon::parse($medicine->expiration_date)->format('M d, Y');
+                    return $medicine;
+                });
+
             // Supply search
-            $supplies = Supply::where(function($q) use ($searchTerm) {
+            $supplies = Supply::where(function ($q) use ($searchTerm) {
                 $q->where('supply_name', 'LIKE', "%{$searchTerm}%")
-                  ->orWhere('status', 'LIKE', "%{$searchTerm}%")
-                  ->orWhere('unit', 'LIKE', "%{$searchTerm}%");
+                    ->orWhere('status', 'LIKE', "%{$searchTerm}%")
+                    ->orWhere('unit', 'LIKE', "%{$searchTerm}%");
             })
-            ->orderBy('created_at', 'desc')
-            ->take(5)
-            ->get()
-            ->map(function($supply) {
-                // Format remaining quantity for display
-                $supply->formattedQuantity = number_format($supply->remaining_quantity, 2) . ' ' . $supply->unit;
-                // Format expiration date
-                $supply->formattedExpiry = Carbon::parse($supply->expiration_date)->format('M d, Y');
-                return $supply;
-            });
-                
+                ->orderBy('created_at', 'desc')
+                ->take(5)
+                ->get()
+                ->map(function ($supply) {
+                    // Format remaining quantity for display
+                    $supply->formattedQuantity = number_format($supply->remaining_quantity, 2) . ' ' . $supply->unit;
+                    // Format expiration date
+                    $supply->formattedExpiry = Carbon::parse($supply->expiration_date)->format('M d, Y');
+                    return $supply;
+                });
+
             // Report search
-            $reports = Report::where(function($q) use ($searchTerm) {
+            $reports = Report::where(function ($q) use ($searchTerm) {
                 $q->where('title', 'LIKE', "%{$searchTerm}%")
-                  ->orWhere('name', 'LIKE', "%{$searchTerm}%")
-                  ->orWhere('complaint', 'LIKE', "%{$searchTerm}%")
-                  ->orWhere('diagnosis', 'LIKE', "%{$searchTerm}%")
-                  ->orWhere('category', 'LIKE', "%{$searchTerm}%")
-                  ->orWhere('remarks', 'LIKE', "%{$searchTerm}%");
+                    ->orWhere('name', 'LIKE', "%{$searchTerm}%")
+                    ->orWhere('complaint', 'LIKE', "%{$searchTerm}%")
+                    ->orWhere('diagnosis', 'LIKE', "%{$searchTerm}%")
+                    ->orWhere('category', 'LIKE', "%{$searchTerm}%")
+                    ->orWhere('remarks', 'LIKE', "%{$searchTerm}%");
             })
-            ->orderBy('created_at', 'desc')
-            ->take(5)
-            ->get()
-            ->map(function($report) {
-                // Format report date
-                $report->formattedDate = Carbon::parse($report->date)->format('M d, Y');
-                // Format report created date
-                $report->formattedCreatedDate = Carbon::parse($report->created_at)->format('M d, Y');
-                // Format complaint preview
-                $report->complaintPreview = \Str::limit(strip_tags($report->complaint), 80);
-                // Format diagnosis preview
-                $report->diagnosisPreview = \Str::limit(strip_tags($report->diagnosis), 80);
-                // Build patient info string
-                $report->patientInfo = $report->name . ' (' . $report->age . ', ' . $report->sex . ')';
-                return $report;
-            });
-                
+                ->orderBy('created_at', 'desc')
+                ->take(5)
+                ->get()
+                ->map(function ($report) {
+                    // Format report date
+                    $report->formattedDate = Carbon::parse($report->date)->format('M d, Y');
+                    // Format report created date
+                    $report->formattedCreatedDate = Carbon::parse($report->created_at)->format('M d, Y');
+                    // Format complaint preview
+                    $report->complaintPreview = \Str::limit(strip_tags($report->complaint), 80);
+                    // Format diagnosis preview
+                    $report->diagnosisPreview = \Str::limit(strip_tags($report->diagnosis), 80);
+                    // Build patient info string
+                    $report->patientInfo = $report->name . ' (' . $report->age . ', ' . $report->sex . ')';
+                    return $report;
+                });
+
             // Document search
             $documents = Document::select('documents.*')
-                ->where(function($query) use ($searchTerm) {
+                ->where(function ($query) use ($searchTerm) {
                     // First search in the main documents table
                     $query->where('documents.document_type', 'LIKE', "%{$searchTerm}%");
                 })
                 // Join with excuseletter table
-                ->leftJoin('excuseletter', function($join) use ($searchTerm) {
+                ->leftJoin('excuseletter', function ($join) use ($searchTerm) {
                     $join->on('documents.id', '=', 'excuseletter.document_id')
-                         ->where(function($q) use ($searchTerm) {
+                        ->where(function ($q) use ($searchTerm) {
                             $q->where('excuseletter.patient_name', 'LIKE', "%{$searchTerm}%")
-                              ->orWhere('excuseletter.recipient', 'LIKE', "%{$searchTerm}%")
-                              ->orWhere('excuseletter.cause', 'LIKE', "%{$searchTerm}%")
-                              ->orWhere('excuseletter.department', 'LIKE', "%{$searchTerm}%")
-                              ->orWhere('excuseletter.doctorName', 'LIKE', "%{$searchTerm}%");
-                         });
+                                ->orWhere('excuseletter.recipient', 'LIKE', "%{$searchTerm}%")
+                                ->orWhere('excuseletter.cause', 'LIKE', "%{$searchTerm}%")
+                                ->orWhere('excuseletter.department', 'LIKE', "%{$searchTerm}%")
+                                ->orWhere('excuseletter.doctorName', 'LIKE', "%{$searchTerm}%");
+                        });
                 })
                 // Join with annual_medical_clearances table
-                ->leftJoin('annual_medical_clearances', function($join) use ($searchTerm) {
+                ->leftJoin('annual_medical_clearances', function ($join) use ($searchTerm) {
                     $join->on('documents.id', '=', 'annual_medical_clearances.document_id')
-                         ->where(function($q) use ($searchTerm) {
+                        ->where(function ($q) use ($searchTerm) {
                             $q->where('annual_medical_clearances.patient_name', 'LIKE', "%{$searchTerm}%")
-                              ->orWhere('annual_medical_clearances.doctorName', 'LIKE', "%{$searchTerm}%")
-                              ->orWhere('annual_medical_clearances.license_number', 'LIKE', "%{$searchTerm}%");
-                         });
+                                ->orWhere('annual_medical_clearances.doctorName', 'LIKE', "%{$searchTerm}%")
+                                ->orWhere('annual_medical_clearances.license_number', 'LIKE', "%{$searchTerm}%");
+                        });
                 })
                 // Join with waiver table
-                ->leftJoin('waiver', function($join) use ($searchTerm) {
+                ->leftJoin('waiver', function ($join) use ($searchTerm) {
                     $join->on('documents.id', '=', 'waiver.document_id')
-                         ->where(function($q) use ($searchTerm) {
+                        ->where(function ($q) use ($searchTerm) {
                             $q->where('waiver.name', 'LIKE', "%{$searchTerm}%")
-                              ->orWhere('waiver.collegeName', 'LIKE', "%{$searchTerm}%")
-                              ->orWhere('waiver.department', 'LIKE', "%{$searchTerm}%")
-                              ->orWhere('waiver.diagnosedIllness', 'LIKE', "%{$searchTerm}%")
-                              ->orWhere('waiver.doctorName', 'LIKE', "%{$searchTerm}%");
-                         });
+                                ->orWhere('waiver.collegeName', 'LIKE', "%{$searchTerm}%")
+                                ->orWhere('waiver.department', 'LIKE', "%{$searchTerm}%")
+                                ->orWhere('waiver.diagnosedIllness', 'LIKE', "%{$searchTerm}%")
+                                ->orWhere('waiver.doctorName', 'LIKE', "%{$searchTerm}%");
+                        });
                 })
                 // Join with medical_certificates table
-                ->leftJoin('medical_certificates', function($join) use ($searchTerm) {
+                ->leftJoin('medical_certificates', function ($join) use ($searchTerm) {
                     $join->on('documents.id', '=', 'medical_certificates.document_id')
-                         ->where(function($q) use ($searchTerm) {
+                        ->where(function ($q) use ($searchTerm) {
                             $q->where('medical_certificates.patient_name', 'LIKE', "%{$searchTerm}%")
-                              ->orWhere('medical_certificates.sickness', 'LIKE', "%{$searchTerm}%")
-                              ->orWhere('medical_certificates.reason', 'LIKE', "%{$searchTerm}%")
-                              ->orWhere('medical_certificates.doctorName', 'LIKE', "%{$searchTerm}%");
-                         });
+                                ->orWhere('medical_certificates.sickness', 'LIKE', "%{$searchTerm}%")
+                                ->orWhere('medical_certificates.reason', 'LIKE', "%{$searchTerm}%")
+                                ->orWhere('medical_certificates.doctorName', 'LIKE', "%{$searchTerm}%");
+                        });
                 })
                 // Join with medical_clearances table
-                ->leftJoin('medical_clearances', function($join) use ($searchTerm) {
+                ->leftJoin('medical_clearances', function ($join) use ($searchTerm) {
                     $join->on('documents.id', '=', 'medical_clearances.document_id')
-                         ->where(function($q) use ($searchTerm) {
+                        ->where(function ($q) use ($searchTerm) {
                             $q->where('medical_clearances.patient_name', 'LIKE', "%{$searchTerm}%")
-                              ->orWhere('medical_clearances.vaccination_status', 'LIKE', "%{$searchTerm}%")
-                              ->orWhere('medical_clearances.excuse', 'LIKE', "%{$searchTerm}%")
-                              ->orWhere('medical_clearances.position', 'LIKE', "%{$searchTerm}%")
-                              ->orWhere('medical_clearances.doctorName', 'LIKE', "%{$searchTerm}%");
-                         });
+                                ->orWhere('medical_clearances.vaccination_status', 'LIKE', "%{$searchTerm}%")
+                                ->orWhere('medical_clearances.excuse', 'LIKE', "%{$searchTerm}%")
+                                ->orWhere('medical_clearances.position', 'LIKE', "%{$searchTerm}%")
+                                ->orWhere('medical_clearances.doctorName', 'LIKE', "%{$searchTerm}%");
+                        });
                 })
                 // Join with dmdc_consent_forms table
-                ->leftJoin('dmdc_consent_forms', function($join) use ($searchTerm) {
+                ->leftJoin('dmdc_consent_forms', function ($join) use ($searchTerm) {
                     $join->on('documents.id', '=', 'dmdc_consent_forms.document_id')
-                         ->where(function($q) use ($searchTerm) {
+                        ->where(function ($q) use ($searchTerm) {
                             $q->where('dmdc_consent_forms.event_name', 'LIKE', "%{$searchTerm}%");
-                         });
+                        });
                 })
                 // Join with waiver_for_pulmonary_cases table
-                ->leftJoin('waiver_for_pulmonary_cases', function($join) use ($searchTerm) {
+                ->leftJoin('waiver_for_pulmonary_cases', function ($join) use ($searchTerm) {
                     $join->on('documents.id', '=', 'waiver_for_pulmonary_cases.document_id')
-                         ->where(function($q) use ($searchTerm) {
+                        ->where(function ($q) use ($searchTerm) {
                             $q->where('waiver_for_pulmonary_cases.patient_name', 'LIKE', "%{$searchTerm}%")
-                              ->orWhere('waiver_for_pulmonary_cases.collegeName', 'LIKE', "%{$searchTerm}%")
-                              ->orWhere('waiver_for_pulmonary_cases.year', 'LIKE', "%{$searchTerm}%");
-                         });
+                                ->orWhere('waiver_for_pulmonary_cases.collegeName', 'LIKE', "%{$searchTerm}%")
+                                ->orWhere('waiver_for_pulmonary_cases.year', 'LIKE', "%{$searchTerm}%");
+                        });
                 })
                 ->distinct() // Avoid duplicate documents
                 ->orderBy('documents.created_at', 'desc')
@@ -190,13 +190,13 @@ class DashboardController extends Controller
                 ->get();
 
             // Now enhance the results with additional info from specific document types
-            $formattedDocuments = $documents->map(function($document) {
+            $formattedDocuments = $documents->map(function ($document) {
                 // Get the specific document details based on type
                 $documentDetails = null;
                 $patientName = null;
                 $doctorName = null;
-                
-                switch($document->document_type) {
+
+                switch ($document->document_type) {
                     case 'excuseletter':
                         $documentDetails = DB::table('excuseletter')->where('document_id', $document->id)->first();
                         $patientName = $documentDetails->patient_name ?? null;
@@ -233,26 +233,26 @@ class DashboardController extends Controller
                         $doctorName = null;
                         break;
                 }
-                
+
                 // Format document type for display
                 $document->documentTypeFormatted = ucwords(str_replace('_', ' ', $document->document_type));
-                
+
                 // Add formatted date
                 $document->formattedDate = Carbon::parse($document->created_at)->format('M d, Y');
-                
+
                 // Add patient name and doctor name if available
                 $document->patientName = $patientName;
                 $document->doctorName = $doctorName;
-                
+
                 // For specific document types, add additional details
                 if ($documentDetails) {
                     if (isset($documentDetails->date)) {
                         $document->documentDate = Carbon::parse($documentDetails->date)->format('M d, Y');
                     }
-                    
+
                     $document->specificDetails = $documentDetails;
                 }
-                
+
                 return $document;
             });
 
@@ -263,10 +263,10 @@ class DashboardController extends Controller
                 'supplies' => $supplies,
                 'reports' => $reports,
                 'documents' => $formattedDocuments,
-                'hasResults' => $patients->count() + $medicines->count() + $supplies->count() + 
-                               $reports->count() + $formattedDocuments->count() > 0,
-                'totalCount' => $patients->count() + $medicines->count() + $supplies->count() + 
-                               $reports->count() + $formattedDocuments->count()
+                'hasResults' => $patients->count() + $medicines->count() + $supplies->count() +
+                    $reports->count() + $formattedDocuments->count() > 0,
+                'totalCount' => $patients->count() + $medicines->count() + $supplies->count() +
+                    $reports->count() + $formattedDocuments->count()
             ];
 
             // Log search for analytics
@@ -276,15 +276,15 @@ class DashboardController extends Controller
                 'user_id' => auth()->id() ?? 'guest'
             ]);
         }
-        
+
         // Get total patient count
         $totalPatients = Patient::count();
-        
+
         // Get total medicines count (only for boxes that are not returned)
-        $totalMedicines = Medicine::whereHas('box', function($query) {
+        $totalMedicines = Medicine::whereHas('box', function ($query) {
             $query->where('isReturned', 0);
         })->count();
-        
+
         // You can also get counts by patient type
         $patientCounts = [
             'students' => Patient::where('patientType', 'Student')->count(),
@@ -293,18 +293,18 @@ class DashboardController extends Controller
             'admin' => Patient::where('patientType', 'Admin')->count(),
             'visitors' => Patient::where('patientType', 'Visitor')->count(),
         ];
-        
+
         // Get monthly patient counts for current year
         $monthlyPatients = Patient::select(
             DB::raw('MONTH(created_at) as month'),
             DB::raw('COUNT(*) as count')
         )
-        ->whereYear('created_at', Carbon::now()->year)
-        ->groupBy('month')
-        ->orderBy('month')
-        ->get()
-        ->pluck('count', 'month')
-        ->toArray();
+            ->whereYear('created_at', Carbon::now()->year)
+            ->groupBy('month')
+            ->orderBy('month')
+            ->get()
+            ->pluck('count', 'month')
+            ->toArray();
 
         // Fill in missing months with zero
         $monthlyPatientCounts = [];
@@ -314,10 +314,10 @@ class DashboardController extends Controller
 
         // Get returned and not returned medicine counts
         $medicineStatus = [
-            'returned' => Medicine::whereHas('box', function($query) {
+            'returned' => Medicine::whereHas('box', function ($query) {
                 $query->where('isReturned', 1);
             })->count(),
-            'active' => Medicine::whereHas('box', function($query) {
+            'active' => Medicine::whereHas('box', function ($query) {
                 $query->where('isReturned', 0);
             })->count()
         ];
@@ -353,8 +353,8 @@ class DashboardController extends Controller
         $totalReports = Report::count();
 
         return view('dashboard.dashboard_index', compact(
-            'totalPatients', 
-            'patientCounts', 
+            'totalPatients',
+            'patientCounts',
             'totalMedicines',
             'monthlyPatientCounts',
             'medicineStatus',
@@ -403,14 +403,14 @@ class DashboardController extends Controller
         try {
             $today = Carbon::today('Asia/Manila');
             $userIds = User::pluck('id')->toArray();
-            
+
             Log::info('Starting medicine expiry check', [
                 'today' => $today->format('Y-m-d'),
                 'users' => count($userIds)
             ]);
 
             $medicines = Medicine::whereNotNull('expiration_date')
-                ->whereHas('box', function($query) {
+                ->whereHas('box', function ($query) {
                     $query->where('isReturned', 0);
                 })
                 ->get();
@@ -420,7 +420,7 @@ class DashboardController extends Controller
             foreach ($medicines as $medicine) {
                 $expiryDate = Carbon::parse($medicine->expiration_date)->startOfDay();
                 $daysRemaining = $today->diffInDays($expiryDate);
-                
+
                 Log::info('Checking medicine', [
                     'id' => $medicine->id,
                     'name' => $medicine->medicine_name,
@@ -433,14 +433,14 @@ class DashboardController extends Controller
                     try {
                         $this->createNotification(
                             'Medicine Expiring within 3 Months',
-                            "{$medicine->medicine_name} will expire in {$daysRemaining} " . 
-                            ($daysRemaining == 1 ? 'day' : 'days') . " on " . 
-                            $expiryDate->format('M d, Y') . "",
+                            "{$medicine->medicine_name} will expire in {$daysRemaining} " .
+                                ($daysRemaining == 1 ? 'day' : 'days') . " on " .
+                                $expiryDate->format('M d, Y') . "",
                             'warning',
                             $userIds,
                             $medicine->id
                         );
-                        
+
                         $medicine->notified_quarterly = true;
                         $medicine->save();
                     } catch (\Exception $e) {
@@ -456,14 +456,14 @@ class DashboardController extends Controller
                     try {
                         $this->createNotification(
                             'Medicine Expiring in a Month',
-                            "{$medicine->medicine_name} will expire in {$daysRemaining} " . 
-                            ($daysRemaining == 1 ? 'day' : 'days') . " on " . 
-                            $expiryDate->format('M d, Y') . "",
+                            "{$medicine->medicine_name} will expire in {$daysRemaining} " .
+                                ($daysRemaining == 1 ? 'day' : 'days') . " on " .
+                                $expiryDate->format('M d, Y') . "",
                             'warning',
                             $userIds,
                             $medicine->id
                         );
-                        
+
                         $medicine->notified_monthly = true;
                         $medicine->save();
                     } catch (\Exception $e) {
@@ -473,20 +473,20 @@ class DashboardController extends Controller
                         ]);
                     }
                 }
-                
+
                 // Weekly notification (2-7 days)
                 if ($daysRemaining <= 7 && $daysRemaining >= 1 && !$medicine->notified_weekly) {
                     try {
                         $this->createNotification(
                             'Medicine Expiring This Week',
-                            "{$medicine->medicine_name} will expire in {$daysRemaining} " . 
-                            ($daysRemaining == 1 ? 'day' : 'days') . " on " . 
-                            $expiryDate->format('M d, Y') . ".",
+                            "{$medicine->medicine_name} will expire in {$daysRemaining} " .
+                                ($daysRemaining == 1 ? 'day' : 'days') . " on " .
+                                $expiryDate->format('M d, Y') . ".",
                             'danger',
                             $userIds,
                             $medicine->id
                         );
-                        
+
                         $medicine->notified_weekly = true;
                         $medicine->save();
                     } catch (\Exception $e) {
@@ -502,13 +502,13 @@ class DashboardController extends Controller
                     try {
                         $this->createNotification(
                             'Medicine Has Expired',
-                            "{$medicine->medicine_name} has expired on " . $expiryDate->format('M d, Y') . 
-                            " and is not usable anymore. Please dispose of properly.",
+                            "{$medicine->medicine_name} has expired on " . $expiryDate->format('M d, Y') .
+                                " and is not usable anymore. Please dispose of properly.",
                             'deleted',
                             $userIds,
                             $medicine->id
                         );
-                        
+
                         $medicine->notified_today = true;
                         $medicine->save();
                     } catch (\Exception $e) {
@@ -518,7 +518,7 @@ class DashboardController extends Controller
                         ]);
                     }
                 }
-                
+
                 // Daily notification (0 day)
                 if ($daysRemaining == 0 && !$medicine->notified_today) {
                     try {
@@ -529,7 +529,7 @@ class DashboardController extends Controller
                             $userIds,
                             $medicine->id
                         );
-                        
+
                         $medicine->notified_today = true;
                         $medicine->save();
                     } catch (\Exception $e) {
@@ -540,9 +540,8 @@ class DashboardController extends Controller
                     }
                 }
             }
-            
+
             Log::info('Completed medicine expiry check');
-            
         } catch (\Exception $e) {
             Log::error('Error checking expiring medicines', [
                 'message' => $e->getMessage(),
@@ -551,13 +550,12 @@ class DashboardController extends Controller
         }
     }
 
-    public function superadminDashboard ()
+    public function superadminDashboard()
     {
         $total_users = User::all()->count();
         $total_active_users = User::where('status', 'active')->count();
         $total_inactive_users = User::where('status', 'inactive')->count();
 
-        return view('SuperAdmin.Superadmin_dashboard', compact('total_users','total_active_users','total_inactive_users'));
+        return view('SuperAdmin.Superadmin_dashboard', compact('total_users', 'total_active_users', 'total_inactive_users'));
     }
-    
 }

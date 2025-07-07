@@ -33,15 +33,15 @@
         <p class="mt-4 mb-2 text-sm font-semibold text-gray-300 text-start">Menu</p>
         <ul class="flex flex-col space-y-1">
             <li>
-                <x-sidebar-link :href="route('Superadmin_dashboard')" :active="request()->is('Superadmin_dashboard*') || request()->is('/')" :icon="'fas fa-chart-pie'">Dashboard</x-sidebar-link>
+                <x-sidebar-link :href="route('Superadmin_dashboard')" :active="request()->is('Superadmin_dashboard*') || request()->is('admin/dashboard*')" :icon="'fas fa-chart-pie'">Dashboard</x-sidebar-link>
             </li>
             <li>
-                <x-sidebar-link :href="route('users.get')" :active="request()->is('admin/users*')" :icon="'fas fa-user-injured'">User</x-sidebar-link>
+                <x-sidebar-link :href="route('users.get')" :active="request()->is('admin/users*')" :icon="'fas fa-user'">User</x-sidebar-link>
             </li>
             <li>
                 <x-sidebar-link :href="route('Auditlog')" :active="request()->is('admin/activity-logs*')" :icon="'fas fa-history'">Audit log</x-sidebar-link>
             </li>
         </ul>
     </div>
-   
+
 </aside>

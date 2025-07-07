@@ -1,10 +1,10 @@
 @php
-    use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Auth;
 
-    $user = Auth::user();
-    $defaultImage =
-        'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iI2NjYyI+PHBhdGggZD0iTTEyIDJDNi40OCAyIDIgNi40OCAyIDEyczQuNDggMTAgMTAgMTAgMTAtNC40OCAxMC0xMFMxNy41MiAyIDEyIDJ6bTAgM2MxLjY2IDAgMyAxLjM0IDMgM3MtMS4zNCAzLTMgMy0zLTEuMzQtMy0zIDEuMzQtMyAzLTN6bTAgMTQuMmMtMi41IDAtNC43MS0xLjI4LTYtMy4yMi4wMy0xLjk5IDQtMy4wOCA2LTMuMDggMS45OSAwIDUuOTcgMS4wOSA2IDMuMDgtMS4yOSAxLjk0LTMuNSAzLjIyLTYgMy4yMnoiLz48L3N2Zz4=';
-    $profileImage = $user && $user->profile_image ? asset('uploads/users/' . $user->profile_image) : $defaultImage;
+$user = Auth::user();
+$defaultImage =
+    'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iI2NjYyI+PHBhdGggZD0iTTEyIDJDNi40OCAyIDIgNi40OCAyIDEyczQuNDggMTAgMTAgMTAgMTAtNC40OCAxMC0xMFMxNy41MiAyIDEyIDJ6bTAgM2MxLjY2IDAgMyAxLjM0IDMgM3MtMS4zNCAzLTMgMy0zLTEuMzQtMy0zIDEuMzQtMyAzLTN6bTAgMTQuMmMtMi41IDAtNC43MS0xLjI4LTYtMy4yMi4wMy0xLjk5IDQtMy4wOCA2LTMuMDggMS45OSAwIDUuOTcgMS4wOSA2IDMuMDgtMS4yOSAxLjk0LTMuNSAzLjIyLTYgMy4yMnoiLz48L3N2Zz4=';
+$profileImage = $user && $user->profile_image ? asset('uploads/users/' . $user->profile_image) : $defaultImage;
 @endphp
 
 <!-- Add this in your <head> section -->
@@ -54,10 +54,17 @@
                     </div>
                 </a>
                 <!-- End Logo -->
-                <div>
-                    <a href="{{ route('dashboard') }}"
-                        class="font-medium px-2 hover:underline text-base hover:text-blue-500">Dashboard</a>
-                </div>
+                @if (auth()->user() && auth()->user()->role == 'standard')
+                    <div>
+                        <a href="{{ route('dashboard') }}"
+                            class="font-medium px-2 hover:underline text-base hover:text-blue-500">Dashboard</a>
+                    </div>
+                @else
+                    <div>
+                        <a href="{{ route('Superadmin_dashboard') }}"
+                            class="font-medium px-2 hover:underline text-base hover:text-blue-500">Dashboard</a>
+                    </div>
+                @endif
             </div>
         </div>
 
@@ -75,9 +82,10 @@
                         </path>
                     </svg>
                     @if (
-                        $notifications->filter(function ($notification) {
-                                return $notification->users->first() && is_null($notification->users->first()->pivot->viewed_at);
-                            })->count() > 0)
+    $notifications->filter(function ($notification) {
+        return $notification->users->first() && is_null($notification->users->first()->pivot->viewed_at);
+    })->count() > 0
+)
                         <span class="absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full"></span>
                     @endif
                 </button>
