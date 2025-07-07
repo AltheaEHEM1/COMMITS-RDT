@@ -347,7 +347,7 @@
                         <div
                             id="preview-container-1"
                             style="border-style: dashed"
-                            class="relative flex items-center justify-center h-20 border-2 border-gray-300 rounded-lg bg-gray-50 hover:bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-800 dark:border-gray-600 dark:hover:border-gray-500"
+                            class="relative flex items-center justify-center h-20 border-2 border-gray-300 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500"
                         >
                             <img
                             id="preview-img-1"
@@ -372,7 +372,7 @@
                         <div
                             id="preview-container-2"
                             style="border-style: dashed"
-                            class="relative flex items-center justify-center h-20 border-2 border-gray-300 rounded-lg bg-gray-50 hover:bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-800 dark:border-gray-600 dark:hover:border-gray-500"
+                            class="relative flex items-center justify-center h-20 border-2 border-gray-300 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500"
                         >
                             <img
                             id="preview-img-2"

@@ -112,7 +112,7 @@
             <!--loading spinner-->
             <x-loading-spinner />
 
-            <div class="h-full p-4">
+            <div class="p-4">
                 <!--Main Content-->
                 @yield('content')
             </div>

@@ -77,9 +77,15 @@
                         @foreach ($services as $service)
                             @if (!empty($service['data'][5]))
                                 {{-- Category header: shown but not selectable --}}
-                                <option value="" disabled><strong>{{ $service['name'] }}</strong></option>
+                                @php
+                                    $cleanName = preg_replace('/^\d+\.\s*/', '', $service['name']);
+                                @endphp
+                                <option value="" disabled><strong>{{ $cleanName }}</strong></option>
                             @else
-                                <option value="{{ $service['name'] }}">{{ $service['name'] }}</option>
+                                @php
+                                    $cleanName = preg_replace('/^\d+\.\s*/', '', $service['name']);
+                                @endphp
+                                <option value="{{ $service['name'] }}">{{ $cleanName }}</option>
                             @endif
                         @endforeach
                     </select>
