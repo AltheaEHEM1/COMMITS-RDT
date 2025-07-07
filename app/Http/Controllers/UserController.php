@@ -37,6 +37,18 @@ class UserController extends Controller
             // Authentication successful
             $user = Auth::user(); // Get authenticated user
 
+            if (strtolower($user->status) == 'deactivated') {
+                // User account is deactivated and cannot log in
+                Auth::logout(); // Log out the user
+                return back()->with('error', 'Your account has been deactivated. Please contact support.');
+            }
+
+            // Check if the user is suspended
+            if (strtolower($user->status) == 'suspended') {
+                Auth::logout(); // Log out the user
+                return back()->with('error', 'Your account is suspended. Please contact support.');
+            }
+
             // check if first time login and update certain details
             if (!$user->is_activated && $user->status == "inactive") {
                 $user->is_activated = true;
@@ -48,12 +60,13 @@ class UserController extends Controller
             if ($user->role === 'superadmin') {
                 return redirect()->route('Superadmin_dashboard');
             } else {
+                // For standard users, redirect to the dashboard
                 return redirect()->route('dashboard');
             }
         }
 
         // Authentication failed
-        return redirect()->back()->withErrors(['password' => 'Invalid credentials']);
+        return back()->with('error', 'Invalid credentials');
     }
 
     /**

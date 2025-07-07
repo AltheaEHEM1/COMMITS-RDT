@@ -99,10 +99,10 @@
                         <div id="no-users-message" class="hidden mt-4 text-center text-red-500">
                             No users found matching your search criteria.
                         </div>
+                    </div>
 
-                        <div class="mt-5">
-                            {{ $users->links() }}
-                        </div>
+                    <div class="mt-5">
+                        {{ $users->links() }}
                     </div>
                 </div>
             </div>

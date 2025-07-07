@@ -1,10 +1,10 @@
 @php
-use Illuminate\Support\Facades\Auth;
+    use Illuminate\Support\Facades\Auth;
 
-$user = Auth::user();
-$defaultImage =
-    'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iI2NjYyI+PHBhdGggZD0iTTEyIDJDNi40OCAyIDIgNi40OCAyIDEyczQuNDggMTAgMTAgMTAgMTAtNC40OCAxMC0xMFMxNy41MiAyIDEyIDJ6bTAgM2MxLjY2IDAgMyAxLjM0IDMgM3MtMS4zNCAzLTMgMy0zLTEuMzQtMy0zIDEuMzQtMyAzLTN6bTAgMTQuMmMtMi41IDAtNC43MS0xLjI4LTYtMy4yMi4wMy0xLjk5IDQtMy4wOCA2LTMuMDggMS45OSAwIDUuOTcgMS4wOSA2IDMuMDgtMS4yOSAxLjk0LTMuNSAzLjIyLTYgMy4yMnoiLz48L3N2Zz4=';
-$profileImage = $user && $user->profile_image ? asset('uploads/users/' . $user->profile_image) : $defaultImage;
+    $user = Auth::user();
+    $defaultImage =
+        'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iI2NjYyI+PHBhdGggZD0iTTEyIDJDNi40OCAyIDIgNi40OCAyIDEyczQuNDggMTAgMTAgMTAgMTAtNC40OCAxMC0xMFMxNy41MiAyIDEyIDJ6bTAgM2MxLjY2IDAgMyAxLjM0IDMgM3MtMS4zNCAzLTMgMy0zLTEuMzQtMy0zIDEuMzQtMyAzLTN6bTAgMTQuMmMtMi41IDAtNC43MS0xLjI4LTYtMy4yMi4wMy0xLjk5IDQtMy4wOCA2LTMuMDggMS45OSAwIDUuOTcgMS4wOSA2IDMuMDgtMS4yOSAxLjk0LTMuNSAzLjIyLTYgMy4yMnoiLz48L3N2Zz4=';
+    $profileImage = $user && $user->profile_image ? asset('uploads/users/' . $user->profile_image) : $defaultImage;
 @endphp
 
 <!-- Add this in your <head> section -->
@@ -33,14 +33,15 @@ $profileImage = $user && $user->profile_image ? asset('uploads/users/' . $user->
                 <span class="sr-only">Toggle sidebar</span>
             </button> --}}
             {{-- to hide this navbar to profile page --}}
-            {{-- @if (Route::currentRouteName() != 'profile.accountSettings' && Route::currentRouteName() != 'profile.helpAndSupport')
-                <div class="flex items-center justify-center w-64 bg-[#560012] m-0 px-4 py-2.5"> --}}
-            {{-- add dashboard route here --}}
-            {{-- <a href="#" class="flex items-center justify-between mr-4">
-                        <img src="{{ asset('images/puplogo.png') }}" class="h-8 mr-3" alt="Logo" />
-                        <span class="self-center text-2xl font-semibold text-white whitespace-nowrap">PRMS</span>
-                    </a>
-                </div>
+            {{-- @if (Route::currentRouteName() != 'profile.accountSettings' && Route::currentRouteName() !=
+            'profile.helpAndSupport')
+            <div class="flex items-center justify-center w-64 bg-[#560012] m-0 px-4 py-2.5"> --}}
+                {{-- add dashboard route here --}}
+                {{-- <a href="#" class="flex items-center justify-between mr-4">
+                    <img src="{{ asset('images/puplogo.png') }}" class="h-8 mr-3" alt="Logo" />
+                    <span class="self-center text-2xl font-semibold text-white whitespace-nowrap">PRMS</span>
+                </a>
+            </div>
             @endif --}}
 
             <div class="flex items-center space-x-2 py-2">
@@ -69,113 +70,112 @@ $profileImage = $user && $user->profile_image ? asset('uploads/users/' . $user->
         </div>
 
         <div class="relative flex items-center lg:order-2 space-x-1">
-            <!-- Notifications -->
-            <div class="relative">
-                <!-- Notification Button -->
-                <button type="button" id="notification-button"
-                    class="p-2 px-2 text-gray-500 rounded-lg hover:text-gray-900 hover:bg-gray-100 focus:ring-4 focus:ring-gray-300">
-                    <span class="sr-only">View notifications</span>
-                    <!-- Bell icon -->
-                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                        <path
-                            d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z">
-                        </path>
-                    </svg>
-                    @if (
-    $notifications->filter(function ($notification) {
-        return $notification->users->first() && is_null($notification->users->first()->pivot->viewed_at);
-    })->count() > 0
-)
-                        <span class="absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full"></span>
-                    @endif
-                </button>
+            @if (auth()->user() && auth()->user()->role == 'standard')
+                <!-- Notifications -->
+                <div class="relative">
+                    <!-- Notification Button -->
+                    <button type="button" id="notification-button"
+                        class="p-2 px-2 text-gray-500 rounded-lg hover:text-gray-900 hover:bg-gray-100 focus:ring-4 focus:ring-gray-300">
+                        <span class="sr-only">View notifications</span>
+                        <!-- Bell icon -->
+                        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                            <path
+                                d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z">
+                            </path>
+                        </svg>
+                        @if (
+                                $notifications->filter(function ($notification) {
+                                    return $notification->users->first() && is_null($notification->users->first()->pivot->viewed_at);
+                                })->count() > 0
+                            )
+                            <span class="absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full"></span>
+                        @endif
+                    </button>
 
-                <!-- Custom Notification Dropdown -->
-                <div id="notification-dropdown"
-                    class="fixed z-50 hidden overflow-hidden bg-white rounded-lg shadow-lg w-96 max-w-[95vw]"
-                    style="top: 4rem; right: 1rem;">
-                    <!-- Header -->
-                    <div class="sticky top-0 z-10 px-4 py-3 text-gray-700 bg-red-800 border-b border-gray-400">
-                        <div class="flex items-center justify-between">
-                            <h3 class="text-sm font-medium text-white">Notifications</h3>
+                    <!-- Custom Notification Dropdown -->
+                    <div id="notification-dropdown"
+                        class="fixed z-50 hidden overflow-hidden bg-white rounded-lg shadow-lg w-96 max-w-[95vw]"
+                        style="top: 4rem; right: 1rem;">
+                        <!-- Header -->
+                        <div class="sticky top-0 z-10 px-4 py-3 text-gray-700 bg-red-800 border-b border-gray-400">
+                            <div class="flex items-center justify-between">
+                                <h3 class="text-sm font-medium text-white">Notifications</h3>
+                                @if ($notifications->count() > 0)
+                                    <span class="px-2 py-1 text-xs font-semibold text-black bg-white rounded-full">
+                                        {{ $notifications->count() }}
+                                    </span>
+                                @endif
+                            </div>
+                        </div>
+
+                        <!-- Notification List -->
+                        <div class="overflow-y-auto divide-y divide-gray-100"
+                            style="max-height: min(calc(100vh - 12rem), 500px)">
                             @if ($notifications->count() > 0)
-                                <span class="px-2 py-1 text-xs font-semibold text-black bg-white rounded-full">
-                                    {{ $notifications->count() }}
-                                </span>
+                                @foreach ($notifications as $notification)
+                                    <div class="notification-item p-4 {{ $notification->users->first() && is_null($notification->users->first()->pivot->viewed_at) ? 'bg-blue-50' : 'bg-white' }}"
+                                        data-id="{{ $notification->id }}">
+                                        <div class="flex">
+                                            <!-- Notification Icon -->
+                                            <div class="flex-shrink-0">
+                                                <div class="flex items-center justify-center w-11 h-11 rounded-full
+                                                @if ($notification->type === 'warning') bg-yellow-300 text-yellow-900
+                                                @elseif($notification->type === 'danger') bg-red-300 text-red-900
+                                                @elseif($notification->type === 'deleted') bg-gray-300 text-gray-900
+                                                @else bg-blue-100 text-blue-600 @endif">
+                                                    @if ($notification->type === 'warning')
+                                                        <svg class="w-7 h-7" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
+                                                            fill="currentColor">
+                                                            <path fill-rule="evenodd"
+                                                                d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"
+                                                                clip-rule="evenodd" />
+                                                        </svg>
+                                                    @elseif($notification->type === 'danger')
+                                                        <svg class="w-7 h-7" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+                                                            fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
+                                                            stroke-linejoin="round">
+                                                            <line x1="18" y1="6" x2="6" y2="20"></line>
+                                                            <line x1="6" y1="6" x2="18" y2="20"></line>
+                                                        </svg>
+                                                    @elseif($notification->type === 'deleted')
+                                                        <svg class="w-7 h-7" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
+                                                            fill="currentColor">
+                                                            <path fill-rule="evenodd"
+                                                                d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z"
+                                                                clip-rule="evenodd" />
+                                                        </svg>
+                                                    @else
+                                                        <svg class="w-7 h-7" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
+                                                            fill="currentColor">
+                                                            <path
+                                                                d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z" />
+                                                        </svg>
+                                                    @endif
+                                                </div>
+                                            </div>
+
+                                            <!-- Notification Content -->
+                                            <div class="flex-1 ml-4">
+                                                <p class="text-sm font-medium text-gray-900">{{ $notification->title }}</p>
+                                                <p class="mt-1 text-sm text-gray-500">{{ $notification->message }}</p>
+                                                <p class="mt-1 text-xs text-gray-400">
+                                                    {{ $notification->created_at->diffForHumans() }}
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                @endforeach
+                            @else
+                                <div class="flex items-center justify-center p-8">
+                                    <div class="text-center">
+                                        <p class="mt-4 text-sm text-gray-500">No new notifications</p>
+                                    </div>
+                                </div>
                             @endif
                         </div>
                     </div>
-
-                    <!-- Notification List -->
-                    <div class="overflow-y-auto divide-y divide-gray-100"
-                        style="max-height: min(calc(100vh - 12rem), 500px)">
-                        @if ($notifications->count() > 0)
-                            @foreach ($notifications as $notification)
-                                <div class="notification-item p-4 {{ $notification->users->first() && is_null($notification->users->first()->pivot->viewed_at) ? 'bg-blue-50' : 'bg-white' }}"
-                                    data-id="{{ $notification->id }}">
-                                    <div class="flex">
-                                        <!-- Notification Icon -->
-                                        <div class="flex-shrink-0">
-                                            <div
-                                                class="flex items-center justify-center w-11 h-11 rounded-full
-                                @if ($notification->type === 'warning') bg-yellow-300 text-yellow-900
-                                @elseif($notification->type === 'danger') bg-red-300 text-red-900
-                                @elseif($notification->type === 'deleted') bg-gray-300 text-gray-900
-                                @else bg-blue-100 text-blue-600 @endif">
-                                                @if ($notification->type === 'warning')
-                                                    <svg class="w-7 h-7" xmlns="http://www.w3.org/2000/svg"
-                                                        viewBox="0 0 20 20" fill="currentColor">
-                                                        <path fill-rule="evenodd"
-                                                            d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"
-                                                            clip-rule="evenodd" />
-                                                    </svg>
-                                                @elseif($notification->type === 'danger')
-                                                    <svg class="w-7 h-7" xmlns="http://www.w3.org/2000/svg"
-                                                        viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                                        stroke-width="2.5" stroke-linecap="round"
-                                                        stroke-linejoin="round">
-                                                        <line x1="18" y1="6" x2="6"
-                                                            y2="20"></line>
-                                                        <line x1="6" y1="6" x2="18"
-                                                            y2="20"></line>
-                                                    </svg>
-                                                @elseif($notification->type === 'deleted')
-                                                    <svg class="w-7 h-7" xmlns="http://www.w3.org/2000/svg"
-                                                        viewBox="0 0 20 20" fill="currentColor">
-                                                        <path fill-rule="evenodd"
-                                                            d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z"
-                                                            clip-rule="evenodd" />
-                                                    </svg>
-                                                @else
-                                                    <svg class="w-7 h-7" xmlns="http://www.w3.org/2000/svg"
-                                                        viewBox="0 0 20 20" fill="currentColor">
-                                                        <path
-                                                            d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z" />
-                                                    </svg>
-                                                @endif
-                                            </div>
-                                        </div>
-
-                                        <!-- Notification Content -->
-                                        <div class="flex-1 ml-4">
-                                            <p class="text-sm font-medium text-gray-900">{{ $notification->title }}</p>
-                                            <p class="mt-1 text-sm text-gray-500">{{ $notification->message }}</p>
-                                            <p class="mt-1 text-xs text-gray-400">
-                                                {{ $notification->created_at->diffForHumans() }}</p>
-                                        </div>
-                                    </div>
-                                </div>
-                            @endforeach
-                        @else
-                            <div class="flex items-center justify-center p-8">
-                                <div class="text-center">
-                                    <p class="mt-4 text-sm text-gray-500">No new notifications</p>
-                                </div>
-                            </div>
-                        @endif
-                    </div>
                 </div>
-            </div>
+            @endif
 
             {{-- Profile --}}
             <div class="relative inline-block">
@@ -200,8 +200,8 @@ $profileImage = $user && $user->profile_image ? asset('uploads/users/' . $user->
                     </a>
                     <a href="{{ route('password.change') }}"
                         class="flex items-center px-4 py-2 text-gray-800 hover:bg-gray-100">
-                        <svg class="inline w-4 h-4 mr-2 text-gray-500" xmlns="http://www.w3.org/2000/svg"
-                            fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                        <svg class="inline w-4 h-4 mr-2 text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="none"
+                            viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round"
                                 d="M21.75 6.75a4.5 4.5 0 0 1-4.884 4.484c-1.076-.091-2.264.071-2.95.904l-7.152 8.684a2.548 2.548 0 1 1-3.586-3.586l8.684-7.152c.833-.686.995-1.874.904-2.95a4.5 4.5 0 0 1 6.336-4.486l-3.276 3.276a3.004 3.004 0 0 0 2.25 2.25l3.276-3.276c.256.565.398 1.192.398 1.852Z" />
                             <path stroke-linecap="round" stroke-linejoin="round"
@@ -210,8 +210,8 @@ $profileImage = $user && $user->profile_image ? asset('uploads/users/' . $user->
                         <span>Change Password</span>
                     </a>
                     <a id="logout-button" class="flex items-center px-4 py-2 text-gray-800 hover:bg-gray-100">
-                        <svg class="inline w-4 h-4 mr-2 text-gray-500" xmlns="http://www.w3.org/2000/svg"
-                            fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                        <svg class="inline w-4 h-4 mr-2 text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="none"
+                            viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round"
                                 d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15m3 0 3-3m0 0-3-3m3 3H9" />
                         </svg>
@@ -316,15 +316,15 @@ $profileImage = $user && $user->profile_image ? asset('uploads/users/' . $user->
 </style>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function () {
         // User menu dropdown functionality
         // (keeping this part as it's working fine)
-        document.getElementById('user-menu-button').addEventListener('click', function() {
+        document.getElementById('user-menu-button').addEventListener('click', function () {
             document.querySelector('.dropdown-menu-content').classList.toggle('hidden');
         });
 
         // Close dropdown when clicking outside the area of dropdown menu or its button
-        document.addEventListener('click', function(event) {
+        document.addEventListener('click', function (event) {
             const dropdown = document.querySelector('.dropdown-menu-content');
             const button = document.getElementById('user-menu-button');
             if (!dropdown.classList.contains('hidden') && !dropdown.contains(event.target) && !button
@@ -340,17 +340,17 @@ $profileImage = $user && $user->profile_image ? asset('uploads/users/' . $user->
         const cancelButton = document.getElementById('cancelButton');
 
         // Show the modal when the logout button is clicked
-        logoutButton.addEventListener('click', function() {
+        logoutButton.addEventListener('click', function () {
             logoutModal.classList.remove('hidden');
         });
 
         // Hide the modal when the cancel button is clicked
-        cancelButton.addEventListener('click', function() {
+        cancelButton.addEventListener('click', function () {
             logoutModal.classList.add('hidden');
         });
 
         // Hide the modal when clicking outside of it
-        window.addEventListener('click', function(event) {
+        window.addEventListener('click', function (event) {
             if (event.target === logoutModal) {
                 logoutModal.classList.add('hidden');
             }
@@ -374,16 +374,16 @@ $profileImage = $user && $user->profile_image ? asset('uploads/users/' . $user->
             if (notificationIds.length === 0) return;
 
             fetch('/notifications/mark-as-viewed', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute(
-                            'content')
-                    },
-                    body: JSON.stringify({
-                        notification_ids: notificationIds
-                    })
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute(
+                        'content')
+                },
+                body: JSON.stringify({
+                    notification_ids: notificationIds
                 })
+            })
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
@@ -407,7 +407,7 @@ $profileImage = $user && $user->profile_image ? asset('uploads/users/' . $user->
         }
 
         // Toggle notification dropdown - Fixed implementation
-        notificationButton.addEventListener('click', function(e) {
+        notificationButton.addEventListener('click', function (e) {
             e.preventDefault(); // Prevent any default behavior
 
             const isHidden = notificationDropdown.classList.contains('hidden');
@@ -431,7 +431,7 @@ $profileImage = $user && $user->profile_image ? asset('uploads/users/' . $user->
 
                 // Set timer to mark as viewed after 5 seconds
                 console.log('Setting timer to mark notifications as viewed in 5 seconds');
-                notificationViewTimer = setTimeout(function() {
+                notificationViewTimer = setTimeout(function () {
                     console.log('Timer triggered - marking notifications as viewed');
                     markNotificationsAsViewed();
                 }, 5000);
@@ -450,7 +450,7 @@ $profileImage = $user && $user->profile_image ? asset('uploads/users/' . $user->
         });
 
         // Close notification dropdown when clicking outside - Fixed implementation
-        document.addEventListener('click', function(event) {
+        document.addEventListener('click', function (event) {
             // Only process if the dropdown is visible
             if (!notificationDropdown.classList.contains('hidden')) {
                 // And if the click was outside both the dropdown and the button
@@ -477,7 +477,7 @@ $profileImage = $user && $user->profile_image ? asset('uploads/users/' . $user->
         });
 
         // Handle "View all notifications" button click
-        document.getElementById('view-all-notifications')?.addEventListener('click', function() {
+        document.getElementById('view-all-notifications')?.addEventListener('click', function () {
             // Implementation for viewing all notifications
             // Could redirect to a notifications page or open a modal
             console.log('View all notifications clicked');
@@ -485,7 +485,7 @@ $profileImage = $user && $user->profile_image ? asset('uploads/users/' . $user->
 
         // Optional: Add click functionality to individual notifications
         document.querySelectorAll('.notification-item').forEach(item => {
-            item.addEventListener('click', function() {
+            item.addEventListener('click', function () {
                 // Handle notification click (e.g., navigate to related content)
                 console.log('Clicked notification:', this.dataset.id);
 
@@ -501,19 +501,19 @@ $profileImage = $user && $user->profile_image ? asset('uploads/users/' . $user->
         const confirmClearNotificationsButton = document.getElementById('confirmClearNotifications');
 
         if (clearNotificationsButton) {
-            clearNotificationsButton.addEventListener('click', function() {
+            clearNotificationsButton.addEventListener('click', function () {
                 clearNotificationsModal.classList.remove('hidden');
             });
         }
 
         if (cancelClearNotificationsButton) {
-            cancelClearNotificationsButton.addEventListener('click', function() {
+            cancelClearNotificationsButton.addEventListener('click', function () {
                 clearNotificationsModal.classList.add('hidden');
             });
         }
 
         if (confirmClearNotificationsButton) {
-            confirmClearNotificationsButton.addEventListener('click', function() {
+            confirmClearNotificationsButton.addEventListener('click', function () {
                 // Show loading state
                 this.disabled = true;
                 const originalText = this.innerHTML;
@@ -526,13 +526,13 @@ $profileImage = $user && $user->profile_image ? asset('uploads/users/' . $user->
                 `;
 
                 fetch('/notifications/clear-all', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')
-                                .getAttribute('content')
-                        }
-                    })
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')
+                            .getAttribute('content')
+                    }
+                })
                     .then(response => {
                         if (!response.ok) {
                             throw new Error('Network response was not ok');
@@ -599,7 +599,7 @@ $profileImage = $user && $user->profile_image ? asset('uploads/users/' . $user->
         }
 
         // Close modal when clicking outside
-        window.addEventListener('click', function(event) {
+        window.addEventListener('click', function (event) {
             if (event.target === clearNotificationsModal) {
                 clearNotificationsModal.classList.add('hidden');
             }
@@ -608,7 +608,7 @@ $profileImage = $user && $user->profile_image ? asset('uploads/users/' . $user->
         // Close success modal
         const successModalCloseButton = document.getElementById('successModalClose');
         if (successModalCloseButton) {
-            successModalCloseButton.addEventListener('click', function() {
+            successModalCloseButton.addEventListener('click', function () {
                 const successModal = document.getElementById('successModal');
                 successModal.classList.add('hidden');
             });
@@ -617,13 +617,13 @@ $profileImage = $user && $user->profile_image ? asset('uploads/users/' . $user->
         // Add success modal close button handler
         const successModalClose = document.getElementById('successModalClose');
         if (successModalClose) {
-            successModalClose.addEventListener('click', function() {
+            successModalClose.addEventListener('click', function () {
                 document.getElementById('successModal').classList.add('hidden');
             });
         }
 
         // Close success modal when clicking outside
-        window.addEventListener('click', function(event) {
+        window.addEventListener('click', function (event) {
             const successModal = document.getElementById('successModal');
             if (event.target === successModal) {
                 successModal.classList.add('hidden');
