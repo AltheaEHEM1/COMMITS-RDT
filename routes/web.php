@@ -103,6 +103,7 @@ Route::middleware(['auth'])->group(function () {
         Route::prefix('medicines')->group(function () {
             Route::controller(MedicineController::class)->group(function () {
                 Route::get('/', 'index')->name('inventory-medicines');
+                Route::get('/{medicine}', 'show')->name('medicines.show');
                 Route::post('/', 'store')->name('add_medicine_store');
                 Route::put('/{medicine}', 'update')->name('update_medicine');
                 Route::put('/{medicine}/deduct', 'deduct')->name('deduct_medicine');
@@ -138,6 +139,9 @@ Route::middleware(['auth'])->group(function () {
         // Add this route in an appropriate section of your web.php file
         Route::get('/export/{type}', [App\Http\Controllers\InventoryExportController::class, 'export'])->name('inventory.export');
     });
+
+    //Fuzzy Search Route
+    Route::post('/patients/check-similar', [PatientController::class, 'checkSimilar'])->name('patients.check-similar');
 
     // Document Routes
     Route::prefix('documents')->group(function () {

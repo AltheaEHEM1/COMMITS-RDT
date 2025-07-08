@@ -55,7 +55,7 @@ class PatientHistoryController extends Controller
 
                 // Apply filtering to get only the records for the specific week in the selected month
                 $query->whereRaw("
-                    WEEK(created_at, 1) - WEEK(DATE_SUB(created, INTERVAL DAYOFMONTH(created_at)-1 DAY), 1) + 1 = ?
+                    WEEK(created_at, 1) - WEEK(DATE_SUB(created_at, INTERVAL DAYOFMONTH(created_at)-1 DAY), 1) + 1 = ?
                 ", [$weekFilter]);
             }
         }

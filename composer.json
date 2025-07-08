@@ -7,9 +7,12 @@
     "license": "MIT",
     "require": {
         "php": "^8.2",
+        "http-interop/http-factory-guzzle": "^1.2",
         "laravel/framework": "^11.31",
+        "laravel/scout": "^10.15",
         "laravel/tinker": "^2.9",
-        "maatwebsite/excel": "^3.1",
+        "maatwebsite/excel": "^1.1",
+        "meilisearch/meilisearch-php": "^1.15",
         "spatie/laravel-activitylog": "^4.10"
     },
     "require-dev": {

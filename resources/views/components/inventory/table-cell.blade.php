@@ -1,1 +1,1 @@
-<td class="px-2 py-3"> {{ $slot }}</td>
+<td class="px-4 py-3 text-center align-middle"> {{ $slot }}</td>

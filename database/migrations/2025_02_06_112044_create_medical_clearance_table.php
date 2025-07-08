@@ -20,9 +20,9 @@ return new class extends Migration
             $table->string('excuse');
             $table->string('position');
             $table->string('license_number');
-            $table->string('control_number');
-            $table->string('revision');
-            $table->date('date_issued'); // Date the contruct was issued
+            $table->string('control_number')->nullable();
+            $table->string('revision')->nullable();
+            $table->date('date_issued')->nullable();
             $table->timestamps();
             $table->string('doctorName');
             $table->string('xray_result')->nullable();

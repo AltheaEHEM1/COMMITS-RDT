@@ -18,6 +18,14 @@
                 </div>
 
                 <div class="flex mb-4 space-x-2">
+                    <!-- Filter Button -->
+                    <button data-modal-target="filter-modal" data-modal-toggle="filter-modal" class="inline-flex items-center px-4 py-2 text-xs font-semibold tracking-widest text-gray-700 uppercase transition bg-white border border-gray-300 rounded-md hover:bg-gray-50 active:bg-gray-100 focus:outline-none focus:border-gray-400 focus:ring focus:ring-gray-200 disabled:opacity-25" type="button">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
+                        </svg>
+                        Filter
+                    </button>
+
                     <!-- Download Excel Button -->
                     @php
                         $exportType = 'medicines'; // Default
@@ -42,6 +50,128 @@
                             <p>Add</p>
                         </div>
                     </button>
+                </div>
+            </div>
+
+            {{-- Filter Modal --}}
+            <div id="filter-modal" tabindex="-1" aria-hidden="true" class="fixed top-0 left-0 right-0 z-50 hidden w-full p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] max-h-full">
+                <div class="relative w-full max-w-2xl max-h-full">
+                    <!-- Modal content -->
+                    <div class="relative bg-white rounded-lg shadow">
+                        <!-- Modal header -->
+                        <div class="flex items-start justify-between p-4 border-b rounded-t">
+                            <h3 class="text-xl font-semibold text-gray-900">
+                                Filter Options
+                            </h3>
+                            <button type="button" class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ml-auto inline-flex justify-center items-center" data-modal-hide="filter-modal">
+                                <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
+                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
+                                </svg>
+                                <span class="sr-only">Close modal</span>
+                            </button>
+                        </div>
+                        <!-- Modal body -->
+                        <div class="p-6 space-y-6">
+                            @php
+                                $filters = $filters ?? [];
+                                $hasActiveFilters = !empty(array_filter($filters));
+                            @endphp
+                            
+                            @if($hasActiveFilters)
+                                <div class="p-3 mb-4 bg-blue-50 border border-blue-200 rounded-lg">
+                                    <div class="flex items-center justify-between mb-2">
+                                        <span class="text-sm font-medium text-blue-800">Active Filters:</span>
+                                    </div>
+                                    <div class="flex flex-wrap gap-2">
+                                        @foreach($filters as $key => $value)
+                                            @if($value)
+                                                <span class="inline-flex items-center px-2 py-1 text-xs font-medium text-blue-700 bg-blue-100 rounded-full">
+                                                    {{ ucfirst(str_replace('_', ' ', $key)) }}: {{ $value }}
+                                                </span>
+                                            @endif
+                                        @endforeach
+                                    </div>
+                                </div>
+                            @endif
+
+                            <form id="filter-form" method="GET" action="{{ request()->url() }}">
+                                <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
+                                    <!-- Status Filter -->
+                                    <div>
+                                        <label for="status" class="block mb-2 text-sm font-medium text-gray-900">Status</label>
+                                        <select id="status" name="status" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
+                                            <option value="">All Status</option>
+                                            <option value="Full" {{ ($filters['status'] ?? '') === 'Full' ? 'selected' : '' }}>Full</option>
+                                            <option value="In Stock" {{ ($filters['status'] ?? '') === 'In Stock' ? 'selected' : '' }}>In Stock</option>
+                                            <option value="Low Stock" {{ ($filters['status'] ?? '') === 'Low Stock' ? 'selected' : '' }}>Low Stock</option>
+                                            <option value="Out of Stock" {{ ($filters['status'] ?? '') === 'Out of Stock' ? 'selected' : '' }}>Out of Stock</option>
+                                            <option value="Returned" {{ ($filters['status'] ?? '') === 'Returned' ? 'selected' : '' }}>Returned</option>
+                                        </select>
+                                    </div>
+
+                                    <!-- Medicine Name Search -->
+                                    <div>
+                                        <label for="medicine_name" class="block mb-2 text-sm font-medium text-gray-900">Medicine Name</label>
+                                        <input type="text" id="medicine_name" name="medicine_name" value="{{ $filters['medicine_name'] ?? '' }}" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" placeholder="Search medicine name...">
+                                    </div>
+
+                                    <!-- Stock Number Search -->
+                                    <div>
+                                        <label for="stock_number" class="block mb-2 text-sm font-medium text-gray-900">Stock Number</label>
+                                        <input type="text" id="stock_number" name="stock_number" value="{{ $filters['stock_number'] ?? '' }}" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" placeholder="Search stock number...">
+                                    </div>
+
+                                    <!-- MOR Filter -->
+                                    <div>
+                                        <label for="user_id" class="block mb-2 text-sm font-medium text-gray-900">Memorandum Receipt (MOR)</label>
+                                        <select id="user_id" name="user_id" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
+                                            <option value="">All Users</option>
+                                            @if(isset($users))
+                                                @foreach($users as $user)
+                                                    <option value="{{ $user->id }}" {{ ($filters['user_id'] ?? '') == $user->id ? 'selected' : '' }}>{{ $user->full_name }}</option>
+                                                @endforeach
+                                            @endif
+                                        </select>
+                                    </div>
+
+                                    <!-- Date Received Range -->
+                                    <div>
+                                        <label for="date_received_from" class="block mb-2 text-sm font-medium text-gray-900">Date Received From</label>
+                                        <input type="date" id="date_received_from" name="date_received_from" value="{{ $filters['date_received_from'] ?? '' }}" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
+                                    </div>
+
+                                    <div>
+                                        <label for="date_received_to" class="block mb-2 text-sm font-medium text-gray-900">Date Received To</label>
+                                        <input type="date" id="date_received_to" name="date_received_to" value="{{ $filters['date_received_to'] ?? '' }}" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
+                                    </div>
+
+                                    <!-- Expiration Date Range -->
+                                    <div>
+                                        <label for="expiration_from" class="block mb-2 text-sm font-medium text-gray-900">Expiration From</label>
+                                        <input type="date" id="expiration_from" name="expiration_from" value="{{ $filters['expiration_from'] ?? '' }}" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
+                                    </div>
+
+                                    <div>
+                                        <label for="expiration_to" class="block mb-2 text-sm font-medium text-gray-900">Expiration To</label>
+                                        <input type="date" id="expiration_to" name="expiration_to" value="{{ $filters['expiration_to'] ?? '' }}" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        <!-- Modal footer -->
+                        <div class="flex justify-center items-center p-6 space-x-2 border-t border-gray-200 rounded-b">
+                            <button type="button" 
+                                onclick="console.log('Apply clicked'); document.getElementById('filter-form').submit();" 
+                                class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center">
+                                Apply Filters
+                            </button>
+                            <button type="button" 
+                                onclick="console.log('Clear clicked'); var form = document.getElementById('filter-form'); var inputs = form.querySelectorAll('input, select'); inputs.forEach(input => { if (input.tagName === 'SELECT') { input.selectedIndex = 0; } else { input.value = ''; } });" 
+                                class="text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-900 focus:z-10">
+                                Clear All
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -209,35 +339,81 @@
             </style>
 
             <script>
-                function closeModal() {
-                    const modal = document.getElementById('message-modal');
-                    const modalContent = modal.querySelector('div');
+                // Simple direct event handlers
+                document.addEventListener('DOMContentLoaded', function() {
+                    console.log('DOM loaded - setting up filter handlers');
                     
-                    // Apply closing animations with classes
-                    modal.classList.add('modal-closing');
-                    modalContent.classList.add('modal-content-closing');
+                    // Get form and buttons
+                    const filterForm = document.getElementById('filter-form');
                     
-                    // Remove the modal after animation completes
-                    setTimeout(() => {
-                        modal.style.display = 'none';
-                    }, 300);
-                }
+                    console.log('Form found:', !!filterForm);
+                    
+                    // Apply filters function
+                    function handleApplyFilters() {
+                        console.log('Apply filters triggered');
+                        if (filterForm) {
+                            console.log('Submitting form...');
+                            filterForm.submit();
+                        } else {
+                            console.error('Form not found!');
+                        }
+                    }
+                    
+                    // Clear filters function
+                    function handleClearFilters() {
+                        console.log('Clear filters triggered');
+                        if (filterForm) {
+                            const inputs = filterForm.querySelectorAll('input, select');
+                            inputs.forEach(input => {
+                                if (input.tagName === 'SELECT') {
+                                    input.selectedIndex = 0;
+                                } else {
+                                    input.value = '';
+                                }
+                            });
+                            console.log('Filters cleared');
+                        }
+                    }
+                    
+                    // Clear and submit function
+                    function handleClearAndSubmit() {
+                        console.log('Clear and submit triggered');
+                        handleClearFilters();
+                        setTimeout(() => {
+                            handleApplyFilters();
+                        }, 100);
+                    }
+                    
+                    // Message modal close function
+                    window.closeModal = function() {
+                        const modal = document.getElementById('message-modal');
+                        if (modal) {
+                            const modalContent = modal.querySelector('div');
+                            
+                            // Apply closing animations with classes
+                            modal.classList.add('modal-closing');
+                            modalContent.classList.add('modal-content-closing');
+                            
+                            // Remove the modal after animation completes
+                            setTimeout(() => {
+                                modal.style.display = 'none';
+                            }, 300);
+                        }
+                    };
+                    
+                    // Initialize message modal if exists
+                    const messageModal = document.getElementById('message-modal');
+                    if (messageModal) {
+                        messageModal.style.display = 'flex';
+                    }
+                });
 
-                // Auto close after 5 seconds
+                // Auto close message modal after 5 seconds
                 setTimeout(() => {
                     if (document.getElementById('message-modal')) {
                         closeModal();
                     }
                 }, 5000);
-                
-                // Initialize with proper animation state
-                document.addEventListener('DOMContentLoaded', function() {
-                    const modal = document.getElementById('message-modal');
-                    if (modal) {
-                        // Ensure modal is visible and animated correctly
-                        modal.style.display = 'flex';
-                    }
-                });
             </script>
         @endif
     </div>

@@ -182,7 +182,7 @@
                 </div>
                 @endif
 
-            @if(!$allTypesCreated)
+            @if($allTypesCreated === false)
             <div class="flex justify-end space-x-4 mt-6">
                     <button onclick="openCreateForm()" type="button"
                         class="bg-[#3CAA38] hover:bg-[#2B8E2F] text-white font-medium py-2 px-4 rounded-md">
@@ -243,7 +243,7 @@
                             name="date_issued" required>
                         <span id="dateError" class="text-red-500 text-sm hidden">Date is required.</span>
                     </div>
-                    
+
                     <div class="flex justify-end space-x-4 mt-6">
                         <button onclick="goBack()" type="button"
                             class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-medium py-2 px-4 rounded-md">
@@ -254,7 +254,7 @@
                                 Submit
                         </button>
                     </div>
-                </form>  
+                </form>
             </div>
         </div>
     </div>
@@ -294,7 +294,7 @@
                                                         class="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                                                         name="date_issued" required>
                                                     <span id="dateError" class="text-red-500 text-sm hidden">Date is required.</span>
-                                            </div>  
+                                            </div>
 
 
                                             <div class="flex justify-end space-x-4 mt-6">
@@ -333,7 +333,7 @@
         function closeCreateModal() {
             let modal = document.getElementById("createFormModal");
             let modalContent = modal.querySelector("div.relative");
-            
+
             modal.classList.add("hidden");
             modalContent.classList.remove("scale-100");
             modalContent.classList.add("scale-95");

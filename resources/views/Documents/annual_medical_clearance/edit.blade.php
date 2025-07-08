@@ -4,6 +4,48 @@
 
 @section('content')
 
+<style>
+    @page {
+        margin: 0; /* Remove default print page margin */
+    }
+    @media print {
+      .container {
+        padding-top: 0 !important;
+        padding-bottom: 0 !important;
+        margin-top: 0 !important;
+        margin-bottom: 0 !important;
+      }
+
+      .md\:py-20 {
+        padding-top: 0 !important;
+        padding-bottom: 0 !important;
+      }
+      * {
+            box-sizing: border-box;
+    }
+
+    .page {
+        margin-top: 0 !important;
+        padding-top: 0 !important;
+        position: relative !important;
+        top: -150px !important;
+        padding-right: 10px !important;
+      }
+
+      body, html {
+        margin: 0 !important;
+        padding: 0 !important;
+        height: 100% !important;
+        overflow: hidden !important;
+      }
+      body {
+        font-family: Arial;
+        font-size: 13px;
+    }
+
+    }
+  </style>
+
     <!-- Buttons (Optional for print view, you can hide them when printing) -->
     <div class="flex space-x-10 justify-between mb-5">
         <button class="px-4 py-2 bg-gray-300 text-black rounded hover:bg-gray-400 flex items-center space-x-2"
@@ -68,7 +110,7 @@
                     <span id="letterDate" class="underline">
                         {{ \Carbon\Carbon::parse($associatedDocument->date)->format('F j, Y') }} </span>
                 </div>
-                <div class="space-y-4 font-Arial mb-5">
+                <div class="space-y-4 font-Arial mb-0">
                     <p>To Whom It May Concern:</p>
                     <p class="indent-8">
                         This is to clarify that <span id="name-placeholder"
@@ -128,7 +170,7 @@
                     </span>
                 </div>
 
-                <div class="space-y-4 font-Arial mb-5">
+                <div class="space-y-4 font-Arial mb-0">
                     <p>To Whom It May Concern:</p>
                     <p class="indent-8">
                         This is to clarify that <span id="name-placeholder"

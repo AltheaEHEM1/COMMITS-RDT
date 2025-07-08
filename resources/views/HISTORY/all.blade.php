@@ -65,7 +65,7 @@
                     <!-- Month Dropdown -->
                     <div class="relative inline-block text-left">
                         <button onclick="toggleDropdown('month-dropdown')"
-                            class="flex items-center px-4 py-2 text-white bg-yellow-400 rounded-md hover:bg-yellow-500">
+                            class="flex items-center px-4 py-2 text-blue-500 bg-blue-100 hover:bg-blue-200 rounded-lg transition-all duration-200">
                             <p class="px-2">{{ $selectedMonth ?? 'All Month' }}</p>
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="white"
                                 viewBox="0 0 24 24">
@@ -93,7 +93,7 @@
                     <!-- Week Dropdown -->
                     <div class="relative inline-block text-left">
                         <button onclick="toggleDropdown('week-dropdown')"
-                            class="flex items-center px-4 py-2 text-white bg-red-900 rounded-md hover:bg-red-1000">
+                            class="flex items-center px-4 py-2 text-white bg-blue-500 hover:bg-blue-600 rounded-lg transition-all duration-200 transform active:translate-y-0">
                             <p class="px-2"> {{ $selectedWeek ? 'Week ' . $selectedWeek : 'All Week' }}</p>
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="white"
                                 viewBox="0 0 24 24">
@@ -134,16 +134,26 @@
                 <p class="text-center text-gray-600">No records found.</p>
             @else
                 @foreach ($groupedRecords as $date => $dateRecords)
-                    <div class="p-4 mb-6 bg-white border border-gray-200 rounded shadow-lg">
+                <div class="w-full flex justify-center pt-10">
+                   <div class="w-full max-w-full p-6 bg-white border border-gray-200 rounded-lg shadow-sm">
                         <h2 class="mb-2 text-lg font-semibold text-gray-700">{{ $date }}</h2>
                         <ul class="space-y-2">
                             @foreach ($dateRecords as $record)
                                 <li class="flex items-center space-x-4 history-item">
-                                    <span class="text-sm font-normal text-gray-700 underline">{{ $record->fullname }}</span>
+                                    <span class="text-sm text-gray-700">
+                                        {{ $record->created_at->format('h:i A') }}
+                                    </span>
+                                    <span> | </span>
+                                        <svg class="w-6 h-6 text-blue-600" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
+                                            <path fill-rule="evenodd" d="M12 4a4 4 0 1 0 0 8 4 4 0 0 0 0-8Zm-2 9a4 4 0 0 0-4 4v1a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2v-1a4 4 0 0 0-4-4h-4Z" clip-rule="evenodd"/>
+                                        </svg>
+                                    <span class="text-md font-normal text-gray-700">{{ $record->fullname }} </span>
+                                    
                                 </li>
                             @endforeach
                         </ul>
                     </div>
+                
                 @endforeach
             @endif
 

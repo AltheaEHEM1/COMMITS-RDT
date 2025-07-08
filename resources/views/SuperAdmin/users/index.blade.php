@@ -3,28 +3,27 @@
 @section('title', 'User Management')
 
 @section('content')
-    <div class="mx-auto">
+    <div class="mx-auto px-4 sm:px-6 lg:px-8">
         <x-page-title value="User Management" class="mb-0" />
         <p class="text-sm text-gray-500 mb-7">A list of all registered users to this system.</p>
 
-
-        <div class="h-full py-5 mb-10 bg-white rounded-lg shadow-sm px-7 ">
-            <div class="flex items-center justify-between">
+        <div class="h-full py-4 sm:py-5 mb-10 bg-white rounded-lg shadow-sm px-4 sm:px-7">
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
                 <input type="text" placeholder="Search for users..."
-                    class="w-64 h-10 p-3 text-sm text-gray-500 bg-gray-100 border border-gray-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-500"
-                    id="user_search" autocomplete="off" onkeyup="" />
+                    class="w-full sm:w-64 h-10 p-3 text-sm text-gray-500 bg-gray-100 border border-gray-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-500"
+                    id="user_search" autocomplete="off" />
 
                 <!-- Add Button -->
                 <button type="button" onclick="openAddModal()"
-                    class="inline-flex items-center gap-2 px-6 py-2.5 text-white bg-blue-500 hover:bg-blue-600 rounded-lg shadow-md hover:shadow-lg active:shadow-sm transform focus:outline-none focus:ring-4 focus:ring-blue-300 active:translate-y-0">
+                class="inline-flex justify-center items-center whitespace-nowrap gap-2 px-6 py-2.5 text-white bg-blue-500 hover:bg-blue-600 rounded-lg shadow-md hover:shadow-lg active:shadow-sm transform focus:outline-none focus:ring-4 focus:ring-blue-300 active:translate-y-0">
                     <span class="font-medium">+ Add user</span>
                 </button>
             </div>
 
             {{-- USERS TABLE --}}
-            <div class="flex items-start justify-center w-full rounded-lg my-7">
-                <div class="w-full h-auto">
-                    <table id="user_table" class="w-full rounded-lg shadow table-auto user_table">
+            <div class="w-full overflow-x-auto rounded-lg my-7">
+                <div class="min-w-full">
+                    <table id="user_table" class="min-w-full rounded-lg shadow table-auto user_table">
                         <thead class="bg-gray-100 border-b-2 rounded-lg">
                             <tr>
                                 <th class="p-3 text-sm font-semibold tracking-wide text-center min-w-max">No.</th>
@@ -41,7 +40,7 @@
                                 <th class="p-3 text-sm font-semibold tracking-wide text-center min-w-max"></th>
                             </tr>
                         </thead>
-                        <tbody class="text-sm text-center" id="user_table_body">
+                        <tbody class="text-xs sm:text-sm text-center" id="user_table_body">
                             @foreach ($users as $user)
                                 <tr class="border-b user_row hover:bg-gray-50">
                                     <td class="px-5 py-3">
@@ -53,12 +52,12 @@
                                     <td class="px-5 py-3">{{ ucfirst($user->role) }}</td>
                                     <td class="px-5 py-3">
                                         <span
-                                            class="text-xs {{ $user->is_activated ? 'text-green-500' : 'text-red-500' }} rounded-md px-2 py-1"
+                                            class="text-xs sm:text-sm {{ $user->is_activated ? 'text-green-500' : 'text-red-500' }} rounded-md px-2 py-1"
                                             style="background-color: {{ $user->is_activated ? '#DCF8F0' : '#FFDFDF' }};">
                                             {{ $user->is_activated ? 'Yes' : 'No' }}
                                         </span>
                                     </td>
-                                    <td class="px-5 py-3">
+                                    <td class="px-2 sm:px-5 py-2 sm:py-3">
                                         @php
                                             $statusColors = match ($user->status) {
                                                 'active' => 'bg-green-100 text-green-500',
@@ -69,30 +68,30 @@
                                             };
                                         @endphp
 
-                                        <span class="text-xs rounded-md px-2 py-1 font-medium {{ $statusColors }}">
+                                        <span class="text-xs sm:text-sm rounded-md px-2 py-1 font-medium {{ $statusColors }}">
                                             {{ ucfirst($user->status) }}
                                         </span>
                                     </td>
-                                    <td class="flex items-center justify-end px-5 py-3 space-x-2">
+                                    <td class="flex flex-col sm:flex-row items-center justify-end px-2 sm:px-5 py-2 sm:py-3 space-y-2 sm:space-y-0 sm:space-x-2">
                                         <button onclick="openEditModal(this)" data-id="{{ $user->id }}"
                                             data-firstname="{{ $user->first_name }}"
                                             data-lastname="{{ $user->last_name }}" data-email="{{ $user->email }}"
                                             data-role="{{ $user->role }}" data-status="{{ $user->status }}"
-                                            class="px-3 py-2 text-white bg-yellow-500 rounded-md hover:bg-yellow-600">
-                                            <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none"
+                                            class="w-full sm:w-auto px-3 py-2 text-white bg-yellow-500 rounded-md hover:bg-yellow-600">
+                                            <svg class="w-5 h-5 sm:w-6 sm:h-6 mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none"
                                                 viewBox="0 0 24 24" stroke="currentColor">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                     d="m14.304 4.844 2.852 2.852M7 7H4a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h11a1 1 0 0 0 1-1v-4.5m2.409-9.91a2.017 2.017 0 0 1 0 2.853l-6.844 6.844L8 14l.713-3.565 6.844-6.844a2.015 2.015 0 0 1 2.852 0Z" />
                                             </svg>
                                         </button>
-                                        <form action="{{ route('user.destroy') }}" method="POST">
+                                        <form action="{{ route('user.destroy') }}" method="POST" class="w-full sm:w-auto">
                                             @csrf
                                             <input type="hidden" name="delete_user_id" id="id"
                                                 value="{{ $user->id }}" name="id">
                                             <button type="button"
                                                 onclick="confirmDelete('{{ $user->first_name }}', this.form)"
-                                                class="px-3 py-2 text-white bg-red-500 rounded-md hover:bg-red-600">
-                                                <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="currentColor"
+                                                class="w-full px-3 py-2 text-white bg-red-500 rounded-md hover:bg-red-600">
+                                                <svg class="w-5 h-5 sm:w-6 sm:h-6 mx-auto" xmlns="http://www.w3.org/2000/svg" fill="currentColor"
                                                     viewBox="0 0 24 24">
                                                     <path fill-rule="evenodd"
                                                         d="M8.586 2.586A2 2 0 0 1 10 2h4a2 2 0 0 1 2 2v2h3a1 1 0 1 1 0 2v12a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V8a1 1 0 0 1 0-2h3V4a2 2 0 0 1 .586-1.414ZM10 6h4V4h-4v2Zm1 4a1 1 0 1 0-2 0v8a1 1 0 1 0 2 0v-8Zm4 0a1 1 0 1 0-2 0v8a1 1 0 1 0 2 0v-8Z"
@@ -101,7 +100,6 @@
                                             </button>
                                         </form>
                                     </td>
-
                                 </tr>
                             @endforeach
                         </tbody>
@@ -186,20 +184,20 @@
             // Get the modal element
             const modal = document.getElementById('editFormModal');
             const modalContent = modal.querySelector("div.relative");
-            
+
             // Add a debug log to check if the function is being called
             console.log('Closing edit modal');
-            
+
             try {
                 // Apply closing animation
                 modal.classList.add("opacity-0");
                 modalContent.classList.remove("scale-100");
                 modalContent.classList.add("scale-95");
-                
+
                 // Hide modal after animation completes
                 setTimeout(() => {
                     modal.classList.add("hidden");
-                    
+
                     // clear form values (optional)
                     document.getElementById('user_id').value = "";
                     document.getElementById('edit_first_name').value = "";
@@ -207,7 +205,7 @@
                     document.getElementById('edit_email').value = "";
                     document.getElementById('edit_role').value = "";
                     document.getElementById('edit_status').value = "";
-                    
+
                     console.log('Modal hidden');
                 }, 300);
             } catch (error) {

@@ -11,5 +11,7 @@ class LogSuccessfulLogout
     {
         Activity::causedBy($event->user)
             ->log('logged out');
+       
     }
+    
 }

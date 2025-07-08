@@ -24,6 +24,16 @@ class Boxes extends Model
     ];
 
     /**
+     * The attributes that should be cast.
+     *
+     * @var array<string, string>
+     */
+    protected $casts = [
+        'date_received' => 'datetime',
+        'isReturned' => 'boolean',
+    ];
+
+    /**
      * Get the medicine associated with the box.
      */
     public function medicine()

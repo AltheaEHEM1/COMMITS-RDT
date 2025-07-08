@@ -23,9 +23,9 @@ return new class extends Migration
             $table->string('cause'); // Reason for the excuse
             $table->string('doctorName');
             $table->string('document_type');
-            $table->string('control_number');
-            $table->string('revision');
-            $table->date('date_issued'); // Date the contruct was issued
+            $table->string('control_number')->nullable();
+            $table->string('revision')->nullable();
+            $table->date('date_issued')->nullable();
             $table->timestamps(); // created_at and updated_at columns
             $table->softDeletes();
             $table->foreign('document_id')->references('id')->on('documents')->onDelete('cascade');

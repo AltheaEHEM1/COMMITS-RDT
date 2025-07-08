@@ -3,6 +3,51 @@
 @section('title', 'Annual Medical Clearance')
 
 @section('content')
+
+<style>
+    @page {
+            margin: 0; /* Remove default print page margin */
+        }
+        @media print {
+        .container {
+            padding-top: 0 !important;
+            padding-bottom: 0 !important;
+            margin-top: 0 !important;
+            margin-bottom: 0 !important;
+        }
+        .container2.mt-0 {
+                margin-top: -170px !important;
+                padding-top: 0 !important;
+        }
+        .md\:py-20 {
+            padding-top: 0 !important;
+            padding-bottom: 0 !important;
+        }
+        * {
+                box-sizing: border-box;
+        }
+
+        .page {
+            margin-top: 0 !important;
+            padding-top: 0 !important;
+            position: relative !important;
+            top: -150px !important;
+            padding-right: 10px !important;
+        }
+
+        body, html {
+            margin: 0 !important;
+            padding: 0 !important;
+            height: 100% !important;
+            overflow: hidden !important;
+        }
+        body {
+            font-family: Arial;
+            font-size: 13px;
+        }
+
+    }
+  </style>
     <!-- Buttons (Optional for print view, you can hide them when printing) -->
     <div class="flex space-x-10 justify-between mb-5">
         <button class="px-4 py-2 bg-gray-300 text-black rounded hover:bg-gray-400 flex items-center space-x-2"
@@ -38,7 +83,7 @@
     <div class="container mx-auto bg-white md:py-10 md:px-10 w-[90%] md:w-[70%] lg:w-[70%]">
         <div class="page">
             <!-- Document 2 (duplicate the structure as needed) -->
-            <div class="container">
+            <div class="container mb-0">
                 @foreach ($controlNumber->where('document_type', $documentType) as $control)
                     <div class="flex flex-col items-end text-xs leading-tight text-gray-800">
                         <p>{{ $control->control_number ?? '__________' }}</p>
@@ -64,11 +109,11 @@
 
                 </div>
 
-                <div class="text-right my-10 mb-8 font-Arial">
+                <div class="text-right my-5 mb-0 font-Arial">
                     <span> <span id="date-placeholder" class="underline-offset-4">Date ___________________</span>
                 </div>
 
-                <div class="space-y-4 font-Arial mb-5">
+                <div class="space-y-4 font-Arial mb-0">
                     <p>To Whom It May Concern:</p>
                     <p class="indent-8">
                         This is to clarify that <span id="name-placeholder" class="underline-offset-4">
@@ -84,7 +129,7 @@
 
                 </div>
                 <!-- signature -->
-                <div class="flex justify-end p-10">
+                <div class="flex justify-end py-5">
                     <div class="w-11/30 text-left">
                         <p><span id="physician-name-placeholder" class="underline-underoffset-4">____________________</span>
                             M.D.</p>
@@ -98,7 +143,7 @@
 
 
         <!-- Document 2 (duplicate the structure as needed) -->
-        <div class="container2 mt-5">
+        <div class="container2 mt-0">
                 @foreach ($controlNumber->where('document_type', $documentType) as $control)
                     <div class="flex flex-col items-end text-xs leading-tight text-gray-800">
                         <p>{{ $control->control_number ?? '__________' }}</p>
@@ -124,7 +169,7 @@
 
             </div>
 
-            <div class="text-right my-10 mb-0 font-Arial">
+            <div class="text-right my-5 mb-0 font-Arial">
                 <span><span id="date-placeholder2" class="underline-offset-4">Date ____________________</span>
             </div>
 
@@ -145,7 +190,7 @@
 
             </div>
 
-            <div class="flex justify-end p-10 ">
+            <div class="flex justify-end p-0 ">
                 <div class="w-11/30 text-left">
                     <p><span id="x-ray-placeholder2" class="underline-offset-4">____________________</span> M.D.</p>
                     <p>Lic No. <span id="lic_no-placeholder2" class="underline-underoffset-4">

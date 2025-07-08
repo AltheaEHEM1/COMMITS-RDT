@@ -3,6 +3,79 @@
 @section('title', 'Edit DMDC Consent Form')
 
 @section('content')
+<style>
+    /* Adjusting for print */
+    .underlined {
+        text-decoration: underline;
+        text-decoration-color: #000;
+        text-decoration-style: solid;
+    }
+
+
+    @media print {
+.header-print img {
+    margin-left: -20px; /* Adjust this value to decrease the left margin */
+}
+
+.header-print {
+    padding-left: 0;
+    /* Remove or reduce left padding if needed */
+}
+
+.header-print p {
+    font-size: 12px;
+    line-height: 1.3;
+    /* Adjust line spacing for paragraphs */
+}
+
+.header-print h2 {
+    font-size: 14px;
+    line-height: 1.2;
+}
+
+@page {
+    margin: 0;
+}
+
+.page {
+    margin-top: -120px;
+    padding-top: 0;
+    position: relative;
+    top: 0px;
+    padding-right: 10px;
+}
+
+body {
+    font-family: Arial;
+    font-size: 12px;
+}
+
+body * {
+    visibility: hidden;
+}
+
+.container,
+.container * {
+    visibility: visible;
+}
+
+.page {
+    display: block;
+    height: 100%;
+}
+
+.flex-container {
+    flex-direction: column;
+}
+body, html {
+        margin: 0 !important;
+        padding: 0 !important;
+        height: 100% !important;
+        overflow: hidden !important;
+      }
+}
+
+</style>
 
     <!-- Buttons (Optional for print view, you can hide them when printing) -->
     <div class="flex space-x-10 justify-between mb-5">

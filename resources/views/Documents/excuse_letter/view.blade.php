@@ -14,44 +14,39 @@
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        /* Adjusting for print */
-
-        /* Print-specific styles */
-        @media print {
-            .print\\:hidden {
-                display: none !important;
-            }
-
-            @page {
-                /* size: A4; */
-                margin: 0;
-
-            }
-
-            .container {
-                width: 100% !important;
-                margin: 10 auto !important;
-                padding: 10;
-            }
-
-            .page {
-                margin-top: 10;
-                /* Move the form up */
-                position: relative;
-                padding-top: 40px;
-                /* padding-left: 10px; */
-                padding-right: 10px;
-                /* Adjust to move the form higher */
-
-            }
-
-            .container,
-            .container * {
-                visibility: visible;
-            }
-
+<style>
+    /* Adjusting for print */
+    @media print {
+        @page {
+            size: A4; /* O palitan ng 'Letter' kung Letter size ang gamit */
+            margin: 0; /* Tanggalin ang margin */
         }
-    </style>
+
+        body, html {
+            margin: 0 !important;
+            padding: 0 !important;
+            height: 100% !important;
+            overflow: hidden !important;
+        }
+
+        .page {
+            margin: 0;
+            padding: 0;
+            position: relative;
+            top: -130px; /* Alisin ang offset */
+        }
+            body {
+            font-family: Arial;
+            font-size: 13px;
+        }
+        .container {
+        padding-top: 0 !important;
+        padding-bottom: 0 !important;
+        margin-top: 0 !important;
+        margin-bottom: 0 !important;
+      }
+    }
+</style>
 </head>
 
 <body class="bg-gray-100">

@@ -3,6 +3,38 @@
 @section('title', 'Medical Clearance')
 
 @section('content')
+<style>
+    @media print {
+        @page {
+            size: A4; /* O palitan ng 'Letter' kung Letter size ang gamit */
+            margin: 0; /* Tanggalin ang margin */
+        }
+
+        body, html {
+            margin: 0 !important;
+            padding: 0 !important;
+            height: 100% !important;
+            overflow: hidden !important;
+        }
+
+        .page {
+            margin: 0; /* Siguraduhing walang margin ang page */
+            padding: 0; /* Siguraduhing walang padding ang page */
+            position: relative;
+            top: -130px; /* Alisin ang offset */
+        }
+            body {
+            font-family: Arial;
+            font-size: 13px;
+        }
+        .container {
+        padding-top: 0 !important;
+        padding-bottom: 0 !important;
+        margin-top: 0 !important;
+        margin-bottom: 0 !important;
+      }
+    }
+</style>
     <!-- Buttons (Optional for print view, you can hide them when printing) -->
     <div class="flex space-x-10 justify-between mb-5">
         <button class="px-4 py-2 bg-gray-300 text-black rounded hover:bg-gray-400 flex items-center space-x-2"
@@ -35,10 +67,12 @@
         </div>
     </div>
 
-    <div class="container mx-auto bg-white md:py-0 md:px-20 w-[90%] md:w-[70%] lg:w-[70%]">
+    <div class="container mx-auto bg-white md:py-10 md:px-10 w-[90%] md:w-[70%] lg:w-[70%]">
+
+
         <div class="page">
             <!-- Document 2 (duplicate the structure as needed) -->
-            <div class="container">
+            <div class="container mb-0">
                 @foreach ($controlNumber->where('document_type', $documentType) as $control)
                     <div class="flex flex-col items-end text-xs leading-tight text-gray-800">
                         <p>{{ $control->control_number ?? '__________' }}</p>
@@ -46,7 +80,7 @@
                         <p>{{ \Carbon\Carbon::parse($control->date_issued)->format('F j, Y') ?? '__________' }} </p>
                     </div>
                 @endforeach
-                <div class="flex items-center justify-center mb-5">
+                <div class="flex items-center justify-center">
                     <div class="mr-5">
                         <img src="{{ asset('Logo_image/logopup.png') }}" alt="Logo" class="w-28 mb-5">
                     </div>
@@ -57,35 +91,35 @@
                         <!-- University heading -->
                         <h1 class="text-base font-normal">POLYTECHNIC UNIVERSITY OF THE PHILIPPINES</h1>
                         <!-- Location -->
-                        <p class="text-sm mb-5">Quezon City</p>
+                        <p class="text-sm mb-0">Quezon City</p>
                         <!-- Medical clearance title -->
                         <h2 class="text-xl font-semibold">MEDICAL CLEARANCE</h2>
                     </div>
 
                 </div>
 
-                <div class="text-right my-10 mb-8 font-Arial">
+                <div class="text-right my-0 mb-0 font-Arial">
                     <span> <span id="date-placeholder" class="underline-offset-4">Date ___________________</span>
                 </div>
 
-                <div class="space-y-4 font-Arial mb-5">
+                <div class="space-y-4 font-Arial my-4">
                     <p>To Whom It May Concern:</p>
                     <p class="indent-8">
                         This is to clarify that <span id="name-placeholder" class="underline-offset-4">
-                            __________________________________________________________________________</span>
+                            _____________________________________________________________</span>
                         has been examined by the undersigned and found to be physically fit at the time of examination.
                     </p>
                     <p class="indent-8">
                         This certification is issued upon his/her request for <span id="excuse-placeholder"
                             class="underline-offset-4">
-                            ______________________________________________________________________________________________</span>
+                            ___________________________________________________________________________________</span>
                         purposes but not for medico-legal
                         reason.
                     </p>
 
                 </div>
                 <!-- Flex Row for COVID Status and Signature -->
-                <div class="flex justify-between pt-10">
+                <div class="flex justify-between pt-0">
                     <div id="" class="w-1/2 text-left">
                         <p>COVID-19 Vaccination Status:</p>
                         <p><span class="checkbox" id="status-unvaccinated">_____</span> Unvaccinated</p>
@@ -101,74 +135,75 @@
                     </div>
                 </div>
             </div>
-        </div>
 
-        <!-- Document 2 (duplicate the structure as needed) -->
-        <div class="container2 mt-10">
-                @foreach ($controlNumber->where('document_type', $documentType) as $control)
-                    <div class="flex flex-col items-end text-xs leading-tight text-gray-800">
-                        <p>{{ $control->control_number ?? '__________' }}</p>
-                        <p>Rev. {{ $control->revision ?? '_________'}}</p>
-                        <p>{{ \Carbon\Carbon::parse($control->date_issued)->format('F j, Y') ?? '__________' }} </p>
+
+            <!-- Document 2 (duplicate the structure as needed) -->
+            <div class="container2 mt-0">
+                    @foreach ($controlNumber->where('document_type', $documentType) as $control)
+                        <div class="flex flex-col items-end text-xs leading-tight text-gray-800">
+                            <p>{{ $control->control_number ?? '__________' }}</p>
+                            <p>Rev. {{ $control->revision ?? '_________'}}</p>
+                            <p>{{ \Carbon\Carbon::parse($control->date_issued)->format('F j, Y') ?? '__________' }} </p>
+                        </div>
+                    @endforeach
+                <div class="flex items-center justify-center">
+                    <div class="mr-5">
+                        <img src="{{ asset('Logo_image/logopup.png') }}" alt="Logo" class="w-28 mb-5">
                     </div>
-                @endforeach
-            <div class="flex items-center justify-center mb-5">
-                <div class="mr-5">
-                    <img src="{{ asset('Logo_image/logopup.png') }}" alt="Logo" class="w-28 mb-5">
-                </div>
-                <!-- Center-aligned text block with a serif font -->
-                <div class="text-center" style="font-family: 'Times New Roman', serif;">
-                    <!-- Republic heading -->
-                    <h1 class="text-sm font-normal">Republic of the Philippines</h1>
-                    <!-- University heading -->
-                    <h1 class="text-base font-normal">POLYTECHNIC UNIVERSITY OF THE PHILIPPINES</h1>
-                    <!-- Location -->
-                    <p class="text-sm mb-5">Quezon City</p>
-                    <!-- Medical clearance title -->
-                    <h2 class="text-xl font-semibold">MEDICAL CLEARANCE</h2>
+                    <!-- Center-aligned text block with a serif font -->
+                    <div class="text-center" style="font-family: 'Times New Roman', serif;">
+                        <!-- Republic heading -->
+                        <h1 class="text-sm font-normal">Republic of the Philippines</h1>
+                        <!-- University heading -->
+                        <h1 class="text-base font-normal">POLYTECHNIC UNIVERSITY OF THE PHILIPPINES</h1>
+                        <!-- Location -->
+                        <p class="text-sm mb-0">Quezon City</p>
+                        <!-- Medical clearance title -->
+                        <h2 class="text-xl font-semibold">MEDICAL CLEARANCE</h2>
+                    </div>
+
                 </div>
 
-            </div>
+                <div class="text-right mb-0 mb-0 font-Arial">
+                    <span><span id="date-placeholder2" class="underline-offset-4">Date ____________________</span>
+                </div>
 
-            <div class="text-right my-10 mb-0 font-Arial">
-                <span><span id="date-placeholder2" class="underline-offset-4">Date ____________________</span>
-            </div>
-
-            <div class="space-y-4 font-Arial mb-5">
-                <p>To Whom It May Concern:</p>
-                <p class="indent-8">
-                    This is to clarify that <span id="name-placeholder2" class="underline-offset-4">
-                        __________________________________________________________________________</span>
-                    has been examined by the undersigned and found to be physically fit at the time of examination.
-                </p>
-                <p class="indent-8">
-                    This certification is issued upon his/her request for <span id="excuse-placeholder2"
-                        class="underline-offset-4">
-                        ______________________________________________________________________________________________</span>
-                    purposes but not for medico-legal
-                    reason.
-                </p>
-
-            </div>
-            <div class="mt-5">
-                <span>X-ray Result: <span id="x-ray-placeholder2" class="underline-offset-4">
-                        ____________________</span>
-            </div>
-            <!-- Flex Row for COVID Status and Signature -->
-            <div class="flex justify-between mt-10">
-                <div class="w-1/2 text-left">
-                    <p>COVID-19 Vaccination Status:</p>
-                    <p><span class="checkbox" id="status-unvaccinated2">_____</span> Unvaccinated</p>
-                    <p><span class="checkbox" id="status-incomplete2">_____</span> Primary series incomplete</p>
-                    <p><span class="checkbox" id="status-completed2">_____</span> Primary dose / series completed
+                <div class="space-y-4 font-Arial mt-4">
+                    <p>To Whom It May Concern:</p>
+                    <p class="indent-8">
+                        This is to clarify that <span id="name-placeholder2" class="underline-offset-4">
+                            _____________________________________________________________</span>
+                        has been examined by the undersigned and found to be physically fit at the time of examination.
                     </p>
-                    <p><span class="checkbox" id="status-boosters2">_____</span> 1st / second Boosters</p>
+                    <p class="indent-8">
+                        This certification is issued upon his/her request for <span id="excuse-placeholder2"
+                            class="underline-offset-4">
+                            ___________________________________________________________________________________</span>
+                        purposes but not for medico-legal
+                        reason.
+                    </p>
+
                 </div>
-                <div class="w-11/30 text-left">
-                    <p><span id="x-ray-placeholder2" class="underline-offset-4">____________________</span> M.D.</p>
-                    <p><span id="x-ray-placeholder2" class="underline-offset-4">____________________</span> </p>
-                    <p>Lic No. <span id="lic_no-placeholder2" class="underline-underoffset-4">
-                            ____________________</span></p>
+                <div class="my-4">
+                    <span>X-ray Result: <span id="x-ray-placeholder2" class="underline-offset-4">
+                            ____________________</span>
+                </div>
+                <!-- Flex Row for COVID Status and Signature -->
+                <div class="flex justify-between mt-0">
+                    <div class="w-1/2 text-left">
+                        <p>COVID-19 Vaccination Status:</p>
+                        <p><span class="checkbox" id="status-unvaccinated2">_____</span> Unvaccinated</p>
+                        <p><span class="checkbox" id="status-incomplete2">_____</span> Primary series incomplete</p>
+                        <p><span class="checkbox" id="status-completed2">_____</span> Primary dose / series completed
+                        </p>
+                        <p><span class="checkbox" id="status-boosters2">_____</span> 1st / second Boosters</p>
+                    </div>
+                    <div class="w-11/30 text-left">
+                        <p><span id="x-ray-placeholder2" class="underline-offset-4">____________________</span> M.D.</p>
+                        <p><span id="x-ray-placeholder2" class="underline-offset-4">____________________</span> </p>
+                        <p>Lic No. <span id="lic_no-placeholder2" class="underline-underoffset-4">
+                                ____________________</span></p>
+                    </div>
                 </div>
             </div>
         </div>

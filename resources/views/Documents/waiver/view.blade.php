@@ -14,66 +14,36 @@
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        /* Adjusting for print */
         @media print {
-            header {
-                padding: 0;
-            }
-
             @page {
-                size: A4;
-                margin: 0;
-
+                size: A4; /* O palitan ng 'Letter' kung Letter size ang gamit */
+                margin: 0; /* Tanggalin ang margin */
             }
 
+            body, html {
+                margin: 0 !important;
+                padding: 0 !important;
+                height: 100% !important;
+                overflow: hidden !important;
+            }
+
+
             .page {
-                margin-top: 0;
-                /* Move the form up */
+                margin: 0; /* Siguraduhing walang margin ang page */
+                padding: 0; /* Siguraduhing walang padding ang page */
                 position: relative;
-                padding-top: 0;
-                top: -40px;
-                padding-left: 20px;
-                padding-right: 20px;
-                /* Adjust to move the form higher */
-
+                top: -130px; /* Alisin ang offset */
             }
-
-            body {
+                body {
                 font-family: Arial;
-                font-size: 12px;
+                font-size: 13px;
             }
-
-            /* Hide all content except the container */
-            body * {
-                visibility: hidden;
-            }
-
-            .container,
-            .container * {
-                visibility: visible;
-                margin-top: 0;
-            }
-
-            .page {
-                display: block;
-                height: 100%;
-
-            }
-
-            .flex-container {
-                flex-direction: column;
-                /* gap: 5px; */
-            }
-        }
-
-        /* Make the modal scrollable */
-        .modal-content1 {
-            max-height: 80vh;
-            /* Limit the height to 80% of the viewport */
-            overflow-y: auto;
-            /* Enable vertical scrolling if content exceeds */
-            padding-right: 15px;
-            /* Add space for scrollbar */
+            .container {
+            padding-top: 0 !important;
+            padding-bottom: 0 !important;
+            margin-top: 0 !important;
+            margin-bottom: 0 !important;
+          }
         }
     </style>
 </head>
@@ -82,6 +52,7 @@
 <body class="bg-gray-100">
 
     <!-- Buttons (Optional for print view, you can hide them when printing) -->
+
     <div class="flex space-x-10 justify-between mb-5">
         <button class="px-4 py-2 bg-gray-300 text-black rounded hover:bg-gray-400 flex items-center space-x-2"
             onclick="goBack()" aria-label="Go Back">
@@ -153,13 +124,10 @@
                     </div>
                 </div>
             </div>
-        </div>
 
-    </div>
 
-    <!-- Document 2 (duplicate the structure as needed) -->
-    <div class="container mx-auto bg-white md:py-20 md:px-20 w-[90%] md:w-[70%] lg:w-[70%]">
-            <div class="container mt-15">
+            <!-- Document 2 (duplicate the structure as needed) -->
+                <div class="container mt-15">
                     <div class="flex flex-col items-end text-xs leading-tight text-gray-800">
                         <p>{{ $specificDocument->control_number ?? '__________' }}</p>
                         <p>Rev. {{ $specificDocument->revision ?? '_________'}}</p>
@@ -203,7 +171,8 @@
                                 class="underline">{{ $specificDocument->additional_doctorName ?? '__________' }} <label class="font-medium">M.D. </label></span></p>
                     </div>
                 </div>
-            </div>
+
+        </div>
     </div>
 
     <script>

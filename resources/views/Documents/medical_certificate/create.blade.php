@@ -3,6 +3,38 @@
 @section('title', 'Medical Certificate')
 
 @section('content')
+<style>
+    @media print {
+        @page {
+            size: A4; /* O palitan ng 'Letter' kung Letter size ang gamit */
+            margin: 0; /* Tanggalin ang margin */
+        }
+
+        body, html {
+            margin: 0 !important;
+            padding: 0 !important;
+            height: 100% !important;
+            overflow: hidden !important;
+        }
+
+        .page {
+            margin: 0; /* Siguraduhing walang margin ang page */
+            padding: 0; /* Siguraduhing walang padding ang page */
+            position: relative;
+            top: -130px; /* Alisin ang offset */
+        }
+            body {
+            font-family: Arial;
+            font-size: 13px;
+        }
+        .container {
+        padding-top: 0 !important;
+        padding-bottom: 0 !important;
+        margin-top: 0 !important;
+        margin-bottom: 0 !important;
+      }
+    }
+</style>
     <!-- Buttons (Optional for print view, you can hide them when printing) -->
     <div class="flex space-x-10 justify-between mb-5">
         <button class="px-4 py-2 bg-gray-300 text-black rounded hover:bg-gray-400 flex items-center space-x-2"
@@ -37,118 +69,120 @@
 
     <div class="container mx-auto space-y-2 bg-white md:py-20 md:px-20 w-[90%] md:w-[70%] lg:w-[70%]">
         <!-- Document 2 (duplicate the structure as needed) -->
-        <div class="container">
-                @foreach ($controlNumber->where('document_type', $documentType) as $control)
-                    <div class="flex flex-col items-end text-xs leading-tight text-gray-800">
-                        <p>{{ $control->control_number ?? '__________' }}</p>
-                        <p>Rev. {{ $control->revision ?? '_________'}}</p>
-                        <p>{{ \Carbon\Carbon::parse($control->date_issued)->format('F j, Y') ?? '__________' }} </p>
+        <div class="page">
+            <div class="container">
+                    @foreach ($controlNumber->where('document_type', $documentType) as $control)
+                        <div class="flex flex-col items-end text-xs leading-tight text-gray-800">
+                            <p>{{ $control->control_number ?? '__________' }}</p>
+                            <p>Rev. {{ $control->revision ?? '_________'}}</p>
+                            <p>{{ \Carbon\Carbon::parse($control->date_issued)->format('F j, Y') ?? '__________' }} </p>
+                        </div>
+                    @endforeach
+                <!-- Date Field -->
+                <div class="flex items-center justify-center mb-5">
+                    <div class="mr-5">
+                        <img src="{{ asset('Logo_image/logopup.png') }}" alt="Logo" class="w-28 mb-5">
                     </div>
-                @endforeach
-            <!-- Date Field -->
-            <div class="flex items-center justify-center mb-5">
-                <div class="mr-5">
-                    <img src="{{ asset('Logo_image/logopup.png') }}" alt="Logo" class="w-28 mb-5">
-                </div>
-                <!-- Center-aligned text block with a serif font -->
-                <div class="text-center" style="font-family: 'Times New Roman', serif;">
-                    <!-- Republic heading -->
-                    <h1 class="text-sm font-normal">Republic of the Philippines</h1>
-                    <!-- University heading -->
-                    <h1 class="text-base font-normal">POLYTECHNIC UNIVERSITY OF THE PHILIPPINES</h1>
-                    <!-- Location -->
-                    <p class="text-sm mb-5">Quezon City</p>
-                    <!-- Medical clearance title -->
-                    <h2 class="text-xl font-semibold">MEDICAL CERTIFICATE</h2>
-                </div>
-
-            </div>
-
-            <div class="text-right my-10 mb-8 font-Arial">
-                <span><span id="date-placeholder1" class="underline-offset-4">Date ___________________</span></span>
-            </div>
-
-            <div class="space-y-4 font-Arial mb-5">
-                <p>To Whom It May Concern:</p>
-                <p class="indent-8">
-                    This is to clarify that <span id="name-placeholder1"
-                        class="underline-offset-4">________________________</span>
-                    has been treated/ is currently being treated for <span id="reason-placeholder1"
-                        class="underline-offset-4">____________________</span>
-                    from <span id="start-date-placeholder1" class="underline-offset-4">________________________</span>
-                    to
-                    <span id="end-date-placeholder1" class="underline-offset-4">________________________</span>.
-                </p>
-                <p class="indent-8">
-                    This certification is issued upon his/her request for <span id="purpose-placeholder1"
-                        class="underline-offset-4">________________________</span> purposes but not for medico-legal
-                    reasons.
-                </p>
-            </div>
-
-            <div class="flex justify-end p-10">
-                <div class="w-11/30 text-left">
-                    <p><span id="physician-name-placeholder1" class="underline-offset-4">____________________</span>
-                        M.D.</p>
-                    <p class="text-center">Clinic Physician</p>
-                </div>
-            </div>
-        </div>
-
-        <!-- Document 2 (duplicate the structure as needed) -->
-        <div class="container2 mt-2">
-                @foreach ($controlNumber->where('document_type', $documentType) as $control)
-                    <div class="flex flex-col items-end text-xs leading-tight text-gray-800">
-                        <p>{{ $control->control_number ?? '__________' }}</p>
-                        <p>Rev. {{ $control->revision ?? '_________'}}</p>
-                        <p>{{ \Carbon\Carbon::parse($control->date_issued)->format('F j, Y') ?? '__________' }} </p>
+                    <!-- Center-aligned text block with a serif font -->
+                    <div class="text-center" style="font-family: 'Times New Roman', serif;">
+                        <!-- Republic heading -->
+                        <h1 class="text-sm font-normal">Republic of the Philippines</h1>
+                        <!-- University heading -->
+                        <h1 class="text-base font-normal">POLYTECHNIC UNIVERSITY OF THE PHILIPPINES</h1>
+                        <!-- Location -->
+                        <p class="text-sm mb-5">Quezon City</p>
+                        <!-- Medical clearance title -->
+                        <h2 class="text-xl font-semibold">MEDICAL CERTIFICATE</h2>
                     </div>
-                @endforeach
-            <div class="flex items-center justify-center mb-5">
-                <div class="mr-5">
-                    <img src="{{ asset('Logo_image/logopup.png') }}" alt="Logo" class="w-28 mb-5">
-                </div>
-                <!-- Center-aligned text block with a serif font -->
-                <div class="text-center" style="font-family: 'Times New Roman', serif;">
-                    <!-- Republic heading -->
-                    <h1 class="text-sm font-normal">Republic of the Philippines</h1>
-                    <!-- University heading -->
-                    <h1 class="text-base font-normal">POLYTECHNIC UNIVERSITY OF THE PHILIPPINES</h1>
-                    <!-- Location -->
-                    <p class="text-sm mb-5">Quezon City</p>
-                    <!-- Medical clearance title -->
-                    <h2 class="text-xl font-semibold">MEDICAL CERTIFICATE</h2>
+
                 </div>
 
+                <div class="text-right my-10 mb-8 font-Arial">
+                    <span><span id="date-placeholder1" class="underline-offset-4">Date ___________________</span></span>
+                </div>
+
+                <div class="space-y-4 font-Arial mb-5">
+                    <p>To Whom It May Concern:</p>
+                    <p class="indent-8">
+                        This is to clarify that <span id="name-placeholder1"
+                            class="underline-offset-4">________________________</span>
+                        has been treated/ is currently being treated for <span id="reason-placeholder1"
+                            class="underline-offset-4">____________________</span>
+                        from <span id="start-date-placeholder1" class="underline-offset-4">________________________</span>
+                        to
+                        <span id="end-date-placeholder1" class="underline-offset-4">________________________</span>.
+                    </p>
+                    <p class="indent-8">
+                        This certification is issued upon his/her request for <span id="purpose-placeholder1"
+                            class="underline-offset-4">________________________</span> purposes but not for medico-legal
+                        reasons.
+                    </p>
+                </div>
+
+                <div class="flex justify-end">
+                    <div class="w-11/30 text-left">
+                        <p><span id="physician-name-placeholder1" class="underline-offset-4">____________________</span>
+                            M.D.</p>
+                        <p class="text-center">Clinic Physician</p>
+                    </div>
+                </div>
             </div>
 
-            <div class="text-right my-10 mb-0 font-Arial">
-                <span><span id="date-placeholder2" class="underline-offset-4">Date ____________________</span></span>
-            </div>
+            <!-- Document 2 (duplicate the structure as needed) -->
+            <div class="container2 mt-4">
+                    @foreach ($controlNumber->where('document_type', $documentType) as $control)
+                        <div class="flex flex-col items-end text-xs leading-tight text-gray-800">
+                            <p>{{ $control->control_number ?? '__________' }}</p>
+                            <p>Rev. {{ $control->revision ?? '_________'}}</p>
+                            <p>{{ \Carbon\Carbon::parse($control->date_issued)->format('F j, Y') ?? '__________' }} </p>
+                        </div>
+                    @endforeach
+                <div class="flex items-center justify-center mb-5">
+                    <div class="mr-5">
+                        <img src="{{ asset('Logo_image/logopup.png') }}" alt="Logo" class="w-28 mb-5">
+                    </div>
+                    <!-- Center-aligned text block with a serif font -->
+                    <div class="text-center" style="font-family: 'Times New Roman', serif;">
+                        <!-- Republic heading -->
+                        <h1 class="text-sm font-normal">Republic of the Philippines</h1>
+                        <!-- University heading -->
+                        <h1 class="text-base font-normal">POLYTECHNIC UNIVERSITY OF THE PHILIPPINES</h1>
+                        <!-- Location -->
+                        <p class="text-sm mb-5">Quezon City</p>
+                        <!-- Medical clearance title -->
+                        <h2 class="text-xl font-semibold">MEDICAL CERTIFICATE</h2>
+                    </div>
 
-            <div class="space-y-4 font-Arial mb-5">
-                <p>To Whom It May Concern:</p>
-                <p class="indent-8">
-                    This is to clarify that <span id="name-placeholder2"
-                        class="underline-offset-4">________________________</span>
-                    has been treated/ is currently being treated for <span id="reason-placeholder2"
-                        class="underline-offset-4">____________________</span>
-                    from <span id="start-date-placeholder2" class="underline-offset-4">________________________</span>
-                    to
-                    <span id="end-date-placeholder2" class="underline-offset-4">________________________</span>.
-                </p>
-                <p class="indent-8">
-                    This certification is issued upon his/her request for <span id="purpose-placeholder2"
-                        class="underline-offset-4">________________________</span> purposes but not for medico-legal
-                    reasons.
-                </p>
-            </div>
+                </div>
 
-            <div class="flex justify-end p-10">
-                <div class="w-11/30 text-left">
-                    <p><span id="physician-name-placeholder2" class="underline-offset-4">____________________</span>
-                        M.D.</p>
-                    <p class="text-center">Clinic Physician</p>
+                <div class="text-right my-10 mb-0 font-Arial">
+                    <span><span id="date-placeholder2" class="underline-offset-4">Date ____________________</span></span>
+                </div>
+
+                <div class="space-y-4 font-Arial mb-5">
+                    <p>To Whom It May Concern:</p>
+                    <p class="indent-8">
+                        This is to clarify that <span id="name-placeholder2"
+                            class="underline-offset-4">________________________</span>
+                        has been treated/ is currently being treated for <span id="reason-placeholder2"
+                            class="underline-offset-4">____________________</span>
+                        from <span id="start-date-placeholder2" class="underline-offset-4">________________________</span>
+                        to
+                        <span id="end-date-placeholder2" class="underline-offset-4">________________________</span>.
+                    </p>
+                    <p class="indent-8">
+                        This certification is issued upon his/her request for <span id="purpose-placeholder2"
+                            class="underline-offset-4">________________________</span> purposes but not for medico-legal
+                        reasons.
+                    </p>
+                </div>
+
+                <div class="flex justify-end pt-0">
+                    <div class="w-11/30 text-left">
+                        <p><span id="physician-name-placeholder2" class="underline-offset-4">____________________</span>
+                            M.D.</p>
+                        <p class="text-center">Clinic Physician</p>
+                    </div>
                 </div>
             </div>
         </div>

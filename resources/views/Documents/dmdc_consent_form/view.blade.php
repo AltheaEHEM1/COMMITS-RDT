@@ -48,10 +48,10 @@
     }
 
     .page {
-        margin-top: 0;
+        margin-top: -120px;
         padding-top: 0;
         position: relative;
-        top: -70px;
+        top: 0px;
         padding-right: 10px;
     }
 
@@ -77,6 +77,12 @@
     .flex-container {
         flex-direction: column;
     }
+    body, html {
+        margin: 0 !important;
+        padding: 0 !important;
+        height: 100% !important;
+        overflow: hidden !important;
+      }
 }
 
     </style>

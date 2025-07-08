@@ -3,6 +3,39 @@
 @section('title', 'Add Excuse Letter')
 
 @section('content')
+<style>
+    /* Adjusting for print */
+    @media print {
+        @page {
+            size: A4; /* O palitan ng 'Letter' kung Letter size ang gamit */
+            margin: 0; /* Tanggalin ang margin */
+        }
+
+        body, html {
+            margin: 0 !important;
+            padding: 0 !important;
+            height: 100% !important;
+            overflow: hidden !important;
+        }
+
+        .page {
+            margin: 0;
+            padding: 0;
+            position: relative;
+            top: 0; /* Alisin ang offset */
+        }
+            body {
+            font-family: Arial;
+            font-size: 13px;
+        }
+        .container {
+        padding-top: 0 !important;
+        padding-bottom: 0 !important;
+        margin-top: 0 !important;
+        margin-bottom: 0 !important;
+      }
+    }
+</style>
     <div class="flex space-x-10 justify-between mb-5 print:hidden">
         <button class="px-4 py-2 bg-gray-300 text-black rounded hover:bg-gray-400 flex items-center space-x-2"
             onclick="goBack()" aria-label="Go Back">

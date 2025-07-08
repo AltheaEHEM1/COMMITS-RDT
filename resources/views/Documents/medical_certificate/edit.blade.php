@@ -3,6 +3,40 @@
 @section('title', 'Medical Certificate')
 
 @section('content')
+<style>
+    @media print {
+        @page {
+            size: A4; /* O palitan ng 'Letter' kung Letter size ang gamit */
+            margin: 0; /* Tanggalin ang margin */
+        }
+
+        body, html {
+            margin: 0 !important;
+            padding: 0 !important;
+            height: 100% !important;
+            overflow: hidden !important;
+        }
+
+        .page {
+            margin: 0; /* Siguraduhing walang margin ang page */
+            padding: 0; /* Siguraduhing walang padding ang page */
+            position: relative;
+            top: -130px; /* Alisin ang offset */
+        }
+            body {
+            font-family: Arial;
+            font-size: 13px;
+        }
+        .container {
+        padding-top: 0 !important;
+        padding-bottom: 0 !important;
+        margin-top: 0 !important;
+        margin-bottom: 0 !important;
+    }
+    }
+</style>
+
+
     <!-- Buttons (Optional for print view, you can hide them when printing) -->
     <div class="flex space-x-10 justify-between mb-5">
         <button class="px-4 py-2 bg-gray-300 text-black rounded hover:bg-gray-400 flex items-center space-x-2"

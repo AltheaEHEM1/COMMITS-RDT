@@ -3,6 +3,40 @@
 @section('title', 'Waver for Pulmonary Case Form')
 
 @section('content')
+<style>
+    /* Adjusting for print */
+    @media print {
+        @page {
+            size: A4; /* O palitan ng 'Letter' kung Letter size ang gamit */
+            margin: 0; /* Tanggalin ang margin */
+        }
+
+        body, html {
+            margin: 0 !important;
+            padding: 0 !important;
+            height: 100% !important;
+            overflow: hidden !important;
+        }
+
+
+        .page {
+            margin: 0; /* Siguraduhing walang margin ang page */
+            padding: 0; /* Siguraduhing walang padding ang page */
+            position: relative;
+            top: -130px; /* Alisin ang offset */
+        }
+            body {
+            font-family: Arial;
+            font-size: 13px;
+        }
+        .container {
+        padding-top: 0 !important;
+        padding-bottom: 0 !important;
+        margin-top: 0 !important;
+        margin-bottom: 0 !important;
+      }
+    }
+</style>
 
     <!-- Buttons (Optional for print view, you can hide them when printing) -->
     <div class="flex space-x-10 justify-between mb-5">
@@ -62,7 +96,7 @@
                     </span>
                 </div>
 
-                <div class="space-y-4 font-Arial mb-5">
+                <div class="space-y-4 font-Arial mb-0">
 
                     <p class="indent-8">
                         I, <span id="name-placeholder" class="underline">
@@ -80,7 +114,73 @@
                     </p>
                 </div>
 
-                <div class="flex justify-end p-10">
+                <div class="flex justify-end pt-5">
+                    <div class="w-11/30 text-left">
+                        <p>_______________________________</p>
+                        <p class="text-center">Signature</p>
+                    </div>
+                </div>
+
+                <div class="flex justify-start p-0">
+                    <div class="w-11/30 text-left">
+                        <p>Comforme:</p><br>
+                        <p>_______________________________</p>
+                        <p class="text-center">Parent / Guardian</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Document 2 (duplicate the structure as needed) -->
+            <div class="container2 mt-15">
+                        <div class="flex flex-col items-end text-xs leading-tight text-gray-800">
+                            <p>{{ $associatedDocument->control_number ?? '__________' }}</p>
+                            <p>Rev. {{ $associatedDocument->revision ?? '_________'}}</p>
+                            <p>{{ \Carbon\Carbon::parse($associatedDocument->date_issued)->format('F j, Y') ?? '__________' }} </p>
+                        </div>
+                <div class="flex items-center justify-center mb-5">
+                    <div class="mr-5">
+                        <img src="{{ asset('Logo_image/logopup.png') }}" alt="Logo" class="w-28 mb-5">
+                    </div>
+                    <!-- Center-aligned text block with a serif font -->
+                    <div class="text-center" style="font-family: 'Times New Roman', serif;">
+                        <!-- Republic heading -->
+                        <h1 class="text-sm font-normal">Republic of the Philippines</h1>
+                        <!-- University heading -->
+                        <h1 class="text-base font-normal">POLYTECHNIC UNIVERSITY OF THE PHILIPPINES</h1>
+                        <!-- Location -->
+                        <p class="text-sm mb-5">Quezon City</p>
+                        <!-- Medical clearance title -->
+                        <h2 class="text-xl font-semibold">WAIVER PULMONARY CASE</h2>
+                    </div>
+
+                </div>
+
+                <div class="text-right my-10 mb-8 font-Arial">
+                    <label class="font-medium">Date: </label>
+                    <span id="date-placeholder"
+                        class="underline">{{ $associatedDocument->additional_date ? \Carbon\Carbon::parse($associatedDocument->additional_date)->format('F j, Y') : '__________' }}
+                    </span>
+                </div>
+                <div class="space-y-4 font-Arial mb-0">
+                    <p class="indent-8">
+                        I, <span id="name-placeholder2" class="underline">
+                            {{ $associatedDocument->additional_patient_name ?? '__________' }}</span> student from
+                        the College of <span id="school2"
+                            class="underline">{{ $associatedDocument->additional_collegeName ?? '__________' }}</span> , school
+                        year
+                        <span id="department2"
+                            class="underline">{{ $associatedDocument->additional_year ?? '__________' }}</span>, am aware that
+                        as per medical advice from the
+                        University Medical Clinic, should submit by myself for
+                        follow-up medical check-up on
+                        <span id="date2"
+                            class="underline">{{ $associatedDocument->additional_followUpDate ? \Carbon\Carbon::parse($associatedDocument->additional_followUpDate)->format('F j, Y') : '__________' }}</span>
+                        and that additional clearance must be secured prior
+                        to the next
+                        semester's enrollment.
+                </div>
+
+                <div class="flex justify-end pt-5">
                     <div class="w-11/30 text-left">
                         <p>_______________________________</p>
                         <p class="text-center">Signature</p>
@@ -96,77 +196,7 @@
                 </div>
             </div>
         </div>
-
     </div>
-
-    <!-- Document 2 (duplicate the structure as needed) -->
-    <div class="container mx-auto bg-white md:py-20 md:px-20 w-[90%] md:w-[70%] lg:w-[70%]">
-        <div class="container2 mt-15">
-                    <div class="flex flex-col items-end text-xs leading-tight text-gray-800">
-                        <p>{{ $associatedDocument->control_number ?? '__________' }}</p>
-                        <p>Rev. {{ $associatedDocument->revision ?? '_________'}}</p>
-                        <p>{{ \Carbon\Carbon::parse($associatedDocument->date_issued)->format('F j, Y') ?? '__________' }} </p>
-                    </div>
-            <div class="flex items-center justify-center mb-5">
-                <div class="mr-5">
-                    <img src="{{ asset('Logo_image/logopup.png') }}" alt="Logo" class="w-28 mb-5">
-                </div>
-                <!-- Center-aligned text block with a serif font -->
-                <div class="text-center" style="font-family: 'Times New Roman', serif;">
-                    <!-- Republic heading -->
-                    <h1 class="text-sm font-normal">Republic of the Philippines</h1>
-                    <!-- University heading -->
-                    <h1 class="text-base font-normal">POLYTECHNIC UNIVERSITY OF THE PHILIPPINES</h1>
-                    <!-- Location -->
-                    <p class="text-sm mb-5">Quezon City</p>
-                    <!-- Medical clearance title -->
-                    <h2 class="text-xl font-semibold">WAIVER PULMONARY CASE</h2>
-                </div>
-
-            </div>
-
-            <div class="text-right my-10 mb-8 font-Arial">
-                <label class="font-medium">Date: </label>
-                <span id="date-placeholder"
-                    class="underline">{{ $associatedDocument->additional_date ? \Carbon\Carbon::parse($associatedDocument->additional_date)->format('F j, Y') : '__________' }}
-                </span>
-            </div>
-            <div class="space-y-4 font-Arial mb-5">
-                <p class="indent-8">
-                    I, <span id="name-placeholder2" class="underline">
-                        {{ $associatedDocument->additional_patient_name ?? '__________' }}</span> student from
-                    the College of <span id="school2"
-                        class="underline">{{ $associatedDocument->additional_collegeName ?? '__________' }}</span> , school
-                    year
-                    <span id="department2"
-                        class="underline">{{ $associatedDocument->additional_year ?? '__________' }}</span>, am aware that
-                    as per medical advice from the
-                    University Medical Clinic, should submit by myself for
-                    follow-up medical check-up on
-                    <span id="date2"
-                        class="underline">{{ $associatedDocument->additional_followUpDate ? \Carbon\Carbon::parse($associatedDocument->additional_followUpDate)->format('F j, Y') : '__________' }}</span>
-                    and that additional clearance must be secured prior
-                    to the next
-                    semester's enrollment.
-            </div>
-
-            <div class="flex justify-end p-10">
-                <div class="w-11/30 text-left">
-                    <p>_______________________________</p>
-                    <p class="text-center">Signature</p>
-                </div>
-            </div>
-
-            <div class="flex justify-start p-0">
-                <div class="w-11/30 text-left">
-                    <p>Comforme:</p><br>
-                    <p>_______________________________</p>
-                    <p class="text-center">Parent / Guardian</p>
-                </div>
-            </div>
-        </div>
-    </div>
-    
     @include('Documents.waiver_for_pulmonary_case.edit-form')
     {{--
     <!-- Modal -->

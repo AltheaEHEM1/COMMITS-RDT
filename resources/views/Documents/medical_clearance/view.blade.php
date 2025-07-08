@@ -27,15 +27,18 @@
             }
 
             .page {
+
                 margin-top: 0;
                 /* Move the form up */
                 position: relative;
-                top: -90px;
+                top: -140px;
                 /* Adjust to move the form higher */
                 margin-top: 0;
+
             }
 
             body {
+                zoom: 0.95;
                 font-family: Arial;
                 font-size: 12px;
             }
@@ -47,9 +50,13 @@
 
             .container,
             .container * {
+
                 visibility: visible;
                 padding-top: 0;
                 margin-top: 0;
+            }
+            .page:last-child {
+                page-break-after: auto;
             }
 
             .page {
@@ -58,10 +65,22 @@
 
             }
 
+            body {
+                overflow: hidden;
+            }
+
+
             .flex-container {
                 flex-direction: column;
                 /* gap: 5px; */
             }
+            body, html {
+                margin: 0 !important;
+                padding: 0 !important;
+                height: 100% !important;
+                overflow: hidden !important;
+            }
+
         }
 
         /* Make the modal scrollable */
@@ -103,139 +122,141 @@
     </div>
 
     <div class="container mx-auto bg-white md:py-20 md:px-20 w-[90%] md:w-[70%] lg:w-[70%]">
-        <div class="page">
-            <!-- Document 2 (duplicate the structure as needed) -->
-            <div class="container">
-                    <div class="flex flex-col items-end text-xs leading-tight text-gray-800">
-                        <p>{{ $specificDocument->control_number ?? '__________' }}</p>
-                        <p>Rev. {{ $specificDocument->revision ?? '_________'}}</p>
-                        <p>{{ \Carbon\Carbon::parse($specificDocument->date_issued)->format('F j, Y') ?? '__________' }} </p>
-                    </div>
-                <div class="flex items-center justify-center mb-5">
-                    <div class="mr-5">
-                        <img src="{{ asset('Logo_image/logopup.png') }}" alt="Logo" class="w-28 mb-5">
-                    </div>
-                    <!-- Center-aligned text block with a serif font -->
-                    <div class="text-center" style="font-family: 'Times New Roman', serif;">
-                        <!-- Republic heading -->
-                        <h1 class="text-sm font-normal">Republic of the Philippines</h1>
-                        <!-- University heading -->
-                        <h1 class="text-base font-normal">POLYTECHNIC UNIVERSITY OF THE PHILIPPINES</h1>
-                        <!-- Location -->
-                        <p class="text-sm mb-5">Quezon City</p>
-                        <!-- Medical clearance title -->
-                        <h2 class="text-xl font-semibold">MEDICAL CLEARANCE</h2>
+
+            <div class="page">
+                <!-- Document 2 (duplicate the structure as needed) -->
+                <div class="container">
+                        <div class="flex flex-col items-end text-xs leading-tight text-gray-800">
+                            <p>{{ $specificDocument->control_number ?? '__________' }}</p>
+                            <p>Rev. {{ $specificDocument->revision ?? '_________'}}</p>
+                            <p>{{ \Carbon\Carbon::parse($specificDocument->date_issued)->format('F j, Y') ?? '__________' }} </p>
+                        </div>
+                    <div class="flex items-center justify-center mb-4">
+                        <div class="mr-5">
+                            <img src="{{ asset('Logo_image/logopup.png') }}" alt="Logo" class="w-28 mb-5">
+                        </div>
+                        <!-- Center-aligned text block with a serif font -->
+                        <div class="text-center" style="font-family: 'Times New Roman', serif;">
+                            <!-- Republic heading -->
+                            <h1 class="text-sm font-normal">Republic of the Philippines</h1>
+                            <!-- University heading -->
+                            <h1 class="text-base font-normal">POLYTECHNIC UNIVERSITY OF THE PHILIPPINES</h1>
+                            <!-- Location -->
+                            <p class="text-sm mb-5">Quezon City</p>
+                            <!-- Medical clearance title -->
+                            <h2 class="text-xl font-semibold">MEDICAL CLEARANCE</h2>
+                        </div>
+
                     </div>
 
-                </div>
-
-                <div class="text-right my-10 mb-8 font-Arial">
-                    <label class="font-medium">Date: </label>
-                     <span id="date-placeholder" class="underline">{{ $specificDocument->date ? \Carbon\Carbon::parse($specificDocument->date)->format('F j, Y') : '__________' }}
-                    </span>
-                </div>
-
-                <div class="space-y-4 font-Arial mb-5">
-                    <p>To Whom It May Concern:</p>
-                    <p class="indent-8">
-                        This is to clarify that <span id="name-placeholder" class="underline">
-                        {{ $specificDocument->patient_name ?? '______________' }}</span>
-                        has been examined by the undersigned and found to be physically fit at the time of examination.
-                    </p>
-                    <p class="indent-8">
-                        This certification is issued upon his/her request for <span id="excuse-placeholder"
-                            class="underline">{{ $specificDocument->excuse ?? '_____________' }}</span> purposes but not for medico-legal
-                        reason.
-                    </p>
-
-                </div>
-                <!-- Flex Row for COVID Status and Signature -->
-                <div class="flex justify-between pt-10">
-                    <div id="" class="w-1/2 text-left">
-                        <p>COVID-19 Vaccination Status:</p>
-                        <p><span class="checkbox" id="status-unvaccinated">{{ $specificDocument->vaccination_status == 'Unvaccinated' ? '___✓___' : '_____' }}</span> Unvaccinated</p>
-                        <p><span class="checkbox" id="status-incomplete">{{ $specificDocument->vaccination_status == 'Primary Incomplete' ? '___✓___' : '_____' }}</span> Primary series incomplete</p>
-                        <p><span class="checkbox" id="status-completed">{{ $specificDocument->vaccination_status == 'Primary Complete' ? '___✓___' : '_____' }}</span> Primary dose / series completed</p>
-                        <p><span class="checkbox" id="status-boosters">{{ $specificDocument->vaccination_status == 'Boosters' ? '___✓___' : '_____' }}</span> 1st / second Boosters</p>
+                    <div class="text-right my-0 mb-8 font-Arial">
+                        <label class="font-medium">Date: </label>
+                        <span id="date-placeholder" class="underline">{{ $specificDocument->date ? \Carbon\Carbon::parse($specificDocument->date)->format('F j, Y') : '__________' }}
+                        </span>
                     </div>
-                    <div class="w-11/30 text-left">
-                    <p><span id="x-ray-placeholder2" class="underline">{{ $specificDocument->doctorName ?? '__________' }}</span><label class="font-medium"> M.D. </label></p>
-                    <p><span id="x-ray-placeholder2" class="font-medium">{{ $specificDocument->position ?? '__________' }}</span> </p>
-                    <p><label class="font-medium">Lic No. </label> <span id="lic_no-placeholder2" class="underline">
-                    {{ $specificDocument->license_number ?? '__________' }}</span></p>
-                </div>
+
+                    <div class="space-y-4 font-Arial mb-5">
+                        <p>To Whom It May Concern:</p>
+                        <p class="indent-8">
+                            This is to clarify that <span id="name-placeholder" class="underline">
+                            {{ $specificDocument->patient_name ?? '______________' }}</span>
+                            has been examined by the undersigned and found to be physically fit at the time of examination.
+                        </p>
+                        <p class="indent-8">
+                            This certification is issued upon his/her request for <span id="excuse-placeholder"
+                                class="underline">{{ $specificDocument->excuse ?? '_____________' }}</span> purposes but not for medico-legal
+                            reason.
+                        </p>
+
+                    </div>
+                    <!-- Flex Row for COVID Status and Signature -->
+                    <div class="flex justify-between pt-10">
+                        <div id="" class="w-1/2 text-left">
+                            <p>COVID-19 Vaccination Status:</p>
+                            <p><span class="checkbox" id="status-unvaccinated">{{ $specificDocument->vaccination_status == 'Unvaccinated' ? '___✓___' : '_____' }}</span> Unvaccinated</p>
+                            <p><span class="checkbox" id="status-incomplete">{{ $specificDocument->vaccination_status == 'Primary Incomplete' ? '___✓___' : '_____' }}</span> Primary series incomplete</p>
+                            <p><span class="checkbox" id="status-completed">{{ $specificDocument->vaccination_status == 'Primary Complete' ? '___✓___' : '_____' }}</span> Primary dose / series completed</p>
+                            <p><span class="checkbox" id="status-boosters">{{ $specificDocument->vaccination_status == 'Boosters' ? '___✓___' : '_____' }}</span> 1st / second Boosters</p>
+                        </div>
+                        <div class="w-11/30 text-left">
+                        <p><span id="x-ray-placeholder2" class="underline">{{ $specificDocument->doctorName ?? '__________' }}</span><label class="font-medium"> M.D. </label></p>
+                        <p><span id="x-ray-placeholder2" class="font-medium">{{ $specificDocument->position ?? '__________' }}</span> </p>
+                        <p><label class="font-medium">Lic No. </label> <span id="lic_no-placeholder2" class="underline">
+                        {{ $specificDocument->license_number ?? '__________' }}</span></p>
+                    </div>
+                    </div>
                 </div>
             </div>
-        </div>
 
 
-        <div class="page">
-            <!-- Document 2 (duplicate the structure as needed) -->
-            <div class="container">
-                    <div class="flex flex-col items-end text-xs leading-tight text-gray-800">
-                        <p>{{ $specificDocument->control_number ?? '__________' }}</p>
-                        <p>Rev. {{ $specificDocument->revision ?? '_________'}}</p>
-                        <p>{{ \Carbon\Carbon::parse($specificDocument->date_issued)->format('F j, Y') ?? '__________' }} </p>
-                    </div>
-                <div class="flex items-center justify-center mb-5">
-                    <div class="mr-5">
-                        <img src="{{ asset('Logo_image/logopup.png') }}" alt="Logo" class="w-28 mb-5">
-                    </div>
-                    <!-- Center-aligned text block with a serif font -->
-                    <div class="text-center" style="font-family: 'Times New Roman', serif;">
-                        <!-- Republic heading -->
-                        <h1 class="text-sm font-normal">Republic of the Philippines</h1>
-                        <!-- University heading -->
-                        <h1 class="text-base font-normal">POLYTECHNIC UNIVERSITY OF THE PHILIPPINES</h1>
-                        <!-- Location -->
-                        <p class="text-sm mb-5">Quezon City</p>
-                        <!-- Medical clearance title -->
-                        <h2 class="text-xl font-semibold">MEDICAL CLEARANCE</h2>
+            <div class="page">
+                <!-- Document 2 (duplicate the structure as needed) -->
+                <div class="container">
+                        <div class="flex flex-col items-end text-xs leading-tight text-gray-800">
+                            <p>{{ $specificDocument->control_number ?? '__________' }}</p>
+                            <p>Rev. {{ $specificDocument->revision ?? '_________'}}</p>
+                            <p>{{ \Carbon\Carbon::parse($specificDocument->date_issued)->format('F j, Y') ?? '__________' }} </p>
+                        </div>
+                    <div class="flex items-center justify-center mb-4">
+                        <div class="mr-5">
+                            <img src="{{ asset('Logo_image/logopup.png') }}" alt="Logo" class="w-28 mb-5">
+                        </div>
+                        <!-- Center-aligned text block with a serif font -->
+                        <div class="text-center" style="font-family: 'Times New Roman', serif;">
+                            <!-- Republic heading -->
+                            <h1 class="text-sm font-normal">Republic of the Philippines</h1>
+                            <!-- University heading -->
+                            <h1 class="text-base font-normal">POLYTECHNIC UNIVERSITY OF THE PHILIPPINES</h1>
+                            <!-- Location -->
+                            <p class="text-sm mb-5">Quezon City</p>
+                            <!-- Medical clearance title -->
+                            <h2 class="text-xl font-semibold">MEDICAL CLEARANCE</h2>
+                        </div>
+
                     </div>
 
-                </div>
-
-                <div class="text-right my-10 mb-8 font-Arial">
-                    <label class="font-medium">Date: </label>
-                     <span id="date-placeholder" class="underline">{{ $specificDocument->additional_date ? \Carbon\Carbon::parse($specificDocument->additional_date)->format('F j, Y') : '__________' }}
-                    </span>
-                </div>
-
-                <div class="space-y-4 font-Arial mb-5">
-                    <p>To Whom It May Concern:</p>
-                    <p class="indent-8">
-                        This is to clarify that <span id="name-placeholder" class="underline">
-                        {{ $specificDocument->additional_patient_name ?? '______________' }}</span>
-                        has been examined by the undersigned and found to be physically fit at the time of examination.
-                    </p>
-                    <p class="indent-8">
-                        This certification is issued upon his/her request for <span id="excuse-placeholder"
-                            class="underline">{{ $specificDocument->additional_excuse ?? '_____________' }}</span> purposes but not for medico-legal
-                        reason.
-                    </p>
-                    <div class="mt-5">
-                        <span>X-ray Result: <span id="x-ray-placeholder2" class="underline">
-                            {{ $specificDocument->xray_result ?? '_____________' }}</span>
+                    <div class="text-right my-0 mb-8 font-Arial">
+                        <label class="font-medium">Date: </label>
+                        <span id="date-placeholder" class="underline">{{ $specificDocument->additional_date ? \Carbon\Carbon::parse($specificDocument->additional_date)->format('F j, Y') : '__________' }}
+                        </span>
                     </div>
-                </div>
-                <!-- Flex Row for COVID Status and Signature -->
-                <div class="flex justify-between pt-10">
-                    <div id="" class="w-1/2 text-left">
-                        <p>COVID-19 Vaccination Status:</p>
-                        <p><span class="checkbox" id="status-unvaccinated">{{ $specificDocument->additional_vaccination_status == 'Unvaccinated' ? '___✓___' : '_____' }}</span> Unvaccinated</p>
-                        <p><span class="checkbox" id="status-incomplete">{{ $specificDocument->additional_vaccination_status == 'Primary Incomplete' ? '___✓___' : '_____' }}</span> Primary series incomplete</p>
-                        <p><span class="checkbox" id="status-completed">{{ $specificDocument->additional_vaccination_status == 'Primary Complete' ? '___✓___' : '_____' }}</span> Primary dose / series completed</p>
-                        <p><span class="checkbox" id="status-boosters">{{ $specificDocument->additional_vaccination_status == 'Boosters' ? '___✓___' : '_____' }}</span> 1st / second Boosters</p>
+
+                    <div class="space-y-4 font-Arial mb-5">
+                        <p>To Whom It May Concern:</p>
+                        <p class="indent-8">
+                            This is to clarify that <span id="name-placeholder" class="underline">
+                            {{ $specificDocument->additional_patient_name ?? '______________' }}</span>
+                            has been examined by the undersigned and found to be physically fit at the time of examination.
+                        </p>
+                        <p class="indent-8">
+                            This certification is issued upon his/her request for <span id="excuse-placeholder"
+                                class="underline">{{ $specificDocument->additional_excuse ?? '_____________' }}</span> purposes but not for medico-legal
+                            reason.
+                        </p>
+                        <div class="mt-5">
+                            <span>X-ray Result: <span id="x-ray-placeholder2" class="underline">
+                                {{ $specificDocument->xray_result ?? '_____________' }}</span>
+                        </div>
                     </div>
-                    <div class="w-11/30 text-left">
-                    <p><span id="x-ray-placeholder2" class="underline">{{ $specificDocument->additional_doctorName ?? '__________' }}</span><label class="font-medium"> M.D. </label></p>
-                    <p><span id="x-ray-placeholder2" class="font-medium">{{ $specificDocument->additional_position ?? '__________' }}</span> </p>
-                    <p><label class="font-medium">Lic No. </label> <span id="lic_no-placeholder2" class="underline">
-                    {{ $specificDocument->additional_license_number ?? '__________' }}</span></p>
-                </div>
+                    <!-- Flex Row for COVID Status and Signature -->
+                    <div class="flex justify-between pt-10 mb-0 pb-0">
+                        <div id="" class="w-1/2 text-left">
+                            <p>COVID-19 Vaccination Status:</p>
+                            <p><span class="checkbox" id="status-unvaccinated">{{ $specificDocument->additional_vaccination_status == 'Unvaccinated' ? '___✓___' : '_____' }}</span> Unvaccinated</p>
+                            <p><span class="checkbox" id="status-incomplete">{{ $specificDocument->additional_vaccination_status == 'Primary Incomplete' ? '___✓___' : '_____' }}</span> Primary series incomplete</p>
+                            <p><span class="checkbox" id="status-completed">{{ $specificDocument->additional_vaccination_status == 'Primary Complete' ? '___✓___' : '_____' }}</span> Primary dose / series completed</p>
+                            <p><span class="checkbox" id="status-boosters">{{ $specificDocument->additional_vaccination_status == 'Boosters' ? '___✓___' : '_____' }}</span> 1st / second Boosters</p>
+                        </div>
+                        <div class="w-11/30 text-left">
+                        <p><span id="x-ray-placeholder2" class="underline">{{ $specificDocument->additional_doctorName ?? '__________' }}</span><label class="font-medium"> M.D. </label></p>
+                        <p><span id="x-ray-placeholder2" class="font-medium">{{ $specificDocument->additional_position ?? '__________' }}</span> </p>
+                        <p><label class="font-medium">Lic No. </label> <span id="lic_no-placeholder2" class="underline">
+                        {{ $specificDocument->additional_license_number ?? '__________' }}</span></p>
+                    </div>
+                    </div>
                 </div>
             </div>
-        </div>
+
     </div>
 
         <script>

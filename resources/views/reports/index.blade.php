@@ -23,10 +23,10 @@
         $filterDisplay = count($filters) ? implode(', ', $filters) : 'None';
     @endphp
 
-    <div class="container h-full px-4 mx-auto">
+    <div class="container mx-auto">
         <x-page-title class="mb-2" value="Reports" />
 
-        <div class="flex flex-wrap items-center justify-end w-full gap-2 mb-4">
+        <!-- <div class="flex flex-wrap items-center justify-end w-full gap-2 mb-4">
 
             @if ($filterDisplay !== 'None')
                 <p class="items-start flex-grow text-gray-500">
@@ -45,9 +45,70 @@
                             fill="currentColor"></path>
                     </svg>
                     Filter
-                </button>
+                </button> -->
 
-                <div id="categoryFilterDropdown" class="absolute z-50 hidden mt-1 bg-white border rounded-md shadow-lg ">
+    <div class="p-4 bg-white rounded-lg shadow">
+  <!-- Top bar with tabs on left and button(s) on right -->
+<div class="flex flex-wrap justify-between items-center mb-3 gap-4">
+    
+    <!-- Tabs -->
+    <div class="flex flex-wrap gap-2">
+        <a class="px-3 py-2 text-base text-gray-800 border-b-2 border-blue-500 rounded-t bg-blue-50 tab-btn whitespace-nowrap activate hover:text-gray-700"
+            href="{{ route('reports.index') }}">All</a>
+
+        <a class="px-3 py-2 text-base text-gray-500 border-b-2 border-gray-300 rounded tab-btn whitespace-nowrap hover:text-gray-700"
+            href="{{ route('reports.index', array_merge(request()->query(), ['category' => 'Students'])) }}">Students</a>
+
+        <a class="px-3 py-2 text-base text-gray-500 border-b-2 border-gray-300 rounded tab-btn whitespace-nowrap hover:text-gray-700"
+            href="{{ route('reports.index', array_merge(request()->query(), ['category' => 'Faculty'])) }}">Faculty</a>
+
+        <a class="px-3 py-2 text-base text-gray-500 border-b-2 border-gray-300 rounded tab-btn whitespace-nowrap hover:text-gray-700"
+            href="{{ route('reports.index', array_merge(request()->query(), ['category' => 'Admin'])) }}">Administrative</a>
+
+        <a class="px-3 py-2 text-base text-gray-500 border-b-2 border-gray-300 rounded tab-btn whitespace-nowrap hover:text-gray-700"
+            href="{{ route('reports.index', array_merge(request()->query(), ['category' => 'Visitors'])) }}">Visitors</a>
+
+        <a class="px-3 py-2 text-base text-gray-500 border-b-2 border-gray-300 rounded tab-btn whitespace-nowrap hover:text-gray-700"
+            href="{{ route('reports.index', array_merge(request()->query(), ['category' => 'Dependents'])) }}">Dependents</a>
+    </div>
+
+   <!-- Buttons aligned to the right -->
+    <div class="flex gap-2 ml-auto">
+        <form action="{{ route('reports.showReportPaper') }}" method="GET">
+            <button type="submit"
+                class="relative flex flex-col items-center px-3 py-2 font-bold text-blue-500 bg-blue-100 rounded-lg group hover:bg-blue-200 hover:text-blue-600">
+                <svg xmlns="http://www.w3.org/2000/svg" class="size-6" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M6.72 13.829c-.24.03-.48.062-.72.096m.72-.096a42.415 42.415 0 0 1 10.56 0m-10.56 0L6.34 18m10.94-4.171c.24.03.48.062.72.096m-.72-.096L17.66 18m0 0 .229 2.523a1.125 1.125 0 0 1-1.12 1.227H7.231c-.662 0-1.18-.568-1.12-1.227L6.34 18m11.318 0h1.091A2.25 2.25 0 0 0 21 15.75V9.456c0-1.081-.768-2.015-1.837-2.175a48.055 48.055 0 0 0-1.913-.247M6.34 18H5.25A2.25 2.25 0 0 1 3 15.75V9.456c0-1.081.768-2.015 1.837-2.175a48.041 48.041 0 0 1 1.913-.247m10.5 0a48.536 48.536 0 0 0-10.5 0m10.5 0V3.375c0-.621-.504-1.125-1.125-1.125h-8.25c-.621 0-1.125.504-1.125 1.125v3.659M18 10.5h.008v.008H18V10.5Zm-3 0h.008v.008H15V10.5Z" />
+                </svg>
+                <span
+                    class="absolute bottom-[-1.5rem] left-1/2 transform -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-white font-normal text-gray-700 px-4 text-sm py-1 rounded-md shadow">
+                    Print
+                </span>
+            </button>
+        </form>
+
+
+
+        <!-- <div class="flex gap-2">
+
+                   <form action="{{ route('reports.showReportPaper') }}" method="GET">
+                <button type="submit"
+                    class="relative flex flex-col items-center px-3 py-2 space-y-1 font-bold text-blue-500 bg-blue-100 rounded-lg group hover:bg-blue-200 hover:text-blue-600">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
+                        stroke="currentColor" class="size-6">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M6.72 13.829c-.24.03-.48.062-.72.096m.72-.096a42.415 42.415 0 0 1 10.56 0m-10.56 0L6.34 18m10.94-4.171c.24.03.48.062.72.096m-.72-.096L17.66 18m0 0 .229 2.523a1.125 1.125 0 0 1-1.12 1.227H7.231c-.662 0-1.18-.568-1.12-1.227L6.34 18m11.318 0h1.091A2.25 2.25 0 0 0 21 15.75V9.456c0-1.081-.768-2.015-1.837-2.175a48.055 48.055 0 0 0-1.913-.247M6.34 18H5.25A2.25 2.25 0 0 1 3 15.75V9.456c0-1.081.768-2.015 1.837-2.175a48.041 48.041 0 0 1 1.913-.247m10.5 0a48.536 48.536 0 0 0-10.5 0m10.5 0V3.375c0-.621-.504-1.125-1.125-1.125h-8.25c-.621 0-1.125.504-1.125 1.125v3.659M18 10.5h.008v.008H18V10.5Zm-3 0h.008v.008H15V10.5Z" />
+                    </svg>
+                    <span
+                        class="absolute bottom-[-1.5rem] left-1/2 transform -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-white font-normal text-gray-700 px-4 text-sm py-1 rounded-md shadow">
+                        Print
+                    </span>
+                </button>
+            </form> -->
+
+                <!-- <div id="categoryFilterDropdown" class="absolute z-50 hidden mt-1 bg-white border rounded-md shadow-lg ">
                     <ul class="w-full">
                         <li><a class="block px-6 py-2 font-normal text-gray-700 hover:bg-gray-100 hover:text-gray-700"
                                 href="{{ route('reports.index') }}">All</a></li>
@@ -80,22 +141,23 @@
                         Print
                     </span>
                 </button>
-            </form>
+            </form> -->
 
             <!-- Add Button -->
             <button
-                class="inline-flex items-center gap-2 px-6 py-2.5 text-white bg-blue-500 hover:bg-blue-600 rounded-lg transition-all duration-200 shadow-md hover:shadow-lg active:shadow-sm transform active:translate-y-0"
+                class="inline-flex items-center gap-2 px-3 py-2 text-white bg-blue-500 hover:bg-blue-600 rounded-lg transition-all duration-200 shadow-md hover:shadow-lg active:shadow-sm transform active:translate-y-0"
                 onclick="showAddReportModal()">
-                + Add Report
+                                <span class="font-medium">+ Add Report</span>
             </button>
         </div>
 
         <!-- Responsive Table -->
-        <div class="h-full p-4 bg-white rounded-lg shadow-md">
+        <div class="mt-4"></div>
+
             @if (count($reports) > 0)
-                <div class="overflow-x-auto shadow-md">
-                    <table class="w-full text-sm text-left text-black-500">
-                        <thead class="text-xs text-gray-700 uppercase bg-gray-200 text-black-700">
+                <div class="overflow-x-auto rounded-lg shadow-sm">
+                    <table class="min-w-full text-sm text-left text-black-500">
+                        <thead class="text-xs bg-gray-100 uppercase border-b border-gray-200">
                             <tr>
                                 <th class="px-6 py-3">Title</th>
                                 <th class="px-6 py-3">Name</th>

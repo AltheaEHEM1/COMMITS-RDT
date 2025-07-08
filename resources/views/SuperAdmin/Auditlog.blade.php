@@ -85,8 +85,13 @@
                                                 text-gray-400
                                             @endif
                                             " data-raw="{{ class_basename($log->subject_type) }}">
-                                             </span> 
+                                             </span>
+                                    </span> 
                                     @endif
+                                        @if(isset($log->properties['attempts']))
+                                            <span class="font-normal text-gray-600 text-md"> {{ $log->properties['attempts'] }} times</span>
+                                        @endif
+                                    
                                             <span> | </span>
                                             <span class="text-gray-500 font-medium">
                                                 {{ $log->created_at->format('h:i A') }}

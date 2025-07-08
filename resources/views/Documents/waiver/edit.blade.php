@@ -4,6 +4,40 @@
 
 @section('content')
 
+<style>
+    @media print {
+        @page {
+            size: A4; /* O palitan ng 'Letter' kung Letter size ang gamit */
+            margin: 0; /* Tanggalin ang margin */
+        }
+
+        body, html {
+            margin: 0 !important;
+            padding: 0 !important;
+            height: 100% !important;
+            overflow: hidden !important;
+        }
+
+
+        .page {
+            margin: 0; /* Siguraduhing walang margin ang page */
+            padding: 0; /* Siguraduhing walang padding ang page */
+            position: relative;
+            top: -130px; /* Alisin ang offset */
+        }
+            body {
+            font-family: Arial;
+            font-size: 13px;
+        }
+        .container {
+        padding-top: 0 !important;
+        padding-bottom: 0 !important;
+        margin-top: 0 !important;
+        margin-bottom: 0 !important;
+      }
+    }
+</style>
+
     <!-- Buttons (Optional for print view, you can hide them when printing) -->
     <div class="flex space-x-10 justify-between mb-5">
         <button class="px-4 py-2 bg-gray-300 text-black rounded hover:bg-gray-400 flex items-center space-x-2"
@@ -93,33 +127,31 @@
                     </div>
                 </div>
             </div>
-        </div>
 
-    </div>
 
-    <!-- Document 2 (duplicate the structure as needed) -->
-    <div class="container mx-auto bg-white md:py-20 md:px-20 w-[90%] md:w-[70%] lg:w-[70%]">
+            <!-- Document 2 (duplicate the structure as needed) -->
+
             <div class="container mt-15">
-                    <div class="flex flex-col items-end text-xs leading-tight text-gray-800">
-                        <p>{{ $associatedDocument->control_number ?? '__________' }}</p>
-                        <p>Rev. {{ $associatedDocument->revision ?? '_________'}}</p>
-                        <p>{{ \Carbon\Carbon::parse($associatedDocument->date_issued)->format('F j, Y') ?? '__________' }} </p>
-                    </div>
-                <div class="flex items-center justify-center mb-5">
-                    <div class="mr-5">
-                        <img src="{{ asset('Logo_image/logopup.png') }}" alt="Logo" class="w-28 mb-5">
-                    </div>
-                    <div class="text-center" style="font-family: 'Times New Roman', serif;">
-                        <h1 class="text-sm font-normal">Republic of the Philippines</h1>
-                        <h1 class="text-base font-normal">POLYTECHNIC UNIVERSITY OF THE PHILIPPINES</h1>
-                        <p class="text-sm mb-5">Quezon City</p>
-                        <h2 class="text-xl font-semibold">WAIVER</h2>
-                    </div>
+                <div class="flex flex-col items-end text-xs leading-tight text-gray-800">
+                    <p>{{ $associatedDocument->control_number ?? '__________' }}</p>
+                    <p>Rev. {{ $associatedDocument->revision ?? '_________'}}</p>
+                    <p>{{ \Carbon\Carbon::parse($associatedDocument->date_issued)->format('F j, Y') ?? '__________' }} </p>
                 </div>
-                <div class="text-right my-10 mb-8 font-Arial">
-                    <label class="font-medium">Date: </label>
-                    <span> <span id="date-placeholder" class="underline">{{ $associatedDocument->additional_date ? \Carbon\Carbon::parse($associatedDocument->additional_date)->format('F j, Y') : '__________' }}
-                    </span>
+            <div class="flex items-center justify-center mb-5">
+                <div class="mr-5">
+                    <img src="{{ asset('Logo_image/logopup.png') }}" alt="Logo" class="w-28 mb-5">
+                </div>
+                <div class="text-center" style="font-family: 'Times New Roman', serif;">
+                    <h1 class="text-sm font-normal">Republic of the Philippines</h1>
+                    <h1 class="text-base font-normal">POLYTECHNIC UNIVERSITY OF THE PHILIPPINES</h1>
+                    <p class="text-sm mb-5">Quezon City</p>
+                    <h2 class="text-xl font-semibold">WAIVER</h2>
+                </div>
+            </div>
+            <div class="text-right my-10 mb-8 font-Arial">
+                <label class="font-medium">Date: </label>
+                <span> <span id="date-placeholder" class="underline">{{ $associatedDocument->additional_date ? \Carbon\Carbon::parse($associatedDocument->additional_date)->format('F j, Y') : '__________' }}
+                </span>
             </div>
 
             <div class="space-y-4 font-Arial mb-5">
