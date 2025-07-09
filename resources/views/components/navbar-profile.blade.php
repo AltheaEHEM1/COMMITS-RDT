@@ -12,7 +12,7 @@
 
 <!--======== START NAVBAR =================-->
 <nav
-    class="container mx-auto fixed top-0 left-0 right-0 z-50 flex items-center justify-between bg-white border-b border-gray-200 h-14">
+    class="container fixed top-0 left-0 right-0 z-50 flex items-center justify-between mx-auto bg-white border-b border-gray-200 h-14">
     <div class="flex flex-wrap items-center justify-between w-full">
         <div class="flex items-center justify-start">
             {{-- <button data-drawer-target="drawer-navigation" data-drawer-toggle="drawer-navigation"
@@ -43,25 +43,25 @@
                 </div>
             @endif --}}
 
-            <div class="flex items-center space-x-2 py-2">
+            <div class="flex items-center py-2 space-x-2">
                 <!-- Logo -->
                 <a class="flex-none inline-block text-xl font-semibold rounded-xl focus:outline-hidden focus:opacity-80"
                     href="#" aria-label="PRMS">
                     <div class="flex items-center justify-start w-full">
                         <!--PRMS logo-->
                         <img src="{{ asset('images/prms-logo 2.jpg') }}" alt="logo" class="w-10 mr-1 rounded-full">
-                        <span class="text-2xl font-bold text-red-900 hidden md:block ml-1">PRMS</span>
+                        <span class="hidden ml-1 text-2xl font-bold text-red-900 md:block">PRMS</span>
                     </div>
                 </a>
                 <!-- End Logo -->
                 <div>
-                    <a href="{{ route('dashboard') }}"
-                        class="font-medium px-2 hover:underline text-base hover:text-blue-500">Dashboard</a>
+                    <a href="{{ auth()->user()->role == "superadmin" ? route('Superadmin_dashboard') : route('dashboard') }}"
+                        class="px-2 text-base font-medium hover:underline hover:text-blue-500">Dashboard</a>
                 </div>
             </div>
         </div>
 
-        <div class="relative flex items-center lg:order-2 space-x-1">
+        <div class="relative flex items-center space-x-1 lg:order-2">
             <!-- Notifications -->
             <div class="relative">
                 <!-- Notification Button -->
@@ -180,7 +180,7 @@
 
                 <!-- Dropdown menu profile items -->
                 <div id="profile-dropdown"
-                    class="absolute z-50 hidden w-64 bg-white rounded-lg shadow-lg dropdown-menu-content top-full right-0 mt-2">
+                    class="absolute right-0 z-50 hidden w-64 mt-2 bg-white rounded-lg shadow-lg dropdown-menu-content top-full">
                     <a href="{{ route('user.profile') }}"
                         class="flex items-center px-4 py-2 text-gray-800 hover:bg-gray-100">
                         <svg class="inline w-4 h-4 mr-2 text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="none"

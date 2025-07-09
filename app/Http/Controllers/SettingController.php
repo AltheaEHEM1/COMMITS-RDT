@@ -36,7 +36,7 @@ class SettingController extends Controller
         ]);
 
         // get the current authenticated user
-        $authenticatedUser = User::find(Auth::user());
+        $authenticatedUser = Auth::user();
 
         if (Hash::check($request->current_password, $authenticatedUser->password)) {
             // update the password

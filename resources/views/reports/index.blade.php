@@ -214,9 +214,11 @@
                     </table>
                 </div>
             @else
-                <div class="p-8 text-center">
-                    <p class="text-xl text-gray-600">No reports available.</p>
-                    <p class="mt-2 text-gray-500">Click on "Add Report" to create your first report.</p>
+                <div class="flex items-center justify-center w-full p-8 text-center">
+                    <div class="space-y-2">
+                        <p class="text-xl font-medium text-gray-600">No reports available.</p>
+                        <p class="text-gray-500">Click on "Add Report" to create your first report.</p>
+                    </div>
                 </div>
             @endif
         </div>

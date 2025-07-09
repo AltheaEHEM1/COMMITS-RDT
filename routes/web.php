@@ -63,7 +63,7 @@ Route::middleware(['auth'])->group(function () {
     Route::prefix('settings')->group(function () {
         Route::get('/profile', [SettingController::class, 'profile'])->name('user.profile');
         Route::get('/change-password', [SettingController::class, 'changePassword'])->name('password.change');
-        Route::post('/update-password', [SettingController::class, 'updatePassword'])->name('password.update');
+        Route::post('/update-password', [SettingController::class, 'updatePassword'])->name('update.password');
         Route::post('/update-profile', [SettingController::class, 'updateProfile'])->name('profile.update');
     });
 
