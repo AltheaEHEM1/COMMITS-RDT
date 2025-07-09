@@ -160,7 +160,7 @@
                             48, 49, 51, 52, 53, 54, 56, 57, 58, 61, 62, 63, 64, 65, 66, 68, 69, 71, 
                             72, 73, 74, 75, 77, 79, 80, 82, 83, 84, 85]) ? 'pl-9' : 
                             (in_array($loop->index, [0, 70, 76, 78, 81]) ? 'bg-blue-200 font-bold' :
-                            (in_array($loop->index, [1, 11, 21, 27, 32, 33, 36, 41, 43, 50, 55, 59, 60, 67]) ? 'bg-yellow-100 font-bold' : '')) }}">{{ $service['name'] }} {{ $loop->index }}</td>
+                            (in_array($loop->index, [1, 11, 21, 27, 32, 33, 36, 41, 43, 50, 55, 59, 60, 67]) ? 'bg-yellow-100 font-bold' : '')) }}">{{ $service['name'] }}</td>
                             @foreach ($service['data'] as $data)
                                 <td class="border border-black cells 
                                     {{ in_array($loop->parent->index, [0, 70, 76, 78, 81]) ? 'bg-blue-200 font-bold' :
@@ -191,8 +191,7 @@
                             {{-- adds custom styles to specific cells --}}
                             {{ in_array($loop->index, [86, 90]) ? 'bg-yellow-100 font-bold' :
                             (in_array($loop->index, [87, 88, 89, 91, 92]) ? 'pl-9' : '')}}">
-                                {{ $service['name'] }}  
-                                {{ $loop->index }}
+                                {{ $service['name'] }}                                  
                             </td>
                             @foreach($service['data'] as $data)
                                 <td class="border border-black cells
@@ -348,7 +347,7 @@
                         <div
                             id="preview-container-1"
                             style="border-style: dashed"
-                            class="relative flex items-center justify-center h-20 border-2 border-gray-300 rounded-lg bg-gray-50 hover:bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-800 dark:border-gray-600 dark:hover:border-gray-500"
+                            class="relative flex items-center justify-center h-20 border-2 border-gray-300 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500"
                         >
                             <img
                             id="preview-img-1"
@@ -373,7 +372,7 @@
                         <div
                             id="preview-container-2"
                             style="border-style: dashed"
-                            class="relative flex items-center justify-center h-20 border-2 border-gray-300 rounded-lg bg-gray-50 hover:bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-800 dark:border-gray-600 dark:hover:border-gray-500"
+                            class="relative flex items-center justify-center h-20 border-2 border-gray-300 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500"
                         >
                             <img
                             id="preview-img-2"
@@ -436,14 +435,14 @@
             const previewContainer2 = document.getElementById('preview-container-2');
             // Handle file upload for container 1
             dropzoneFile1.addEventListener('change', function(e) {
-                handleFileUpload(e, previewImg1, placeholder1, previewContainer1);
+                handleFileUpload(e, previewImg1, placeholder1, previewContainer1, dropzoneFile1);
             });
             // Handle file upload for container 2
             dropzoneFile2.addEventListener('change', function(e) {
-                handleFileUpload(e, previewImg2, placeholder2, previewContainer2);
+                handleFileUpload(e, previewImg2, placeholder2, previewContainer2, dropzoneFile2);
             });
             // Function to handle file upload
-            function handleFileUpload(e, previewImg, placeholder, previewContainer) {
+            function handleFileUpload(e, previewImg, placeholder, previewContainer, inputElement) {
                 const file = e.target.files[0];
                 if (file) {
                     const reader = new FileReader();
@@ -454,11 +453,16 @@
                         previewImg.classList.remove('hidden');
                         // Hide placeholder
                         placeholder.classList.add('hidden');
+                        // Store the file data for later reference
+                        inputElement.previousFileData = event.target.result;
                     };
                     reader.readAsDataURL(file);
                 } else {
-                    // If no file is selected (like when a user cancels the file dialog)
-                    resetImagePreview(previewImg, placeholder, previewContainer);
+                    // Only reset if there was no previous file data
+                    // This prevents removing the image when user cancels file dialog
+                    if (!inputElement.previousFileData) {
+                        resetImagePreview(previewImg, placeholder, previewContainer);
+                    }
                 }
             }
             // Function to reset image preview
@@ -476,9 +480,11 @@
                 if (containerNum === 1) {
                     resetImagePreview(previewImg1, placeholder1, previewContainer1);
                     dropzoneFile1.value = '';
+                    dropzoneFile1.previousFileData = null;
                 } else if (containerNum === 2) {
                     resetImagePreview(previewImg2, placeholder2, previewContainer2);
                     dropzoneFile2.value = '';
+                    dropzoneFile2.previousFileData = null;
                 }
             };
         });
@@ -577,6 +583,9 @@
                                 margin: 0;
                                 padding: 0;
                                 background: white;
+                                display: flex;
+                                justify-content: center;
+                                align-items: flex-start;
                             }
                             #ctrlNumber {
                                 width: 180px;
@@ -584,23 +593,34 @@
                             }
                             #reportPaperID {
                                 box-shadow: none !important;
-                                margin: 0 !important;
+                                margin: 0 auto !important;
+                                padding: 20px !important;
                                 padding-bottom: 0 !important;
+                                width: 95% !important;
+                                max-width: 210mm !important;
+                                min-height: auto !important;
+                                overflow: visible !important;
                             }                      
                             td, th {
                                 word-wrap: break-word;
                                 overflow-wrap: break-word;
+                                padding: 2px 4px !important;
                             }
                             input[type="text"], 
                             input[type="number"], 
                             textarea {
                                 width: 100% !important;
                                 box-sizing: border-box;
+                                border: none !important;
+                                background: transparent !important;
+                                padding: 1px 2px !important;
                             }
                             #table1, #table2, #table3, #table4, #table5 {
                                 width: 100% !important;
                                 margin: 0;
                                 padding: 0;
+                                table-layout: fixed !important;
+                                border-collapse: collapse !important;
                             }
                             #table-header {
                                 text-align: center;
@@ -618,6 +638,7 @@
                             }
                             .cells {
                                 padding-left: 10px;
+                                text-align: center !important;
                             }
                             #preview-img-1:not(.hidden),
                             #preview-img-2:not(.hidden) {
@@ -631,6 +652,15 @@
                             #preview-container-2 {
                                 border: none !important;
                                 background: white !important;
+                            }
+                            /* Ensure proper table column widths */
+                            table {
+                                border-spacing: 0 !important;
+                            }
+                            /* Prevent content from being cut off */
+                            * {
+                                -webkit-print-color-adjust: exact !important;
+                                color-adjust: exact !important;
                             }
                         }
                     </style>
@@ -884,12 +914,21 @@
 
             inputEl.addEventListener('change', () => {
                 const file = inputEl.files[0];
-                if (!file) return;
+                if (!file) {
+                    // Only reset if there was no previous file data
+                    if (!inputEl.previousFileData) {
+                        return;
+                    }
+                    return;
+                }
 
                 const url = URL.createObjectURL(file);
                 imgEl.src = url;
                 imgEl.classList.remove('hidden');
                 placeholderEl.classList.add('hidden');
+
+                // Store the file data for later reference
+                inputEl.previousFileData = url;
 
                 // Remove dashed border
                 containerEl.classList.remove(

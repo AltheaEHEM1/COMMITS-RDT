@@ -567,23 +567,23 @@ class ReportController extends Controller
             ],
             [
                 'name' => 'VI. ON-LINE CONSULTATION',
-                'data' => ['', '', '', '', 'VI.']
+                'data' => ['', '', '', '', '', 'VI.']
             ],
             [
                 'name' => 'a. Consultation',
-                'data' => ['', '', '', '', '']
+                'data' => ['', '', '', '', '', '']
             ],
             [
                 'name' => 'b. Medical certificate',
-                'data' => ['', '', '', '', '']
+                'data' => ['', '', '', '', '', '']
             ],
             [
                 'name' => 'c. Others',
-                'data' => ['', '', '', '', '']
+                'data' => ['', '', '', '', '', '']
             ],
             [
                 'name' => 'VII. TRIAGE SURVEY',
-                'data' => ['', '', '', '', 'VII.']
+                'data' => ['', '', '', '', '', 'VII.']
             ],
         ];
     }

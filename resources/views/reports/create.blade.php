@@ -75,9 +75,17 @@
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-2 focus:outline-none focus:ring-blue-500 block w-full p-2.5">
                         <option value="">Select diagnosis</option>
                         @foreach ($services as $service)
-                            @if (!$loop->last)
-                                {{-- to not include the "Total Online Consult" --}}
-                                <option value="{{ $service['name'] }}">{{ $service['name'] }}</option>
+                            @if (!empty($service['data'][5]))
+                                {{-- Category header: shown but not selectable --}}
+                                @php
+                                    $cleanName = preg_replace('/^\d+\.\s*/', '', $service['name']);
+                                @endphp
+                                <option value="" disabled class="font-extrabold"><strong>{{ $cleanName }}</strong></option>
+                            @else
+                                @php
+                                    $cleanName = preg_replace('/^\d+\.\s*/', '', $service['name']);
+                                @endphp
+                                <option value="{{ $service['name'] }}">{{ $cleanName }}</option>
                             @endif
                         @endforeach
                     </select>
