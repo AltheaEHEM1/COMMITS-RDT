@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Hash;
 use App\Models\User;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
+use Spatie\Activitylog\Facades\Activity;
 
 class UserController extends Controller
 {
@@ -44,12 +45,23 @@ class UserController extends Controller
                 $user->save();
             }
 
+            // Log successful login activity
+            Activity::causedBy($user)
+                ->log('logged in successfully');
+
             // Check user role and redirect accordingly
             if ($user->role === 'superadmin') {
                 return redirect()->route('Superadmin_dashboard');
             } else {
                 return redirect()->route('dashboard');
             }
+        }
+
+        // Authentication failed - log failed login attempt
+        $failedUser = User::where('email', $request->email)->first();
+        if ($failedUser) {
+            Activity::causedBy($failedUser)
+                ->log('failed login attempt');
         }
 
         // Authentication failed
@@ -61,6 +73,14 @@ class UserController extends Controller
      */
     public function logout(Request $request)
     {
+        $user = Auth::user();
+        
+        // Log logout activity before logging out
+        if ($user) {
+            Activity::causedBy($user)
+                ->log('logged out');
+        }
+
         Auth::logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();

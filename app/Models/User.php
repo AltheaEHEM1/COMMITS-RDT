@@ -71,4 +71,26 @@ class User extends Authenticatable implements MustVerifyEmail, CanResetPassword
             ->withPivot('viewed_at')
             ->withTimestamps();
     }
+
+    /**
+     * Get the total number of successful logins for this user.
+     */
+    public function getLoginCountAttribute(): int
+    {
+        return \Spatie\Activitylog\Models\Activity::where('causer_id', $this->id)
+            ->where('causer_type', User::class)
+            ->where('description', 'logged in successfully')
+            ->count();
+    }
+
+    /**
+     * Get the total number of failed login attempts for this user.
+     */
+    public function getFailedLoginCountAttribute(): int
+    {
+        return \Spatie\Activitylog\Models\Activity::where('causer_id', $this->id)
+            ->where('causer_type', User::class)
+            ->where('description', 'failed login attempt')
+            ->count();
+    }
 }

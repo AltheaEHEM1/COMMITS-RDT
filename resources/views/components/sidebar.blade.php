@@ -53,10 +53,19 @@
                 <x-sidebar-link :href="route('dashboard')" :active="request()->is('dashboard*') || request()->is('/')" :icon="'fas fa-chart-pie'">Dashboard</x-sidebar-link>
             </li>
             <li>
-                <x-sidebar-link :href="route('patients')" :active="request()->is('patients*') || request()->is('/')" :icon="'fas fa-user-injured'">Patients</x-sidebar-link>
-            </li>
-            <li>
-                <x-sidebar-link :href="route('History.all')" :active="request()->is('history*')" :icon="'fas fa-history'">History</x-sidebar-link>
+                <button type="button" id="patients-dropdown-toggle" class="flex items-center w-full p-2 text-base font-medium transition duration-75 rounded-lg group hover:bg-gray-200 hover:text-red-900 text-gray-300 focus:outline-none">
+                    <i class="fas fa-user-injured w-6 h-5 mr-1 group-hover:text-red-800"></i>
+                    <span class="ml-2 flex-1 text-left">Patients</span>
+                    <svg id="patients-dropdown-arrow" class="w-4 h-4 ml-auto transition-transform{{ (request()->is('patients*') || request()->is('history*')) ? ' rotate-180' : '' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
+                </button>
+                <ul id="patients-dropdown-menu" class="ml-8 mt-1 space-y-1{{ (request()->is('patients*') || request()->is('history*')) ? '' : ' hidden' }}">
+                    <li>
+                        <x-sidebar-link :href="route('patients')" :active="request()->is('patients*') || request()->is('/')" :icon="'fas fa-hospital-user'">Patients Records</x-sidebar-link>
+                    </li>
+                    <li>
+                        <x-sidebar-link :href="route('History.all')" :active="request()->is('history*')" :icon="'fas fa-history'">History</x-sidebar-link>
+                    </li>
+                </ul>
             </li>
             <li>
                 <x-sidebar-link :href="route('inventory')" :active="request()->is('inventory*')" :icon="'fas fa-boxes'">Inventory</x-sidebar-link>
@@ -69,3 +78,16 @@
             </li>
         </ul>
 </aside>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const toggle = document.getElementById('patients-dropdown-toggle');
+        const menu = document.getElementById('patients-dropdown-menu');
+        const arrow = document.getElementById('patients-dropdown-arrow');
+        if (toggle && menu && arrow) {
+            toggle.addEventListener('click', function () {
+                menu.classList.toggle('hidden');
+                arrow.classList.toggle('rotate-180');
+            });
+        }
+    });
+</script>

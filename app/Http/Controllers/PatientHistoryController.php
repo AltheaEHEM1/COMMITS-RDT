@@ -43,21 +43,6 @@ class PatientHistoryController extends Controller
             // Convert month name to number
             $monthNumber = Carbon::createFromFormat('F', $monthFilter)->month;
             $query->whereMonth('created_at', $monthNumber);
-
-            // If a week is also selected, apply week filter within the selected month
-            if ($request->filled('week')) {
-                $weekFilter = $request->input('week');
-
-                // Validate week input
-                $request->validate([
-                    'week' => 'nullable|integer|min:1|max:5',
-                ]);
-
-                // Apply filtering to get only the records for the specific week in the selected month
-                $query->whereRaw("
-                    WEEK(created_at, 1) - WEEK(DATE_SUB(created_at, INTERVAL DAYOFMONTH(created_at)-1 DAY), 1) + 1 = ?
-                ", [$weekFilter]);
-            }
         }
 
         // Sort records by created_at (newest first)
@@ -73,15 +58,10 @@ class PatientHistoryController extends Controller
             'July', 'August', 'September', 'October', 'November', 'December'
         ];
 
-        // Generate week options dynamically (1-5)
-        $weeks = range(1, 5);
-
         return view('History.all', [
             'records' => $records,
             'months' => $months,
-            'weeks' => $weeks,
             'selectedMonth' => $request->input('month'),
-            'selectedWeek' => $request->input('week'),
             'searchTerm' => $request->input('search'), // Pass search term to view
         ]);
     }

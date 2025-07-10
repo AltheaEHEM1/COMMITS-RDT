@@ -65,7 +65,7 @@
                     <!-- Month Dropdown -->
                     <div class="relative inline-block text-left">
                         <button onclick="toggleDropdown('month-dropdown')"
-                            class="flex items-center px-4 py-2 text-blue-500 bg-blue-100 hover:bg-blue-200 rounded-lg transition-all duration-200">
+                            class="flex items-center px-4 py-2 text-white bg-blue-500 hover:bg-blue-600 rounded-lg transition-all duration-200">
                             <p class="px-2">{{ $selectedMonth ?? 'All Month' }}</p>
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="white"
                                 viewBox="0 0 24 24">
@@ -84,34 +84,6 @@
                                     <li>
                                         <a href="{{ route('History.all', array_merge(request()->only('search'), ['month' => $month])) }}"
                                             class="block px-4 py-2 text-gray-700 hover:bg-gray-100">{{ $month }}</a>
-                                    </li>
-                                @endforeach
-                            </ul>
-                        </div>
-                    </div>
-
-                    <!-- Week Dropdown -->
-                    <div class="relative inline-block text-left">
-                        <button onclick="toggleDropdown('week-dropdown')"
-                            class="flex items-center px-4 py-2 text-white bg-blue-500 hover:bg-blue-600 rounded-lg transition-all duration-200 transform active:translate-y-0">
-                            <p class="px-2"> {{ $selectedWeek ? 'Week ' . $selectedWeek : 'All Week' }}</p>
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="white"
-                                viewBox="0 0 24 24">
-                                <path d="M7 10l5 5 5-5H7z" />
-                            </svg>
-                        </button>
-                        <div id="week-dropdown"
-                            class="absolute right-0 hidden w-40 mt-2 bg-white border border-gray-200 rounded shadow-lg dropdown-content">
-                            <ul class="py-1">
-                                <!-- All Weeks -->
-                                <li>
-                                    <a href="{{ route('History.all', array_merge(request()->only('search', 'month'))) }}"
-                                        class="block px-4 py-2 text-gray-700 hover:bg-gray-100">All</a>
-                                </li>
-                                @foreach ($weeks as $week)
-                                    <li>
-                                        <a href="{{ route('History.all', array_merge(request()->only('search', 'month'), ['week' => $week])) }}"
-                                            class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Week {{ $week }}</a>
                                     </li>
                                 @endforeach
                             </ul>

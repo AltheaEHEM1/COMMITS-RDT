@@ -14,11 +14,22 @@ class ActivityLogController extends Controller
             abort(403, 'Unauthorized');
         }
 
-        $logs = Activity::latest()->get()->groupBy(function ($log) {
-            return $log->created_at->format('F j, Y');
-        });
+        $logs = Activity::with('causer')
+            ->latest()
+            ->paginate(10);
 
-        $logs = Activity::latest()->paginate(10);
-        return view('superadmin.auditlog', compact('logs'));
+        // Get login statistics for each user
+        $userLoginStats = [];
+        $users = \App\Models\User::all();
+        
+        foreach ($users as $user) {
+            $userLoginStats[$user->id] = [
+                'successful_logins' => $user->login_count,
+                'failed_logins' => $user->failed_login_count,
+                'total_attempts' => $user->login_count + $user->failed_login_count
+            ];
+        }
+
+        return view('superadmin.auditlog', compact('logs', 'userLoginStats'));
     }
 }

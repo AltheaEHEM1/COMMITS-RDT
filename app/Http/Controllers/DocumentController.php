@@ -36,7 +36,10 @@ class DocumentController extends Controller
         if (!array_key_exists($documentType, $views)) {
             return redirect()->route('documents.index')->with('error', 'Invalid document type.');
         }
-
+        // Check if a control number exists for this document type
+        if (!$controlNumber->where('document_type', $documentType)->count()) {
+            return redirect()->route('documents.index')->with('error', 'No control number exists for this document type. Please create a control number first.');
+        }
         // Render the corresponding create view
         return view($views[$documentType], compact('documentType', 'controlNumber'));
     }
@@ -55,9 +58,7 @@ class DocumentController extends Controller
         $existing = ControlNumber::where('document_type', $request->input('document_type'))->first();
 
         if ($existing) {
-            return redirect()->back()->withInput()->withErrors([
-                'document_type' => 'This document type already exists.'
-            ]);
+            return redirect()->route('documents.index')->with('error', 'You have already created a control number for this document type.');
         }
         // Create the ControlNumber record
         $controlNumber = ControlNumber::create([
@@ -136,7 +137,6 @@ class DocumentController extends Controller
         $request->validate([
             'document_type' => 'required|string|max:255',
         ]);
-        $controlNumber = ControlNumber::where('document_type', $request['document_type'])->first();
         // Create the document record
         $document = Document::create([
             'document_type' => $document_type,

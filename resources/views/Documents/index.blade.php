@@ -101,35 +101,38 @@
             </div>
         </div>
 
-        <!-- Recents Section -->
-        <div class="space-y-4">
+ <!-- Recents Section -->
+<div>
+    <table class="min-w-full bg-white rounded-lg shadow relative">
+        <thead class="bg-gray-100">
+            <tr>
+                <th class="px-6 py-3 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Document</th>
+                <th class="px-6 py-3 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Date Created</th>
+                <th class="px-6 py-3 text-center text-xs font-bold text-gray-600 uppercase tracking-wider">Action</th>
+            </tr>
+        </thead>
+        <tbody>
             @if ($documents->isEmpty() || $documents->where('deleted_at', '!=', null)->count() === $documents->count())
-                <div class="text-center text-gray-500 font-medium p-4">
-                    <p>No Documents Found.</p>
-                </div>
+                <tr>
+                    <td colspan="3" class="text-center text-gray-500 font-medium p-4">No Documents Found.</td>
+                </tr>
             @else
                 @foreach ($documents as $document)
-                    <div id="document-container"
-                        class="bg-white p-4 rounded-lg shadow flex justify-between items-center cursor-pointer transition-all w-full">
-                        <div>
-                            <p class="font-medium text-gray-800">{{ $document->document_type }}</p>
-                            <p class="text-gray-600 text-sm">{{ $document->created_at->format('F j, Y') }}</p>
-                        </div>
-                        <div class="flex items-center justify-center space-x-2">
-                            <!-- Actions dropwdown -->
-                            <div class="relative">
+                    <tr class="border-b hover:bg-gray-50 transition-all align-middle">
+                        <td class="px-6 py-4 whitespace-nowrap font-medium text-gray-800 min-h-[56px]">{{ $document->document_type }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-gray-600 min-h-[56px]">{{ $document->created_at->format('F j, Y') }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-center min-h-[56px]">
+                            <div class="relative inline-block text-left">
                                 <button onclick="toggleDropdown('actions-dropdown-{{ $document->id }}')"
                                     class="inline-flex items-center gap-1 p-2 text-gray-700 bg-gray-200 text-sm hover:bg-gray-300 rounded-lg transition-all duration-200">
-                                    <p class="pl-2">Actions</p>
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="25"
-                                        viewBox="0 0 32 25" fill="none">
-                                        <path
-                                            d="M15.5993 15.4256L10.1191 11.2891L11.9458 9.91016L15.5993 12.6679L19.2526 9.91016L21.0793 11.2891L15.5993 15.4256Z"
-                                            fill="currentColor" />
+                                    <span>Actions</span>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 32 25" fill="none">
+                                        <path d="M15.5993 15.4256L10.1191 11.2891L11.9458 9.91016L15.5993 12.6679L19.2526 9.91016L21.0793 11.2891L15.5993 15.4256Z" fill="currentColor" />
                                     </svg>
                                 </button>
                                 <div id="actions-dropdown-{{ $document->id }}"
-                                    class="dropdown-content text-center text-sm z-50 absolute left-0 mt-2 w-28 bg-white border border-gray-200 rounded shadow-lg hidden">
+                                    class="dropdown-content text-center text-sm absolute left-0 mt-2 min-w-[7rem] bg-white border border-gray-200 rounded shadow-lg hidden"
+                                    style="z-index:99999; min-width:7rem;">
                                     <a href="{{ route('documents.' . strtolower(str_replace(' ', '_', $document->document_type)) . '.view', $document->id) }}"
                                         class="block px-4 py-2 text-gray-700 hover:bg-gray-100">View</a>
                                     <a href="{{ route('documents.' . strtolower(str_replace(' ', '_', $document->document_type)) . '.edit', $document->id) }}"
@@ -144,214 +147,254 @@
                                     </form>
                                 </div>
                             </div>
-                        </div>
-                    </div>
+                        </td>
+                    </tr>
                 @endforeach
             @endif
-        </div>
-    </div>
+        </tbody>
+    </table>
+</div>
     <!-- Modal for Control Number -->
-    <div id="ControlNumberModal" class="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50 hidden">
-        <div class="modal-content1 bg-white rounded-lg shadow-lg p-6 w-full max-w-lg relative">
-            <!-- Close Button in Top-Right -->
-            <span class="close absolute top-2.5 right-2.5 text-red-500 text-2xl cursor-pointer hover:text-red-700"
-                onclick="closeControlNumber()">&times;</span>
-                            <!-- Modal Title -->
-            <h3 class="text-xl font-bold mb-4 text-gray-700">Documents Control Number</h3>
-                @if($controlNumber->isEmpty())
-                    <div class="text-center text-gray-500 font-medium p-4">
-                        <p>No Control Number Added.</p>
-                    </div>
-                 @else
-                 <div class="space-y-4">
-                     @foreach($controlNumber as $control)
-                        <div class="border-b pb-2 flex items-center justify-between">
-                            <div>
-                                <h2 class="text-md font-semibold text-gray-800">{{ $control->document_type }}</h2>
-                                <p class="text-gray-700 text-sm">{{ $control->control_number }} | Rev. {{ $control->revision }} | {{ \Carbon\Carbon::parse($control->date_issued)->format('F d, Y') }}</p>
-                            </div>
-                             <!-- Edit Button -->
-                             <a onclick="openEditModal({{ $control->id }})" data-target="#editFormModal{{ $control->id }}" class="hover:bg-blue-100 rounded-md py-2 px-2 inline-flex items-center justify-center">
-                                    <svg class="w-7 h-7 text-blue-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
-                                        <path fill-rule="evenodd" d="M11.32 6.176H5c-1.105 0-2 .949-2 2.118v10.588C3 20.052 3.895 21 5 21h11c1.105 0 2-.948 2-2.118v-7.75l-3.914 4.144A2.46 2.46 0 0 1 12.81 16l-2.681.568c-1.75.37-3.292-1.263-2.942-3.115l.536-2.839c.097-.512.335-.983.684-1.352l2.914-3.086Z" clip-rule="evenodd"/>
-                                        <path fill-rule="evenodd" d="M19.846 4.318a2.148 2.148 0 0 0-.437-.692 2.014 2.014 0 0 0-.654-.463 1.92 1.92 0 0 0-1.544 0 2.014 2.014 0 0 0-.654.463l-.546.578 2.852 3.02.546-.579a2.14 2.14 0 0 0 .437-.692 2.244 2.244 0 0 0 0-1.635ZM17.45 8.721 14.597 5.7 9.82 10.76a.54.54 0 0 0-.137.27l-.536 2.84c-.07.37.239.696.588.622l2.682-.567a.492.492 0 0 0 .255-.145l4.778-5.06Z" clip-rule="evenodd"/>
-                                    </svg>
-                             </a>
-                        </div>
-                        @endforeach
-                </div>
-                @endif
-
-            @if($allTypesCreated === false)
-            <div class="flex justify-end space-x-4 mt-6">
-                    <button onclick="openCreateForm()" type="button"
-                        class="bg-[#3CAA38] hover:bg-[#2B8E2F] text-white font-medium py-2 px-4 rounded-md">
-                            Add
-                    </button>
-                </div>
-            @endif
+    <div id="ControlNumberModal" tabindex="-1" aria-hidden="true"
+    class="fixed inset-0 z-50 flex items-center justify-center hidden transition-opacity duration-300 ease-out opacity-0 bg-black/50">
+    <!-- Modal content -->
+    <div class="relative w-full h-full max-w-2xl p-6 transition-transform duration-300 ease-out transform scale-95 bg-white rounded-lg shadow md:h-auto sm:p-5">
+        <!-- Modal header -->
+        <div class="flex items-center justify-between pb-4 mb-4 rounded-t sm:mb-5">
+            <h3 class="text-xl font-bold text-gray-700">Documents Control Number</h3>
+            <button type="button" onclick="closeControlNumber()"
+                class="inline-flex items-center p-2 ml-auto text-2xl text-red-500 bg-gray-200 rounded-full focus:ring-4 focus:outline-none focus:ring-gray-300 hover:bg-gray-300 hover:text-red-700"
+                data-modal-toggle="ControlNumberModal">
+                <svg aria-hidden="true" class="w-7 h-7" fill="currentColor" viewBox="0 0 20 20"
+                    xmlns="http://www.w3.org/2000/svg">
+                    <path fill-rule="evenodd"
+                        d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                        clip-rule="evenodd"></path>
+                </svg>
+                <span class="sr-only">Close modal</span>
+            </button>
         </div>
+        <!-- Modal body -->
+        @if($controlNumber->isEmpty())
+            <div class="text-center text-gray-500 font-medium p-4">
+                <p>No Control Number Added.</p>
+            </div>
+        @else
+            <div class="space-y-4">
+                @foreach($controlNumber as $control)
+                    <div class="border-b pb-2 flex items-center justify-between">
+                        <div>
+                            <h2 class="text-md font-semibold text-gray-800">{{ $control->document_type }}</h2>
+                            <p class="text-gray-700 text-sm">{{ $control->control_number }} | Rev. {{ $control->revision }} | {{ \Carbon\Carbon::parse($control->date_issued)->format('F d, Y') }}</p>
+                        </div>
+                        <!-- Edit Button -->
+                        <a onclick="openEditModal({{ $control->id }})" data-target="#editFormModal{{ $control->id }}" class="hover:bg-blue-100 rounded-md py-2 px-2 inline-flex items-center justify-center">
+                            <svg class="w-7 h-7 text-blue-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
+                                <path fill-rule="evenodd" d="M11.32 6.176H5c-1.105 0-2 .949-2 2.118v10.588C3 20.052 3.895 21 5 21h11c1.105 0 2-.948 2-2.118v-7.75l-3.914 4.144A2.46 2.46 0 0 1 12.81 16l-2.681.568c-1.75.37-3.292-1.263-2.942-3.115l.536-2.839c.097-.512.335-.983.684-1.352l2.914-3.086Z" clip-rule="evenodd"/>
+                                <path fill-rule="evenodd" d="M19.846 4.318a2.148 2.148 0 0 0-.437-.692 2.014 2.014 0 0 0-.654-.463 1.92 1.92 0 0 0-1.544 0 2.014 2.014 0 0 0-.654.463l-.546.578 2.852 3.02.546-.579a2.14 2.14 0 0 0 .437-.692 2.244 2.244 0 0 0 0-1.635ZM17.45 8.721 14.597 5.7 9.82 10.76a.54.54 0 0 0-.137.27l-.536 2.84c-.07.37.239.696.588.622l2.682-.567a.492.492 0 0 0 .255-.145l4.778-5.06Z" clip-rule="evenodd"/>
+                            </svg>
+                        </a>
+                    </div>
+                @endforeach
+            </div>
+        @endif
+        @if($allTypesCreated === false)
+        <div class="flex justify-end space-x-4 mt-6">
+            <button onclick="openCreateForm()" type="button"
+                class="bg-[#3CAA38] hover:bg-[#2B8E2F] text-white font-medium py-2 px-4 rounded-md">
+                Add
+            </button>
+        </div>
+        @endif
     </div>
+</div>
 
 
     <!-- Create Form Modal For Controller Number -->
-    <div id="createFormModal" class="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50 hidden">
-        <div class="modal-content1 bg-white rounded-lg shadow-lg p-6 w-full max-w-lg relative">
-            <!-- Close Button in Top-Right -->
-            <span class="close absolute top-2.5 right-2.5 text-red-500 text-2xl cursor-pointer hover:text-red-700"
-                onclick="closeCreateModal()">&times;</span>
-
-            <!-- Modal Title -->
-            <h3 class="text-xl font-bold mb-4 text-gray-700">Create Control Number</h3>
-
-            <!-- Form Container -->
-            <div id="formContainer" class="space-y-4">
-                <form action="{{ route('control-numbers.store') }}" method="POST">
-                    @csrf
-                    <div class="form-group">
-                    <label class="block text-gray-600 font-medium mb-1">Document Type: <span
-                    class="text-red-500">*</span></label>
-                        <select name="document_type"
-                            class="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                required>
-                            <option value="">Document Type</option>
-                            <option value="Excuse Letter">Excuse Letter</option>
-                            <option value="Annual Medical Clearance">Annual Medical Clearance</option>
-                            <option value="Medical Clearance">Medical Clearance</option>
-                            <option value="Medical Certificate">Medical Certificate</option>
-                            <option value="DMDC Consent Form">DMDC Consent Form</option>
-                            <option value="Waiver">Waiver</option>
-                            <option value="Waiver for Pulmonary Case">Waiver for Pulmonary Case</option>
-                        </select>
-                        <span class="text-red-500 text-sm hidden">Document Type is required.</span>
-
-                        <label class="block text-gray-600 font-medium mb-1">Control Number: <span
-                        class="text-red-500">*</span></label>
-                        <input type="text" id="dateInput"
-                            class="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            name="control_number" required>
-                            <label class="block text-gray-600 font-medium mb-1">Revision No.: <span
-                            class="text-red-500">*</span></label>
-                        <input type="text" id="dateInput"
-                            class="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            name="revision" required>
-                        <span id="dateError" class="text-red-500 text-sm hidden">Revision No. is required.</span>
-                        <label class="block text-gray-600 font-medium mb-1">Date: <span
-                        class="text-red-500">*</span></label>
-                        <input type="date" id="dateInput"
-                            class="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            name="date_issued" required>
-                        <span id="dateError" class="text-red-500 text-sm hidden">Date is required.</span>
-                    </div>
-
-                    <div class="flex justify-end space-x-4 mt-6">
-                        <button onclick="goBack()" type="button"
-                            class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-medium py-2 px-4 rounded-md">
-                                Back
-                        </button>
-                        <button type="submit"
-                            class="bg-[#3CAA38] hover:bg-[#2B8E2F] text-white font-medium py-2 px-4 rounded-md">
-                                Submit
-                        </button>
-                    </div>
-                </form>
-            </div>
+    <div id="createFormModal" tabindex="-1" aria-hidden="true"
+    class="fixed inset-0 z-50 flex items-center justify-center hidden transition-opacity duration-300 ease-out opacity-0 bg-black/50">
+    <div class="relative w-full h-full max-w-2xl p-6 transition-transform duration-300 ease-out transform scale-95 bg-white rounded-lg shadow md:h-auto sm:p-5">
+        <div class="flex items-center justify-between pb-4 mb-4 rounded-t sm:mb-5">
+            <h3 class="text-xl font-bold text-gray-700">Create Control Number</h3>
+            <button type="button" onclick="closeCreateModal()"
+                class="inline-flex items-center p-2 ml-auto text-2xl text-red-500 bg-gray-200 rounded-full focus:ring-4 focus:outline-none focus:ring-gray-300 hover:bg-gray-300 hover:text-red-700"
+                data-modal-toggle="createFormModal">
+                <svg aria-hidden="true" class="w-7 h-7" fill="currentColor" viewBox="0 0 20 20"
+                    xmlns="http://www.w3.org/2000/svg">
+                    <path fill-rule="evenodd"
+                        d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                        clip-rule="evenodd"></path>
+                </svg>
+                <span class="sr-only">Close modal</span>
+            </button>
+        </div>
+        <div id="formContainer" class="space-y-4">
+            <form action="{{ route('control-numbers.store') }}" method="POST">
+                @csrf
+                <div class="form-group">
+                    <label class="block text-gray-600 font-medium mb-1">Document Type: <span class="text-red-500">*</span></label>
+                    <select name="document_type"
+                        class="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        required>
+                        <option value="">Document Type</option>
+                        <option value="Excuse Letter">Excuse Letter</option>
+                        <option value="Annual Medical Clearance">Annual Medical Clearance</option>
+                        <option value="Medical Clearance">Medical Clearance</option>
+                        <option value="Medical Certificate">Medical Certificate</option>
+                        <option value="DMDC Consent Form">DMDC Consent Form</option>
+                        <option value="Waiver">Waiver</option>
+                        <option value="Waiver for Pulmonary Case">Waiver for Pulmonary Case</option>
+                    </select>
+                    <span class="text-red-500 text-sm hidden">Document Type is required.</span>
+                    <label class="block text-gray-600 font-medium mb-1">Control Number: <span class="text-red-500">*</span></label>
+                    <input type="text" id="dateInput"
+                        class="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        name="control_number" required>
+                    <label class="block text-gray-600 font-medium mb-1">Revision No.: <span class="text-red-500">*</span></label>
+                    <input type="text" id="dateInput"
+                        class="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        name="revision" required>
+                    <span id="dateError" class="text-red-500 text-sm hidden">Revision No. is required.</span>
+                    <label class="block text-gray-600 font-medium mb-1">Date: <span class="text-red-500">*</span></label>
+                    <input type="date" id="dateInput"
+                        class="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        name="date_issued" required>
+                    <span id="dateError" class="text-red-500 text-sm hidden">Date is required.</span>
+                </div>
+                <div class="flex justify-end space-x-4 mt-6">
+                    <button onclick="goBack()" type="button"
+                        class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-medium py-2 px-4 rounded-md">
+                        Back
+                    </button>
+                    <button type="submit"
+                        class="bg-[#3CAA38] hover:bg-[#2B8E2F] text-white font-medium py-2 px-4 rounded-md">
+                        Submit
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
-                        @foreach($controlNumber as $control)
-                                    <!-- Edit Form Modal For Controller Number -->
-                            <div id="editFormModal-{{ $control->id }}" class="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50 hidden">
-                                <div class="modal-content1 bg-white rounded-lg shadow-lg p-6 w-full max-w-lg relative">
-                                <!-- Close Button in Top-Right -->
-                                    <span class="close absolute top-2.5 right-2.5 text-red-500 text-2xl cursor-pointer hover:text-red-700"
-                                    onclick="closeEditModal({{ $control->id }})">&times;</span>
-
-                                    <!-- Modal Title -->
-                                    <h3 class="text-xl font-bold mb-4 text-gray-700">Edit Control Number</h3>
-
-                                <!-- Form Container -->
-                                    <div id="formContainer" class="space-y-4">
-                                        <form action="{{ route('control-numbers.update', $control->id) }}" method="POST">
-                                        @csrf
-                                        @method('PUT')
-                                            <div class="form-group">
-                                                <input type="hidden" name="document_type" value="{{ $control->document_type }}">
-                                                <label class="block text-gray-800 text-md font-bold mb-1">{{ $control->document_type ?? '' }}</label>
-                                                <label class="block text-gray-600 font-medium mb-1">Control Number: <span
-                                                class="text-red-500">*</span></label>
-                                                    <input type="text" id="dateInput" value="{{ old('control_number', $control->control_number ?? '') }}"
-                                                        class="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                                        name="control_number" required>
-                                                <label class="block text-gray-600 font-medium mb-1">Revision No.: <span
-                                                class="text-red-500">*</span></label>
-                                                <input type="text" id="dateInput" value="{{ old('revision', $control->revision ?? '') }}"
-                                                        class="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                                        name="revision" required>
-                                                <span id="dateError" class="text-red-500 text-sm hidden">Revision No. is required.</span>
-                                                <label class="block text-gray-600 font-medium mb-1">Date: <span
-                                                class="text-red-500">*</span></label>
-                                                <input type="date" id="dateInput" value="{{ old('date_issued', $control->date_issued ?? '') }}"
-                                                        class="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                                        name="date_issued" required>
-                                                    <span id="dateError" class="text-red-500 text-sm hidden">Date is required.</span>
-                                            </div>
-
-
-                                            <div class="flex justify-end space-x-4 mt-6">
-                                                <button onclick="goBack2({{ $control->id }})" type="button"
-                                                    class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-medium py-2 px-4 rounded-md">
-                                                        Back
-                                                </button>
-                                                <button type="submit"
-                                                    class="bg-[#3CAA38] hover:bg-[#2B8E2F] text-white font-medium py-2 px-4 rounded-md">
-                                                        Save Edit
-                                                </button>
-                                            </div>
-                                        </form>
-                                    </div>
-                                </div>
-                            </div>
-                        @endforeach
+</div>
+@foreach($controlNumber as $control)
+<!-- Edit Form Modal For Controller Number -->
+<div id="editFormModal-{{ $control->id }}" tabindex="-1" aria-hidden="true"
+    class="fixed inset-0 z-50 flex items-center justify-center hidden transition-opacity duration-300 ease-out opacity-0 bg-black/50">
+    <div class="relative w-full h-full max-w-2xl p-6 transition-transform duration-300 ease-out transform scale-95 bg-white rounded-lg shadow md:h-auto sm:p-5">
+        <div class="flex items-center justify-between pb-4 mb-4 rounded-t sm:mb-5">
+            <h3 class="text-xl font-bold text-gray-700">Edit Control Number</h3>
+            <button type="button" onclick="closeEditModal({{ $control->id }})"
+                class="inline-flex items-center p-2 ml-auto text-2xl text-red-500 bg-gray-200 rounded-full focus:ring-4 focus:outline-none focus:ring-gray-300 hover:bg-gray-300 hover:text-red-700"
+                data-modal-toggle="editFormModal-{{ $control->id }}">
+                <svg aria-hidden="true" class="w-7 h-7" fill="currentColor" viewBox="0 0 20 20"
+                    xmlns="http://www.w3.org/2000/svg">
+                    <path fill-rule="evenodd"
+                        d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                        clip-rule="evenodd"></path>
+                </svg>
+                <span class="sr-only">Close modal</span>
+            </button>
+        </div>
+        <div id="formContainer" class="space-y-4">
+            <form action="{{ route('control-numbers.update', $control->id) }}" method="POST">
+                @csrf
+                @method('PUT')
+                <div class="form-group">
+                    <input type="hidden" name="document_type" value="{{ $control->document_type }}">
+                    <label class="block text-gray-800 text-md font-bold mb-1">{{ $control->document_type ?? '' }}</label>
+                    <label class="block text-gray-600 font-medium mb-1">Control Number: <span class="text-red-500">*</span></label>
+                    <input type="text" id="dateInput" value="{{ old('control_number', $control->control_number ?? '') }}"
+                        class="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        name="control_number" required>
+                    <label class="block text-gray-600 font-medium mb-1">Revision No.: <span class="text-red-500">*</span></label>
+                    <input type="text" id="dateInput" value="{{ old('revision', $control->revision ?? '') }}"
+                        class="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        name="revision" required>
+                    <span id="dateError" class="text-red-500 text-sm hidden">Revision No. is required.</span>
+                    <label class="block text-gray-600 font-medium mb-1">Date: <span class="text-red-500">*</span></label>
+                    <input type="date" id="dateInput" value="{{ old('date_issued', $control->date_issued ?? '') }}"
+                        class="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        name="date_issued" required>
+                    <span id="dateError" class="text-red-500 text-sm hidden">Date is required.</span>
+                </div>
+                <div class="flex justify-end space-x-4 mt-6">
+                    <button onclick="goBack2({{ $control->id }})" type="button"
+                        class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-medium py-2 px-4 rounded-md">
+                        Back
+                    </button>
+                    <button type="submit"
+                        class="bg-[#3CAA38] hover:bg-[#2B8E2F] text-white font-medium py-2 px-4 rounded-md">
+                        Save Edit
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+@endforeach
 @endsection
 
 @push('scripts')
     <script>
         function openCreateForm() {
             let modal = document.getElementById("createFormModal");
-            let modalContent = modal.querySelector("div.relative");
+            let modalContent = modal.querySelector("div.relative, .relative");
             document.getElementById('ControlNumberModal').classList.add('hidden');
-
+            document.body.classList.add('overflow-hidden');
             modal.classList.remove("hidden");
             setTimeout(() => {
                 modal.classList.remove("opacity-0");
                 modalContent.classList.remove("scale-95");
                 modalContent.classList.add("scale-100");
-            }, 10); // Small delay to trigger animation
-
+            }, 10);
             checkAdditionalFields();
         }
         function closeCreateModal() {
             let modal = document.getElementById("createFormModal");
-            let modalContent = modal.querySelector("div.relative");
-
-            modal.classList.add("hidden");
+            let modalContent = modal.querySelector("div.relative, .relative");
+            modal.classList.add("opacity-0");
             modalContent.classList.remove("scale-100");
             modalContent.classList.add("scale-95");
-            document.getElementById('ControlNumberModal').classList.add('hidden');
+            setTimeout(() => {
+                modal.classList.add("hidden");
+                document.body.classList.remove('overflow-hidden');
+            }, 300);
+            document.getElementById('ControlNumberModal').classList.remove('hidden');
         }
 
         function openEditModal(controlId) {
             const modal = document.getElementById('editFormModal-' + controlId);
             document.getElementById('ControlNumberModal').classList.add('hidden');
+            document.body.classList.add('overflow-hidden');
             if (modal) {
                 modal.classList.remove('hidden');
+                setTimeout(() => {
+                    modal.classList.remove('opacity-0');
+                    const modalContent = modal.querySelector("div.relative, .relative");
+                    modalContent.classList.remove('scale-95');
+                    modalContent.classList.add('scale-100');
+                }, 10);
             }
         }
 
         function closeEditModal(controlId) {
             const modal = document.getElementById('editFormModal-' + controlId);
             if (modal) {
-             modal.classList.add('hidden');
+                modal.classList.add('opacity-0');
+                const modalContent = modal.querySelector("div.relative, .relative");
+                modalContent.classList.remove('scale-100');
+                modalContent.classList.add('scale-95');
+                setTimeout(() => {
+                    modal.classList.add('hidden');
+                    document.body.classList.remove('overflow-hidden');
+                    document.getElementById('ControlNumberModal').classList.remove('hidden');
+                    setTimeout(() => {
+                        document.getElementById('ControlNumberModal').classList.remove('opacity-0');
+                        const mainModalContent = document.getElementById('ControlNumberModal').querySelector("div.relative, .relative");
+                        mainModalContent.classList.remove('scale-95');
+                        mainModalContent.classList.add('scale-100');
+                        document.body.classList.add('overflow-hidden');
+                    }, 10);
+                }, 300);
             }
         }
 
@@ -364,27 +407,33 @@
         }
         function openControlNumber() {
             let modal = document.getElementById("ControlNumberModal");
-            let modalContent = modal.querySelector("div.relative");
+            let modalContent = modal.querySelector("div.relative, .relative");
+            // Lock scroll and overlay everything
+            document.body.classList.add('overflow-hidden');
             modal.classList.remove("hidden");
             setTimeout(() => {
                 modal.classList.remove("opacity-0");
                 modalContent.classList.remove("scale-95");
                 modalContent.classList.add("scale-100");
-            }, 10); // Small delay to trigger animation
+            }, 10);
         }
-
         function closeControlNumber(){
             let modal = document.getElementById("ControlNumberModal");
-            let modalContent = modal.querySelector("div.relative");
-
+            let modalContent = modal.querySelector("div.relative, .relative");
             modal.classList.add("opacity-0");
             modalContent.classList.remove("scale-100");
             modalContent.classList.add("scale-95");
-
             setTimeout(() => {
                 modal.classList.add("hidden");
-            }, 300); // Matches transition duration
+                document.body.classList.remove('overflow-hidden');
+            }, 300);
         }
+        // Prevent click outside modal from closing it
+        document.getElementById('ControlNumberModal').addEventListener('mousedown', function(e) {
+            if (e.target === this) {
+                e.stopPropagation();
+            }
+        });
 
         function closeCreateForm() {
             let modal = document.getElementById("createFormModal");
@@ -409,7 +458,29 @@
                 if (dropdown.id !== dropdownId) dropdown.classList.remove('show');
             });
             const dropdown = document.getElementById(dropdownId);
+            if (!dropdown) return;
             dropdown.classList.toggle('show');
+            if (dropdown.classList.contains('show')) {
+                // Position dropdown so it doesn't overflow the bottom
+                const rect = dropdown.getBoundingClientRect();
+                const windowHeight = window.innerHeight;
+                if (rect.bottom > windowHeight) {
+                    dropdown.style.top = 'auto';
+                    dropdown.style.bottom = '100%';
+                    dropdown.style.marginTop = '0';
+                    dropdown.style.marginBottom = '0.5rem';
+                } else {
+                    dropdown.style.top = '';
+                    dropdown.style.bottom = '';
+                    dropdown.style.marginTop = '0.5rem';
+                    dropdown.style.marginBottom = '';
+                }
+            } else {
+                dropdown.style.top = '';
+                dropdown.style.bottom = '';
+                dropdown.style.marginTop = '';
+                dropdown.style.marginBottom = '';
+            }
         }
 
         window.onclick = function(event) {
