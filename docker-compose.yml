@@ -1,0 +1,22 @@
+version: "3.8"
+
+services:
+    meilisearch:
+        image: getmeili/meilisearch:latest
+        container_name: prms_meilisearch
+        ports:
+            - "7700:7700"
+        environment:
+            - MEILI_ENV=development
+            - MEILI_NO_ANALYTICS=true
+        volumes:
+            - meilisearch_data:/meili_data
+        restart: unless-stopped
+        healthcheck:
+            test: ["CMD", "curl", "-f", "http://localhost:7700/health"]
+            interval: 30s
+            timeout: 10s
+            retries: 3
+
+volumes:
+    meilisearch_data:
