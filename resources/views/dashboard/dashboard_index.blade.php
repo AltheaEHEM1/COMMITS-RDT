@@ -54,11 +54,11 @@
 
         <!-- Search Results Section -->
         @if(isset($searchResults) && $searchTerm)
-            <div class="mb-8 bg-white border rounded-xl shadow-lg overflow-hidden">
+            <div class="mb-8 overflow-hidden bg-white border shadow-lg rounded-xl">
                 @if(!$searchResults['hasResults'])
                     <!-- No results state -->
                     <div class="flex flex-col items-center justify-center p-12">
-                        <div class="p-4 bg-gray-100 rounded-full mb-4">
+                        <div class="p-4 mb-4 bg-gray-100 rounded-full">
                             <svg class="w-16 h-16 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M12 14h.01M5.8 21h12.4a2 2 0 002-2V5a2 2 0 00-2-2H5.8a2 2 0 00-2 2v14a2 2 0 002 2z" />
                             </svg>
@@ -72,7 +72,7 @@
                         @if($searchResults['patients']->count() > 0)
                             <div class="p-5">
                                 <div class="flex items-center mb-4">
-                                    <div class="p-2 bg-blue-100 rounded-lg mr-3">
+                                    <div class="p-2 mr-3 bg-blue-100 rounded-lg">
                                         <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                                         </svg>
@@ -82,9 +82,9 @@
                                     </h4>
                                 </div>
                                 
-                                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                                <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
                                     @foreach($searchResults['patients'] as $patient)
-                                        <div class="border border-gray-200 rounded-xl hover:shadow-md transition-shadow bg-gradient-to-br from-white to-gray-50 p-4">
+                                        <div class="p-4 transition-shadow border border-gray-200 rounded-xl hover:shadow-md bg-gradient-to-br from-white to-gray-50">
                                             <div class="flex items-start">
                                                 <div class="flex-shrink-0">
                                                     <div class="w-10 h-10 rounded-full flex items-center justify-center {{ $patient->sex === 'Male' ? 'bg-blue-100 text-blue-600' : 'bg-pink-100 text-pink-600' }}">
@@ -122,7 +122,7 @@
                         @if($searchResults['medicines']->count() > 0)
                             <div class="p-5">
                                 <div class="flex items-center mb-4">
-                                    <div class="p-2 bg-yellow-100 rounded-lg mr-3">
+                                    <div class="p-2 mr-3 bg-yellow-100 rounded-lg">
                                         <svg class="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
                                         </svg>
@@ -132,11 +132,11 @@
                                     </h4>
                                 </div>
                                 
-                                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                                <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
                                     @foreach($searchResults['medicines'] as $medicine)
-                                        <div class="border border-gray-200 rounded-xl hover:shadow-md transition-shadow bg-gradient-to-br from-white to-gray-50 p-4">
+                                        <div class="p-4 transition-shadow border border-gray-200 rounded-xl hover:shadow-md bg-gradient-to-br from-white to-gray-50">
                                             <h5 class="font-medium text-gray-900">{{ $medicine->medicine_name }}</h5>
-                                            <div class="mt-2 flex items-center text-sm text-gray-500">
+                                            <div class="flex items-center mt-2 text-sm text-gray-500">
                                                 <svg class="w-4 h-4 mr-1 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
                                                 </svg>
@@ -148,7 +148,7 @@
                                                 </svg>
                                                 <span>Expires: {{ $medicine->formattedExpiry }}</span>
                                             </div>
-                                            <div class="mt-3 flex justify-between items-center">
+                                            <div class="flex items-center justify-between mt-3">
                                                 <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ $medicine->status === 'Available' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
                                                     {{ $medicine->status }}
                                                 </span>
@@ -163,7 +163,7 @@
                         @if($searchResults['supplies']->count() > 0)
                             <div class="p-5">
                                 <div class="flex items-center mb-4">
-                                    <div class="p-2 bg-green-100 rounded-lg mr-3">
+                                    <div class="p-2 mr-3 bg-green-100 rounded-lg">
                                         <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
                                         </svg>
@@ -173,11 +173,11 @@
                                     </h4>
                                 </div>
                                 
-                                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                                <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
                                     @foreach($searchResults['supplies'] as $supply)
-                                        <div class="border border-gray-200 rounded-xl hover:shadow-md transition-shadow bg-gradient-to-br from-white to-gray-50 p-4">
+                                        <div class="p-4 transition-shadow border border-gray-200 rounded-xl hover:shadow-md bg-gradient-to-br from-white to-gray-50">
                                             <h5 class="font-medium text-gray-900">{{ $supply->supply_name }}</h5>
-                                            <div class="mt-2 flex items-center text-sm text-gray-500">
+                                            <div class="flex items-center mt-2 text-sm text-gray-500">
                                                 <svg class="w-4 h-4 mr-1 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
                                                 </svg>
@@ -189,7 +189,7 @@
                                                 </svg>
                                                 <span>Expires: {{ $supply->formattedExpiry }}</span>
                                             </div>
-                                            <div class="mt-3 flex justify-between items-center">
+                                            <div class="flex items-center justify-between mt-3">
                                                 <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ $supply->status === 'Available' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
                                                     {{ $supply->status }}
                                                 </span>
@@ -204,7 +204,7 @@
                         @if($searchResults['reports']->count() > 0)
                             <div class="p-5">
                                 <div class="flex items-center mb-4">
-                                    <div class="p-2 bg-indigo-100 rounded-lg mr-3">
+                                    <div class="p-2 mr-3 bg-indigo-100 rounded-lg">
                                         <svg class="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                                         </svg>
@@ -214,10 +214,10 @@
                                     </h4>
                                 </div>
                                 
-                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
                                     @foreach($searchResults['reports'] as $report)
-                                        <div class="border border-gray-200 rounded-xl hover:shadow-md transition-shadow bg-gradient-to-br from-white to-gray-50 p-4">
-                                            <div class="flex justify-between items-start">
+                                        <div class="p-4 transition-shadow border border-gray-200 rounded-xl hover:shadow-md bg-gradient-to-br from-white to-gray-50">
+                                            <div class="flex items-start justify-between">
                                                 <h5 class="font-medium text-gray-900">{{ $report->title }}</h5>
                                                 <span class="px-2.5 py-0.5 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800">
                                                     {{ $report->category }}
@@ -236,7 +236,7 @@
                         @if($searchResults['documents']->count() > 0)
                             <div class="p-5">
                                 <div class="flex items-center mb-4">
-                                    <div class="p-2 bg-purple-100 rounded-lg mr-3">
+                                    <div class="p-2 mr-3 bg-purple-100 rounded-lg">
                                         <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
                                         </svg>
@@ -246,29 +246,29 @@
                                     </h4>
                                 </div>
                                 
-                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
                                     @foreach($searchResults['documents'] as $document)
-                                        <div class="border border-gray-200 rounded-xl hover:shadow-md transition-shadow bg-gradient-to-br from-white to-gray-50 p-4">
+                                        <div class="p-4 transition-shadow border border-gray-200 rounded-xl hover:shadow-md bg-gradient-to-br from-white to-gray-50">
                                             <div class="flex">
                                                 <div class="flex-shrink-0">
                                                     @switch($document->document_type)
                                                         @case('excuseletter')
-                                                            <div class="w-12 h-12 rounded-lg bg-green-100 flex items-center justify-center">
-                                                                <svg class="w-7 h-7 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <div class="flex items-center justify-center w-12 h-12 bg-green-100 rounded-lg">
+                                                                <svg class="text-green-500 w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                                                                 </svg>
                                                             </div>
                                                             @break
                                                         @case('medical_certificate')
-                                                            <div class="w-12 h-12 rounded-lg bg-blue-100 flex items-center justify-center">
-                                                                <svg class="w-7 h-7 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <div class="flex items-center justify-center w-12 h-12 bg-blue-100 rounded-lg">
+                                                                <svg class="text-blue-500 w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
                                                                 </svg>
                                                             </div>
                                                             @break
                                                         @default
-                                                            <div class="w-12 h-12 rounded-lg bg-purple-100 flex items-center justify-center">
-                                                                <svg class="w-7 h-7 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <div class="flex items-center justify-center w-12 h-12 bg-purple-100 rounded-lg">
+                                                                <svg class="text-purple-500 w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
                                                                 </svg>
                                                             </div>
@@ -1043,71 +1043,82 @@
             });
 
             // Supplies Pie Chart
-            var suppliesCtx = document.getElementById('suppliesChart').getContext('2d');
-            var suppliesChart = new Chart(suppliesCtx, {
-                type: 'pie',
-                data: {
-                    labels: ['Available', 'Consumed'],
-                    datasets: [{
-                        data: [
-                            {{ $suppliesStatus['initial'] }},
-                            {{ $suppliesStatus['consumed'] }}
-                        ],
-                        backgroundColor: [
-                            'rgba(34, 197, 94, 0.8)', // green for initial
-                            'rgba(239, 68, 68, 0.8)' // red for consumed
-                        ],
-                        borderColor: [
-                            'rgba(34, 197, 94, 1)',
-                            'rgba(239, 68, 68, 1)'
-                        ],
-                        borderWidth: 2,
-                        hoverOffset: 15
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            position: 'bottom',
-                            labels: {
-                                padding: 8,
-                                boxWidth: 10,
-                                font: {
-                                    size: 10
+            var suppliesInitial = {{ $suppliesStatus['initial'] }};
+            var suppliesConsumed = {{ $suppliesStatus['consumed'] }};
+            var suppliesHasData = suppliesInitial + suppliesConsumed > 0;
+
+            if (!suppliesHasData) {
+                // Optionally, you can show a message or just do nothing (the Blade already shows a message)
+                // You may also clear the canvas if needed:
+                var suppliesCtx = document.getElementById('suppliesChart').getContext('2d');
+                suppliesCtx.clearRect(0, 0, suppliesCtx.canvas.width, suppliesCtx.canvas.height);
+            } else {
+                var suppliesCtx = document.getElementById('suppliesChart').getContext('2d');
+                var suppliesChart = new Chart(suppliesCtx, {
+                    type: 'pie',
+                    data: {
+                        labels: ['Available', 'Consumed'],
+                        datasets: [{
+                            data: [suppliesInitial, suppliesConsumed],
+                            backgroundColor: [
+                                'rgba(34, 197, 94, 0.8)', // green for initial
+                                'rgba(239, 68, 68, 0.8)' // red for consumed
+                            ],
+                            borderColor: [
+                                'rgba(34, 197, 94, 1)',
+                                'rgba(239, 68, 68, 1)'
+                            ],
+                            borderWidth: 2,
+                            hoverOffset: 15
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'bottom',
+                                labels: {
+                                    padding: 8,
+                                    boxWidth: 10,
+                                    font: {
+                                        size: 10
+                                    }
+                                },
+                                display: suppliesHasData // Hide legend if no data
+                            },
+                            tooltip: {
+                                enabled: suppliesHasData, // Hide tooltip if no data
+                                callbacks: {
+                                    label: function(context) {
+                                        const label = context.label || '';
+                                        const value = context.raw || 0;
+                                        const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                        const percentage = Math.round((value / total) * 100);
+                                        return `${label}: ${value} (${percentage}%)`;
+                                    }
                                 }
-                            }
-                        },
-                        tooltip: {
-                            callbacks: {
-                                label: function(context) {
-                                    const label = context.label || '';
-                                    const value = context.raw || 0;
+                            },
+                            datalabels: {
+                                color: '#FFFFFF',
+                                font: {
+                                    weight: 'bold',
+                                    size: 12
+                                },
+                                formatter: function(value, context) {
                                     const total = context.dataset.data.reduce((a, b) => a + b, 0);
                                     const percentage = Math.round((value / total) * 100);
-                                    return `${label}: ${value} (${percentage}%)`;
+                                    return percentage > 0 ? `${percentage}%` : '';
+                                },
+                                display: function(context) {
+                                    // Hide datalabels if value is 0 or all data is zero
+                                    return suppliesHasData && context.dataset.data[context.dataIndex] > 0;
                                 }
-                            }
-                        },
-                        datalabels: {
-                            color: '#FFFFFF',
-                            font: {
-                                weight: 'bold',
-                                size: 12
-                            },
-                            formatter: function(value, context) {
-                                const total = context.dataset.data.reduce((a, b) => a + b, 0);
-                                const percentage = Math.round((value / total) * 100);
-                                return percentage > 0 ? `${percentage}%` : ''; // Show only percentage
-                            },
-                            display: function(context) {
-                                return context.dataset.data[context.dataIndex] > 0;
                             }
                         }
                     }
-                }
-            });
+                });
+            }
 
             // Equipment Vertical Bar Chart
             var equipmentCtx = document.getElementById('equipmentChart').getContext('2d');
