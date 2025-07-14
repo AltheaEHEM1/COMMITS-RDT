@@ -32,7 +32,7 @@
                         </svg>
                     </button>
                     <div id="document-type-dropdown"
-                        class="dropdown-content absolute right-0 mt-2 w-40 bg-white border border-gray-200 rounded shadow-lg hidden">
+                        class="dropdown-content absolute z-50 right-0 mt-2 w-40 bg-white border border-gray-200 rounded shadow-lg hidden">
                         <a href="{{ route('documents.index') }}"
                             class="block px-4 py-2 text-gray-700 hover:bg-gray-100">All</a>
                         @foreach ($typeOptions as $type)
@@ -54,7 +54,7 @@
                         </svg>
                     </button>
                     <div id="date-dropdown"
-                        class="dropdown-content absolute left-0 mt-2 w-40 bg-white border border-gray-200 rounded shadow-lg hidden">
+                        class="dropdown-content absolute z-50 left-0 mt-2 w-40 bg-white border border-gray-200 rounded shadow-lg hidden">
                         @foreach ($MonthOptions as $index => $month)
                             <a href="{{ route('documents.index', ['month' => $index + 1]) }}"
                                 class="block px-4 py-2 text-gray-700 hover:bg-gray-100">{{ $month }}</a>
