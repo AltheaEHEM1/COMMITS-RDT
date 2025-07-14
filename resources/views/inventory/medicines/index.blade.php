@@ -76,6 +76,24 @@
         - Deduct (?)
     -->
 
+    @php
+        $hasActiveFilters = isset($filters) && !empty(array_filter($filters));
+    @endphp
+
+    @if($hasActiveFilters)
+        <div class="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
+                    </svg>
+                    <span class="text-sm font-medium text-blue-800">Filters Applied</span>
+                </div>
+                <a href="{{ route('inventory-medicines') }}" class="text-sm text-blue-600 hover:text-blue-800 underline">Clear All Filters</a>
+            </div>
+        </div>
+    @endif
+
     <x-inventory.table>
         <!-- HEADER  -->
         <x-inventory.table-head
@@ -84,37 +102,66 @@
                 'Stock #',
                 'Medicine',
                 'Unit',
-                'Initial Quantity',
-                'Consumed',
-                'Balance',
+                'Quantity',
                 'Expiration Date',
                 'MOR',
+                'Status', // <-- Added Status column
                 'Actions'
-            ]" 
+            ]"
+            class="text-center align-middle"
         />
 
         <!-- CONTENT -->
         <x-inventory.table-body :data="$medicines" :users="$users">
             @foreach ($medicines as $medicine)
-                <x-inventory.table-row>
-                    <x-inventory.table-cell>{{ \Carbon\Carbon::parse($medicine->box->date_received)->format('Y-m-d') }}</x-inventory.table-cell>
-                    <x-inventory.table-cell>{{ $medicine->box->stock_number }}</x-inventory.table-cell>
-                    <x-inventory.table-cell>{{ $medicine->medicine_name }}</x-inventory.table-cell>
-                    <x-inventory.table-cell>{{ $medicine->unit }}</x-inventory.table-cell>
-                    <x-inventory.table-cell>{{ number_format($medicine->initial_quantity)}}</x-inventory.table-cell>
-                    <x-inventory.table-cell>{{ number_format($medicine->consumed_quantity) }}</x-inventory.table-cell>
-                    <x-inventory.table-cell>{{ number_format($medicine->remaining_quantity) }}</x-inventory.table-cell>
-                    <x-inventory.table-cell>{{ \Carbon\Carbon::parse($medicine->expiration_date)->format("M' y") }}</x-inventory.table-cell>
-                    <x-inventory.table-cell>{{ $medicine->box->user->first_name }}</x-inventory.table-cell>
-                    <x-inventory.table-cell>
+                <x-inventory.table-row class="text-center align-middle">
+                    <x-inventory.table-cell class="align-middle">{{ \Carbon\Carbon::parse($medicine->box->date_received)->format('Y-m-d') }}</x-inventory.table-cell>
+                    <x-inventory.table-cell class="align-middle">{{ $medicine->box->stock_number }}</x-inventory.table-cell>
+                    <x-inventory.table-cell class="align-middle">{{ $medicine->medicine_name }}</x-inventory.table-cell>
+                    <x-inventory.table-cell class="align-middle">{{ $medicine->unit }}</x-inventory.table-cell>
+                    <x-inventory.table-cell class="align-middle">
+                        {{ number_format($medicine->consumed_quantity) }}/{{ number_format($medicine->initial_quantity) }}
+                    </x-inventory.table-cell>
+                    <x-inventory.table-cell class="align-middle">{{ \Carbon\Carbon::parse($medicine->expiration_date)->format("M' y") }}</x-inventory.table-cell>
+                    <x-inventory.table-cell class="align-middle">{{ $medicine->box->user->first_name }}</x-inventory.table-cell>
+                    <x-inventory.table-cell class="align-middle">
+                        @php
+                            // Check if the box is returned first
+                            if ($medicine->box->isReturned) {
+                                $status = 'Returned';
+                                $statusColor = 'bg-gray-100 text-gray-800'; // Default text color
+                            } else {
+                                $status = ucfirst($medicine->status);
+                                $statusColor = match($status) {
+                                    'Full' => 'bg-blue-100 text-blue-800',
+                                    'In Stock' => 'bg-green-100 text-green-800',
+                                    'Low Stock' => 'bg-yellow-100 text-yellow-800',
+                                    'Out of Stock' => 'bg-red-100 text-red-800',
+                                    default => 'bg-gray-100 text-gray-800',
+                                };
+                            }
+                        @endphp
+                        <span class="px-2 py-1 rounded font-semibold text-xs {{ $statusColor }}">
+                            {{ $status }}
+                        </span>
+                    </x-inventory.table-cell>
+                    <x-inventory.table-cell class="align-middle">
                         <div class="flex justify-center gap-2">
+                            <!-- View Button (Green, Eye Icon, styled like btn-delete) -->
+                            <a href="{{ route('medicines.show', $medicine->id) }}"
+                                class="inline-flex items-center gap-2 px-3 py-2 text-sm text-white transition-all duration-200 transform bg-green-500 rounded-lg shadow-md hover:bg-green-600 hover:shadow-lg active:shadow-sm active:bg-green-700 focus:outline-none focus:border-green-700 active:translate-y-0"
+                                title="View Details">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="size-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M15 12a3 3 0 11-6 0 3 3 0 016 0zm6 0c0 5-9 9-9 9s-9-4-9-9a9 9 0 0118 0z" />
+                                </svg>
+                            </a>
                             <!-- Return Button -->
                             <x-inventory.btn-return target="{{ 'return-'.$medicine->id }}"/>
                             <x-inventory.confirm-return 
                                 target="{{'return-'.$medicine->id}}" 
                                 action="{{ route('return_medicine', $medicine->id) }}" 
                             />
-                            
                             <!-- Edit Button -->
                             <x-inventory.btn-edit-modal heading="Edit a Record" target="{{ 'edit-'.$medicine->id }}" >  
                                 <x-inventory.form method="POST" action="{{ route('update_medicine', $medicine->id) }}" 
@@ -186,7 +233,7 @@
                                     />
                                 </x-inventory.form>
                             </x-inventory.btn-edit-modal> 
-                
+
                             <!-- Delete Button -->
                             <x-inventory.btn-delete target="{{'delete-'.$medicine->id}}" />
                             <x-inventory.confirm-deletion target="{{'delete-'.$medicine->id}}" action="{{ route('delete_medicine', $medicine->id) }}" />

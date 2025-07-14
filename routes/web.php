@@ -103,6 +103,7 @@ Route::middleware(['auth'])->group(function () {
         Route::prefix('medicines')->group(function () {
             Route::controller(MedicineController::class)->group(function () {
                 Route::get('/', 'index')->name('inventory-medicines');
+                Route::get('/{medicine}', 'show')->name('medicines.show');
                 Route::post('/', 'store')->name('add_medicine_store');
                 Route::put('/{medicine}', 'update')->name('update_medicine');
                 Route::put('/{medicine}/deduct', 'deduct')->name('deduct_medicine');

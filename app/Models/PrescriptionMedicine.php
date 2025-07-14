@@ -44,4 +44,12 @@ class PrescriptionMedicine extends Model
     {
         return $this->belongsTo(Medicine::class)->withTrashed(); // Add withTrashed if using soft deletes
     }
+
+    /**
+     * Get the prescription that owns the prescription medicine.
+     */
+    public function prescription()
+    {
+        return $this->belongsTo(Prescription::class);
+    }
 }
