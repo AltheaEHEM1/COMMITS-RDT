@@ -83,10 +83,17 @@
             </div>
         </div>
 
-        <div class="grid gap-6 px-3 mb-10 md:grid-cols-5">
-            <button type="submit"
-                class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-2 py-2.5 text-center">Save
-                Changes</button>
+        <div class="grid gap-6 mb-10 md:grid-cols-5 px-3">
+            <button id="saveButton" type="submit"
+                class="flex justify-center items-center w-full px-4 py-3 text-sm font-medium text-white bg-blue-500 rounded-lg focus:ring-4 focus:outline-none focus:ring-blue-300 hover:bg-blue-600 shadow-theme-xs sm:w-auto">
+                <span class="button-text">Save Changes</span>
+                <svg class="hidden w-4 h-4 ml-2 animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor"
+                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                    </path>
+                </svg>
+            </button>
         </div>
     </form>
 @endsection
@@ -97,6 +104,9 @@
         const currentPassword = document.getElementById("current_password");
         const newPassword = document.getElementById("new_password");
         const confirmPassword = document.getElementById("confirm_password");
+        const button = document.getElementById("saveButton");
+        const buttonText = button.querySelector(".button-text");
+        const spinner = button.querySelector("svg");
 
 
         form.addEventListener("submit", (e) => {
@@ -104,6 +114,9 @@
             const isValid = validateInputs();
 
             if (isValid) {
+                button.disabled = true;
+                buttonText.textContent = "Saving...";
+                spinner.classList.remove("hidden");
                 form.submit();
             }
         });

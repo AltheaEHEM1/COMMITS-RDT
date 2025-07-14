@@ -9,11 +9,13 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Contracts\Auth\CanResetPassword;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
 
 class User extends Authenticatable implements MustVerifyEmail, CanResetPassword
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, SoftDeletes, Notifiable;
+    use HasFactory, SoftDeletes, Notifiable, LogsActivity;
 
     /**
      * The attributes that are mass assignable.
@@ -92,5 +94,13 @@ class User extends Authenticatable implements MustVerifyEmail, CanResetPassword
             ->where('causer_type', User::class)
             ->where('description', 'failed login attempt')
             ->count();
+    }
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logAll() // logs all fillable attributes
+            ->useLogName('user')
+            ->logOnlyDirty(); // only logs changes
     }
 }

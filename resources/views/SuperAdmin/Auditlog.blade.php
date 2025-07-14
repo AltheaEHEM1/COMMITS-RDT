@@ -3,23 +3,24 @@
 @section('title', 'Audit Log')
 
 @section('content')
-        <x-page-title value="Audit Log" class="mb-0" />
-        <p class="text-sm text-gray-500 mb-7">A record of all recent actions performed within the system, including created, updated, and deleted items.</p>
-        
-        @php
-            $groupedLogs = $logs->groupBy(function ($log) {
-                return \Carbon\Carbon::parse($log->created_at)->format('l, F j, Y');
-            });
-        @endphp
+    <x-page-title value="Audit Log" class="mb-0" />
+    <p class="text-sm text-gray-500 mb-7">A record of all recent actions performed within the system, including created,
+        updated, and deleted items.</p>
 
-        @if ($groupedLogs->isEmpty())
-            <p class="text-gray-600 text-center">No activity logs available.</p>
-        @else
+    @php
+        $groupedLogs = $logs->groupBy(function ($log) {
+            return \Carbon\Carbon::parse($log->created_at)->format('l, F j, Y');
+        });
+    @endphp
+
+    @if ($groupedLogs->isEmpty())
+        <p class="text-gray-600 text-center">No activity logs available.</p>
+    @else
         @foreach ($groupedLogs as $date => $dateLogs)
-                
+
 
             <div class="mx-automax-w-5xl px-4 sm:px-6 lg:px-8 py-6">
-                <div class="mb-6 p-4 bg-white border border-gray-200 rounded-lg shadow-sm max-w-5xl">
+                <div class="p-4 bg-white border border-gray-200 rounded-lg shadow-sm max-w-5xl">
                     <h2 class="text-lg font-semibold text-gray-700 mb-2">{{ $date }}</h2>
 
                     <ul class="space-y-3 align-middle">
@@ -145,20 +146,20 @@
 @endsection
 
 @push('scripts')
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        const subjectElements = document.querySelectorAll('.subject-type');
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const subjectElements = document.querySelectorAll('.subject-type');
 
-        subjectElements.forEach(el => {
-            const raw = el.dataset.raw;
+            subjectElements.forEach(el => {
+                const raw = el.dataset.raw;
 
-            // Split based on capital letters (e.g., DMDCFormatForm => DMDC Format Form)
-            const formatted = raw.replace(/([a-z])([A-Z])/g, '$1 $2')
-                                 .replace(/([A-Z]+)([A-Z][a-z])/g, '$1 $2') // handle acronyms like DMDC
-                                 .trim();
+                // Split based on capital letters (e.g., DMDCFormatForm => DMDC Format Form)
+                const formatted = raw.replace(/([a-z])([A-Z])/g, '$1 $2')
+                    .replace(/([A-Z]+)([A-Z][a-z])/g, '$1 $2') // handle acronyms like DMDC
+                    .trim();
 
-            el.textContent = formatted;
+                el.textContent = formatted;
+            });
         });
-    });
-</script>
+    </script>
 @endpush

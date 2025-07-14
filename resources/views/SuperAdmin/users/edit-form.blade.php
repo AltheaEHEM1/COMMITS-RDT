@@ -24,7 +24,7 @@
         <form action="{{ route('user.update') }}" method="POST" class="max-h-[80vh] overflow-y-auto ">
             @csrf
             <div class="grid gap-4 px-2 mb-4 sm:grid-cols-2">
-                <input type="hidden" value="" name="id" id="user_id"/>
+                <input type="hidden" value="" name="id" id="user_id" />
 
                 <!-- First Name Field -->
                 <div>
@@ -58,8 +58,9 @@
                     <label for="role" class="block mb-2 text-sm font-medium text-gray-900">Role
                         <span class="text-red-500">*</span></label>
                     <select name="role" id="edit_role"
-                        class=" bg-gray-50 border border-gray-300 text-gray-500 cursor-not-allowed text-sm rounded-lg focus:ring-2 focus:outline-none focus:ring-blue-500 block w-full p-2.5" disabled>
-                        <option value="" selected >Select a role</option>
+                        class=" bg-gray-50 border border-gray-300 text-gray-500 cursor-not-allowed text-sm rounded-lg focus:ring-2 focus:outline-none focus:ring-blue-500 block w-full p-2.5"
+                        disabled>
+                        <option value="" selected>Select a role</option>
                         <option value="standard">Standard User</option>
                         <option value="superadmin">Superadmin</option>
                     </select>
@@ -70,8 +71,9 @@
                     <label for="status" class="block mb-2 text-sm font-medium text-gray-900">Status
                         <span class="text-red-500">*</span></label>
                     <select name="status" id="edit_status"
-                        class=" bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-2 focus:outline-none focus:ring-blue-500 block w-full p-2.5" required>
-                        <option value="" selected >Select a status</option>
+                        class=" bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-2 focus:outline-none focus:ring-blue-500 block w-full p-2.5"
+                        required>
+                        <option value="" selected>Select a status</option>
                         <option value="active">Active</option>
                         <option value="inactive">Inactive</option>
                         <option value="suspended">Suspended</option>
@@ -85,9 +87,15 @@
                     class="flex justify-center w-full px-4 py-3 text-sm font-medium text-gray-700 transition-colors bg-white border border-gray-300 rounded-lg focus:ring-4 focus:outline-none focus:ring-gray-300 shadow-theme-xs hover:bg-gray-50 hover:text-gray-800 sm:w-auto">
                     Close
                 </button>
-                <button type="submit"
-                    class="flex justify-center w-full px-4 py-3 text-sm font-medium text-white bg-green-500 rounded-lg focus:ring-4 focus:outline-none focus:ring-green-300 hover:bg-green-600 bg-brand-500 shadow-theme-xs hover:bg-brand-600 sm:w-auto">
-                    Save Changes
+                <button id="saveButton" type="submit"
+                    class="flex justify-center items-center w-full px-4 py-3 text-sm font-medium text-white bg-green-500 rounded-lg focus:ring-4 focus:outline-none focus:ring-green-300 hover:bg-green-600 shadow-theme-xs sm:w-auto">
+                    <span class="button-text">Save Changes</span>
+                    <svg class="hidden w-4 h-4 ml-2 animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor"
+                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                        </path>
+                    </svg>
                 </button>
             </div>
         </form>
@@ -95,86 +103,99 @@
 </div>
 
 <script>
-function closeEditModal() {
-    const modal = document.getElementById('editFormModal');
-    
-    if (!modal) {
-        console.error('Modal element not found');
-        return;
-    }
-    
-    // Add a debug log to check if the function is being called
-    console.log('Closing edit modal');
-    
-    try {
-        // Apply closing animation
-        modal.classList.remove('opacity-100');
-        modal.classList.add('opacity-0');
-        
-        const modalContent = modal.querySelector('div');
-        if (modalContent) {
-            modalContent.classList.remove('scale-100');
-            modalContent.classList.add('scale-95');
-        }
-        
-        // Hide modal after animation completes
-        setTimeout(() => {
-            modal.classList.add('hidden');
-            console.log('Modal hidden');
-        }, 300);
-    } catch (error) {
-        console.error('Error closing modal:', error);
-        // Fallback: force hide the modal
-        modal.style.display = 'none';
-    }
-}
+    document.addEventListener("DOMContentLoaded", () => {
+        const form = document.querySelector("#editFormModal form");
+        const button = document.getElementById("saveButton");
+        const buttonText = button.querySelector(".button-text");
+        const spinner = button.querySelector("svg");
 
-// Function to open the edit modal with pre-filled data
-function openEditModal(button) {
-    // Get user data from button data attributes
-    const userId = button.getAttribute('data-id');
-    const firstName = button.getAttribute('data-firstname');
-    const lastName = button.getAttribute('data-lastname');
-    const email = button.getAttribute('data-email');
-    const role = button.getAttribute('data-role');
-    const status = button.getAttribute('data-status');
-    
-    // Set values in the form
-    document.getElementById('user_id').value = userId;
-    document.getElementById('edit_first_name').value = firstName;
-    document.getElementById('edit_last_name').value = lastName;
-    document.getElementById('edit_email').value = email;
-    
-    // Set selected values for dropdowns
-    const roleSelect = document.getElementById('edit_role');
-    for (let i = 0; i < roleSelect.options.length; i++) {
-        if (roleSelect.options[i].value === role) {
-            roleSelect.selectedIndex = i;
-            break;
+        form.addEventListener("submit", () => {
+            button.disabled = true;
+            buttonText.textContent = "Saving...";
+            spinner.classList.remove("hidden");
+        });
+    });
+
+    function closeEditModal() {
+        const modal = document.getElementById('editFormModal');
+
+        if (!modal) {
+            console.error('Modal element not found');
+            return;
+        }
+
+        // Add a debug log to check if the function is being called
+        console.log('Closing edit modal');
+
+        try {
+            // Apply closing animation
+            modal.classList.remove('opacity-100');
+            modal.classList.add('opacity-0');
+
+            const modalContent = modal.querySelector('div');
+            if (modalContent) {
+                modalContent.classList.remove('scale-100');
+                modalContent.classList.add('scale-95');
+            }
+
+            // Hide modal after animation completes
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                console.log('Modal hidden');
+            }, 300);
+        } catch (error) {
+            console.error('Error closing modal:', error);
+            // Fallback: force hide the modal
+            modal.style.display = 'none';
         }
     }
-    
-    const statusSelect = document.getElementById('edit_status');
-    for (let i = 0; i < statusSelect.options.length; i++) {
-        if (statusSelect.options[i].value === status) {
-            statusSelect.selectedIndex = i;
-            break;
+
+    // Function to open the edit modal with pre-filled data
+    function openEditModal(button) {
+        // Get user data from button data attributes
+        const userId = button.getAttribute('data-id');
+        const firstName = button.getAttribute('data-firstname');
+        const lastName = button.getAttribute('data-lastname');
+        const email = button.getAttribute('data-email');
+        const role = button.getAttribute('data-role');
+        const status = button.getAttribute('data-status');
+
+        // Set values in the form
+        document.getElementById('user_id').value = userId;
+        document.getElementById('edit_first_name').value = firstName;
+        document.getElementById('edit_last_name').value = lastName;
+        document.getElementById('edit_email').value = email;
+
+        // Set selected values for dropdowns
+        const roleSelect = document.getElementById('edit_role');
+        for (let i = 0; i < roleSelect.options.length; i++) {
+            if (roleSelect.options[i].value === role) {
+                roleSelect.selectedIndex = i;
+                break;
+            }
         }
+
+        const statusSelect = document.getElementById('edit_status');
+        for (let i = 0; i < statusSelect.options.length; i++) {
+            if (statusSelect.options[i].value === status) {
+                statusSelect.selectedIndex = i;
+                break;
+            }
+        }
+
+        // Show the modal with animation
+        const modal = document.getElementById('editFormModal');
+        modal.classList.remove('hidden');
+
+        // Trigger reflow to ensure transition works
+        void modal.offsetWidth;
+
+        // Apply opening animation
+        modal.classList.remove('opacity-0');
+        modal.classList.add('opacity-100');
+
+        const modalContent = modal.querySelector('div');
+        modalContent.classList.remove('scale-95');
+        modalContent.classList.add('scale-100');
     }
-    
-    // Show the modal with animation
-    const modal = document.getElementById('editFormModal');
-    modal.classList.remove('hidden');
-    
-    // Trigger reflow to ensure transition works
-    void modal.offsetWidth;
-    
-    // Apply opening animation
-    modal.classList.remove('opacity-0');
-    modal.classList.add('opacity-100');
-    
-    const modalContent = modal.querySelector('div');
-    modalContent.classList.remove('scale-95');
-    modalContent.classList.add('scale-100');
-}
 </script>

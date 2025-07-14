@@ -31,15 +31,14 @@ class SettingController extends Controller
     public function updatePassword(Request $request)
     {
         $request->validate([
-            "current_password" => "required|max:255",
+            "current_password" => "required|max:60",
             "new_password" => 'required|min:8|confirmed|regex:/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[\W_])\S{8,}$/',
+            "new_password_confirmation" => "required|min:8|same:new_password"
         ]);
 
-        // get the current authenticated user
         $authenticatedUser = Auth::user();
 
         if (Hash::check($request->current_password, $authenticatedUser->password)) {
-            // update the password
             $authenticatedUser->password = Hash::make($request->new_password);
             $authenticatedUser->save();
 
