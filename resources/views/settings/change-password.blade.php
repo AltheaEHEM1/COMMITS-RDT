@@ -2,16 +2,26 @@
 
 @section('profile_content')
     <!--Change password-->
-    <form id="change-password-form" action="{{ route('password.update') }}" method="POST" enctype="multipart/form-data">
+    <form id="change-password-form" action="{{ route('update.password') }}" method="POST" enctype="multipart/form-data">
         @csrf
-        <div class="grid gap-6 mb-4 md:grid-cols-4 mt-4 px-3">
+        <div class="grid gap-6 px-3 mt-4 mb-4 md:grid-cols-4">
             <div>
                 <label for="current_password" class="block mb-2 text-sm font-medium text-gray-900">Current Password <span
                         class="text-red-500">*</span></label>
-                <input type="password" id="current_password" name="current_password"
+                <div class="relative input-control">
+                    <input type="password" id="current_password" name="current_password"
                     class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-2 focus:outline-none focus:ring-blue-500 block w-full p-2.5"
                     placeholder="Type your current password"
                     @error('current_password') style="border-color: red" @enderror />
+                    <!-- Eye Slash Icon (Password Hidden) -->
+                    <span id="current-password-hidden" class="absolute inset-y-0 flex items-center cursor-pointer right-3">
+                        <i class="text-sm text-gray-500 fas fa-eye-slash"></i>
+                    </span>
+                    <!-- Eye Icon (Password Show) -->
+                    <span id="current-password-show" class="absolute inset-y-0 flex items-center hidden cursor-pointer right-3">
+                        <i class="text-sm text-gray-500 fas fa-eye"></i>
+                    </span>
+                </div>
                 <div id="current-password-error" class="block mt-2 ml-1 text-sm text-red-500 w-80"></div>
                 @error('current_password')
                     <p class="text-sm text-red-500 text-start">{{ $message }}</p>
@@ -19,7 +29,7 @@
             </div>
         </div>
 
-        <div class="grid gap-6 mb-10 md:grid-cols-4 px-3">
+        <div class="grid gap-6 px-3 mb-10 md:grid-cols-4">
             <!-- New Password -->
             <div>
                 <label for="new_password" class="block mb-2 text-sm font-medium text-gray-900">New Password <span
@@ -30,13 +40,13 @@
                         placeholder="Type your new password" @error('new_password') style="border-color: red" @enderror />
 
                     <!-- Eye Slash Icon (Password Hidden) -->
-                    <span id="new-password-hidden" class="absolute inset-y-0 right-3 flex items-center cursor-pointer">
-                        <i class="text-sm fas fa-eye-slash text-gray-500"></i>
+                    <span id="new-password-hidden" class="absolute inset-y-0 flex items-center cursor-pointer right-3">
+                        <i class="text-sm text-gray-500 fas fa-eye-slash"></i>
                     </span>
 
                     <!-- Eye Icon (Password Show) -->
-                    <span id="new-password-show" class="absolute inset-y-0 right-3 hidden flex items-center cursor-pointer">
-                        <i class="text-sm fas fa-eye text-gray-500"></i>
+                    <span id="new-password-show" class="absolute inset-y-0 flex items-center hidden cursor-pointer right-3">
+                        <i class="text-sm text-gray-500 fas fa-eye"></i>
                     </span>
                 </div>
                 <p id="new-password-error" class="block mt-2 ml-1 text-sm text-red-500 text-wrap"></p>
@@ -56,14 +66,14 @@
                         @error('new_password_confirmation') style="border-color: red" @enderror />
 
                     <!-- Eye Slash Icon (Password Hidden) -->
-                    <span id="confirm-password-hidden" class="absolute inset-y-0 right-3 flex items-center cursor-pointer">
-                        <i class="text-sm fas fa-eye-slash text-gray-500"></i>
+                    <span id="confirm-password-hidden" class="absolute inset-y-0 flex items-center cursor-pointer right-3">
+                        <i class="text-sm text-gray-500 fas fa-eye-slash"></i>
                     </span>
 
                     <!-- Eye Icon (Password Show) -->
                     <span id="confirm-password-show"
-                        class="absolute inset-y-0 right-3 hidden flex items-center cursor-pointer">
-                        <i class="text-sm fas fa-eye text-gray-500"></i>
+                        class="absolute inset-y-0 flex items-center hidden cursor-pointer right-3">
+                        <i class="text-sm text-gray-500 fas fa-eye"></i>
                     </span>
                 </div>
                 <div id="confirm-password-error" class="block mt-2 ml-1 text-sm text-red-500 w-80"></div>
@@ -73,7 +83,7 @@
             </div>
         </div>
 
-        <div class="grid gap-6 mb-10 md:grid-cols-5 px-3">
+        <div class="grid gap-6 px-3 mb-10 md:grid-cols-5">
             <button type="submit"
                 class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-2 py-2.5 text-center">Save
                 Changes</button>
@@ -187,12 +197,28 @@
         confirmPassword.addEventListener("input", () => validateConfirmPassword());
 
         // PASSWORD MASKING
+        const currentPasswordField = document.getElementById("current_password");
+        const currentPasswordHidden = document.getElementById("current-password-hidden");
+        const currentPasswordShow = document.getElementById("current-password-show");
         const newPasswordField = document.getElementById("new_password");
         const confirmPasswordField = document.getElementById("confirm_password");
         const newPasswordHidden = document.getElementById("new-password-hidden");
         const newPasswordShow = document.getElementById("new-password-show");
         const confirmPasswordHidden = document.getElementById("confirm-password-hidden");
         const confirmPasswordShow = document.getElementById("confirm-password-show");
+
+        // CURRENT PASSWORD ICONS
+        currentPasswordHidden.addEventListener("click", () => {
+            currentPasswordField.type = currentPasswordField.type === "password" ? "text" : "password";
+            currentPasswordHidden.classList.add("hidden");
+            currentPasswordShow.classList.remove("hidden");
+        });
+
+        currentPasswordShow.addEventListener("click", () => {
+            currentPasswordField.type = currentPasswordField.type === "text" ? "password" : "text";
+            currentPasswordHidden.classList.add("hidden");
+            currentPasswordShow.classList.remove("hidden");
+        });
 
         // NEW PASSWORD ICONS
         newPasswordHidden.addEventListener("click", () => {

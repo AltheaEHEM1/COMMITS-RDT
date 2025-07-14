@@ -20,18 +20,8 @@ class ReportController extends Controller
     {
         $query = Report::query();
 
-        if ($request->has('category')) {
-            $query->where('category', $request->category);
-        }
-
-        // Filter by month (based on the 'date' column) for the current year
-        if ($request->has('month')) {
-            $query->whereMonth('date', $request->month)
-                ->whereYear('date', now()->year);
-        }
-
         // Use pagination instead of get()
-        $reports = $query->orderBy('date', 'desc')->paginate(10);
+        $reports = $query->orderBy('created_at', 'desc')->paginate(10);
 
         // to pass the services array to the view
         $services = $this->getDefaultServices();
@@ -61,7 +51,7 @@ class ReportController extends Controller
                 'complaint' => 'required|string|max:255',
                 'diagnosis' => 'required',
                 'remarks' => 'nullable|string|max:255',
-                'category' => 'required|in:students,faculty,administrative,dependents,visitors',
+                'category' => 'required|in:Students,Faculty,Administrative,Dependents,Visitors',
             ]);
 
             // Create a new report
@@ -106,7 +96,7 @@ class ReportController extends Controller
                 'complaint' => 'required|string|max:255',
                 'diagnosis' => 'required',
                 'remarks' => 'nullable|string|max:255',
-                'category' => 'required|in:students,faculty,administrative,dependents,visitors',
+                'category' => 'required|in:Students,Faculty,Administrative,Dependents,Visitors',
             ]);
 
             $report = Report::findOrFail($request->id);
@@ -577,23 +567,23 @@ class ReportController extends Controller
             ],
             [
                 'name' => 'VI. ON-LINE CONSULTATION',
-                'data' => ['', '', '', '', 'VI.']
+                'data' => ['', '', '', '', '', 'VI.']
             ],
             [
                 'name' => 'a. Consultation',
-                'data' => ['', '', '', '', '']
+                'data' => ['', '', '', '', '', '']
             ],
             [
                 'name' => 'b. Medical certificate',
-                'data' => ['', '', '', '', '']
+                'data' => ['', '', '', '', '', '']
             ],
             [
                 'name' => 'c. Others',
-                'data' => ['', '', '', '', '']
+                'data' => ['', '', '', '', '', '']
             ],
             [
                 'name' => 'VII. TRIAGE SURVEY',
-                'data' => ['', '', '', '', 'VII.']
+                'data' => ['', '', '', '', '', 'VII.']
             ],
         ];
     }

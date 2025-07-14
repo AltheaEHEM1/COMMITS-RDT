@@ -41,9 +41,9 @@
                 <div>
                     <label for="sex" class="block mb-2 text-sm font-medium text-gray-900">Sex <span
                             class="text-red-500">*</span></label>
-                    <select id="sex" name="sex"
+                    <select id="sex" name="sex" required
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-2 focus:outline-none focus:ring-blue-500 block w-full p-2.5">
-                        <option selected="">Select biological sex</option>
+                        <option value="">Select biological sex</option>
                         <option value="Male">Male</option>
                         <option value="Female">Female</option>
                     </select>
@@ -58,36 +58,45 @@
                 <div>
                     <label for="category" class="block mb-2 text-sm font-medium text-gray-900">Category <span
                             class="text-red-500">*</span></label>
-                    <select id="category" name="category"
+                    <select id="category" name="category" required
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-2 focus:outline-none focus:ring-blue-500 block w-full p-2.5">
                         <option value="">Select category</option>
-                        <option value="students">Students</option>
-                        <option value="faculty">Faculty</option>
-                        <option value="administrative">Administrative</option>
-                        <option value="dependents">Dependents</option>
-                        <option value="visitors">Visitors</option>
+                        <option value="Students">Students</option>
+                        <option value="Faculty">Faculty</option>
+                        <option value="Administrative">Administrative</option>
+                        <option value="Dependents">Dependents</option>
+                        <option value="Visitors">Visitors</option>
                     </select>
                 </div>
                 <div>
                     <label for="diagnosis" class="block mb-2 text-sm font-medium text-gray-900">Diagnosis <span
                             class="text-red-500">*</span></label>
-                    <select id="diagnosis" name="diagnosis"
+                    <select id="diagnosis" name="diagnosis" required
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-2 focus:outline-none focus:ring-blue-500 block w-full p-2.5">
                         <option value="">Select diagnosis</option>
                         @foreach ($services as $service)
-                            @if (!$loop->last)
-                                {{-- to not include the "Total Online Consult" --}}
-                                <option value="{{ $service['name'] }}">{{ $service['name'] }}</option>
+                            @if (!empty($service['data'][5]))
+                                {{-- Category header: shown but not selectable --}}
+                                @php
+                                    $cleanName = preg_replace('/^\d+\.\s*/', '', $service['name']);
+                                @endphp
+                                <option value="" disabled class="font-extrabold"><strong>{{ $cleanName }}</strong></option>
+                            @else
+                                @php
+                                    $cleanName = preg_replace('/^\d+\.\s*/', '', $service['name']);
+                                @endphp
+                                <option value="{{ $service['name'] }}">{{ $cleanName }}</option>
                             @endif
                         @endforeach
                     </select>
                 </div>
                 <div class="col-span-2">
-                    <label for="complaint" class="block mb-2 text-sm font-medium text-gray-900">Complaint Reason
+                    <label for="complaint" class="block mb-2 text-sm font-medium text-gray-900">Complaint Reason <span
+                        class="text-red-500">*</span>
                     </label>
                     <textarea type="text" name="complaint" id="complaint"
                         class="bg-gray-50 border border-gray-300 text-gray-500 text-sm rounded-lg focus:ring-2 focus:outline-none focus:ring-blue-500 block w-full p-2.5"
-                        placeholder="Type complaint reason here"></textarea>
+                        placeholder="Type complaint reason here" required></textarea>
                 </div>
                 <div class="col-span-2">
                     <label for="remarks" class="block mb-2 text-sm font-medium text-gray-900">Remarks </label>

@@ -49,27 +49,27 @@
 
     <div class="p-4 bg-white rounded-lg shadow">
   <!-- Top bar with tabs on left and button(s) on right -->
-<div class="flex flex-wrap justify-between items-center mb-3 gap-4">
+<div class="flex flex-wrap items-center justify-between gap-4 mb-3">
     
     <!-- Tabs -->
     <div class="flex flex-wrap gap-2">
-        <a class="px-3 py-2 text-base text-gray-800 border-b-2 border-blue-500 rounded-t bg-blue-50 tab-btn whitespace-nowrap activate hover:text-gray-700"
-            href="{{ route('reports.index') }}">All</a>
+        <button type="button" class="px-3 py-2 text-base text-gray-800 border-b-2 border-blue-500 rounded-t bg-blue-50 tab-btn whitespace-nowrap hover:text-gray-700" 
+            data-filter="all">All Reports</button>
 
-        <a class="px-3 py-2 text-base text-gray-500 border-b-2 border-gray-300 rounded tab-btn whitespace-nowrap hover:text-gray-700"
-            href="{{ route('reports.index', array_merge(request()->query(), ['category' => 'Students'])) }}">Students</a>
+        <button type="button" class="px-3 py-2 text-base text-gray-500 border-b-2 border-gray-300 rounded tab-btn whitespace-nowrap hover:text-gray-700" 
+            data-filter="Students">Students</button>
 
-        <a class="px-3 py-2 text-base text-gray-500 border-b-2 border-gray-300 rounded tab-btn whitespace-nowrap hover:text-gray-700"
-            href="{{ route('reports.index', array_merge(request()->query(), ['category' => 'Faculty'])) }}">Faculty</a>
+        <button type="button" class="px-3 py-2 text-base text-gray-500 border-b-2 border-gray-300 rounded tab-btn whitespace-nowrap hover:text-gray-700" 
+            data-filter="Faculty">Faculty</button>
 
-        <a class="px-3 py-2 text-base text-gray-500 border-b-2 border-gray-300 rounded tab-btn whitespace-nowrap hover:text-gray-700"
-            href="{{ route('reports.index', array_merge(request()->query(), ['category' => 'Admin'])) }}">Administrative</a>
+        <button type="button" class="px-3 py-2 text-base text-gray-500 border-b-2 border-gray-300 rounded tab-btn whitespace-nowrap hover:text-gray-700" 
+            data-filter="Administrative">Administrative</button>
 
-        <a class="px-3 py-2 text-base text-gray-500 border-b-2 border-gray-300 rounded tab-btn whitespace-nowrap hover:text-gray-700"
-            href="{{ route('reports.index', array_merge(request()->query(), ['category' => 'Visitors'])) }}">Visitors</a>
+        <button type="button" class="px-3 py-2 text-base text-gray-500 border-b-2 border-gray-300 rounded tab-btn whitespace-nowrap hover:text-gray-700" 
+            data-filter="Visitors">Visitors</button>
 
-        <a class="px-3 py-2 text-base text-gray-500 border-b-2 border-gray-300 rounded tab-btn whitespace-nowrap hover:text-gray-700"
-            href="{{ route('reports.index', array_merge(request()->query(), ['category' => 'Dependents'])) }}">Dependents</a>
+        <button type="button" class="px-3 py-2 text-base text-gray-500 border-b-2 border-gray-300 rounded tab-btn whitespace-nowrap hover:text-gray-700" 
+            data-filter="Dependents">Dependents</button>
     </div>
 
    <!-- Buttons aligned to the right -->
@@ -145,7 +145,7 @@
 
             <!-- Add Button -->
             <button
-                class="inline-flex items-center gap-2 px-3 py-2 text-white bg-blue-500 hover:bg-blue-600 rounded-lg transition-all duration-200 shadow-md hover:shadow-lg active:shadow-sm transform active:translate-y-0"
+                class="inline-flex items-center gap-2 px-3 py-2 text-white transition-all duration-200 transform bg-blue-500 rounded-lg shadow-md hover:bg-blue-600 hover:shadow-lg active:shadow-sm active:translate-y-0"
                 onclick="showAddReportModal()">
                                 <span class="font-medium">+ Add Report</span>
             </button>
@@ -157,7 +157,7 @@
             @if (count($reports) > 0)
                 <div class="overflow-x-auto rounded-lg shadow-sm">
                     <table class="min-w-full text-sm text-left text-black-500">
-                        <thead class="text-xs bg-gray-100 uppercase border-b border-gray-200">
+                        <thead class="text-xs uppercase bg-gray-100 border-b border-gray-200">
                             <tr>
                                 <th class="px-6 py-3">Title</th>
                                 <th class="px-6 py-3">Name</th>
@@ -172,7 +172,7 @@
                         </thead>
                         <tbody id="reportTableBody">
                             @foreach ($reports as $report)
-                                <tr class="bg-white border-b hover:bg-gray-100">
+                                <tr class="bg-white border-b hover:bg-gray-100" data-report-category="{{ $report->category }}">
                                     <td class="px-4 py-2">{{ $report->title }}</td>
                                     <td class="px-4 py-2">{{ $report->name }}</td>
                                     <td class="px-4 py-2">{{ $report->age }}</td>
@@ -181,30 +181,32 @@
                                     <td class="px-4 py-2">{{ $report->diagnosis }}</td>
                                     <td class="px-4 py-2">{{ $report->remarks }}</td>
                                     <td class="px-4 py-2">{{ $report->category }}</td>
-                                    <td class="flex px-4 py-2 gap-x-2">
-                                        <button onclick='showEditReportModal(@json($report->toArray()))'
-                                            class="px-3 py-2 text-white bg-yellow-500 rounded-md hover:bg-yellow-600">
-                                            <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none"
-                                                viewBox="0 0 24 24" stroke="currentColor">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                    d="m14.304 4.844 2.852 2.852M7 7H4a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h11a1 1 0 0 0 1-1v-4.5m2.409-9.91a2.017 2.017 0 0 1 0 2.853l-6.844 6.844L8 14l.713-3.565 6.844-6.844a2.015 2.015 0 0 1 2.852 0Z" />
-                                            </svg>
-                                        </button>
-                                        <form action="{{ route('reports.destroy') }}" method="POST">
-                                            @csrf
-                                            <input type="hidden" id="report_id" value="{{ $report->id }}"
-                                                name="id">
-                                            <button type="button"
-                                                onclick="confirmDelete('{{ $report->title }}', this.form)"
-                                                class="px-3 py-2 text-white bg-red-500 rounded-md hover:bg-red-600">
-                                                <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="currentColor"
-                                                    viewBox="0 0 24 24">
-                                                    <path fill-rule="evenodd"
-                                                        d="M8.586 2.586A2 2 0 0 1 10 2h4a2 2 0 0 1 2 2v2h3a1 1 0 1 1 0 2v12a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V8a1 1 0 0 1 0-2h3V4a2 2 0 0 1 .586-1.414ZM10 6h4V4h-4v2Zm1 4a1 1 0 1 0-2 0v8a1 1 0 1 0 2 0v-8Zm4 0a1 1 0 1 0-2 0v8a1 1 0 1 0 2 0v-8Z"
-                                                        clip-rule="evenodd" />
+                                    <td class="px-4 py-2">
+                                        <div class="flex items-center gap-x-2">
+                                            <button onclick='showEditReportModal(@json($report->toArray()))'
+                                                class="px-3 py-2 text-white bg-yellow-500 rounded-md hover:bg-yellow-600">
+                                                <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none"
+                                                    viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                        d="m14.304 4.844 2.852 2.852M7 7H4a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h11a1 1 0 0 0 1-1v-4.5m2.409-9.91a2.017 2.017 0 0 1 0 2.853l-6.844 6.844L8 14l.713-3.565 6.844-6.844a2.015 2.015 0 0 1 2.852 0Z" />
                                                 </svg>
                                             </button>
-                                        </form>
+                                            <form action="{{ route('reports.destroy') }}" method="POST">
+                                                @csrf
+                                                <input type="hidden" id="report_id" value="{{ $report->id }}"
+                                                    name="id">
+                                                <button type="button"
+                                                    onclick="confirmDelete('{{ $report->title }}', this.form)"
+                                                    class="px-3 py-2 text-white bg-red-500 rounded-md hover:bg-red-600">
+                                                    <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="currentColor"
+                                                        viewBox="0 0 24 24">
+                                                        <path fill-rule="evenodd"
+                                                            d="M8.586 2.586A2 2 0 0 1 10 2h4a2 2 0 0 1 2 2v2h3a1 1 0 1 1 0 2v12a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V8a1 1 0 0 1 0-2h3V4a2 2 0 0 1 .586-1.414ZM10 6h4V4h-4v2Zm1 4a1 1 0 1 0-2 0v8a1 1 0 1 0 2 0v-8Zm4 0a1 1 0 1 0-2 0v8a1 1 0 1 0 2 0v-8Z"
+                                                            clip-rule="evenodd" />
+                                                    </svg>
+                                                </button>
+                                            </form>
+                                        </div>
                                     </td>
                                 </tr>
                             @endforeach
@@ -212,9 +214,11 @@
                     </table>
                 </div>
             @else
-                <div class="p-8 text-center">
-                    <p class="text-xl text-gray-600">No reports available.</p>
-                    <p class="mt-2 text-gray-500">Click on "Add Report" to create your first report.</p>
+                <div class="flex items-center justify-center w-full p-8 text-center">
+                    <div class="space-y-2">
+                        <p class="text-xl font-medium text-gray-600">No reports available.</p>
+                        <p class="text-gray-500">Click on "Add Report" to create your first report.</p>
+                    </div>
                 </div>
             @endif
         </div>
@@ -256,6 +260,8 @@
             let modal = document.getElementById("addReportModal");
             let modalContent = modal.querySelector("div.relative");
 
+            document.body.style.overflow = "hidden";
+
             modal.classList.remove("hidden");
             setTimeout(() => {
                 modal.classList.remove("opacity-0");
@@ -274,6 +280,7 @@
 
             setTimeout(() => {
                 modal.classList.add("hidden");
+                document.body.style.overflow = "auto";
             }, 300); // Matches transition duration
         }
 
@@ -281,6 +288,8 @@
             let modal = document.getElementById("editReportModal");
             let modalContent = modal.querySelector("div.relative");
             let form = document.getElementById('editReportForm');
+
+            document.body.style.overflow = "hidden";
 
             form.querySelector('#report_id').value = report.id;
             form.querySelector('#title').value = report.title;
@@ -321,6 +330,7 @@
 
             setTimeout(() => {
                 modal.classList.add("hidden");
+                document.body.style.overflow = "auto";
             }, 300); // Matches transition duration
         }
 
@@ -339,6 +349,73 @@
                 }
             });
         }
+
+        // Tab filtering functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const tabButtons = document.querySelectorAll('.tab-btn');
+            const reportRows = document.querySelectorAll('tr[data-report-category]');
+
+            function filterReports(filterValue) {
+                let visibleCount = 0;
+                
+                reportRows.forEach(row => {
+                    const category = row.getAttribute('data-report-category');
+                    
+                    // Case-insensitive comparison and handle different category formats
+                    let shouldShow = false;
+                    
+                    if (filterValue === 'all') {
+                        shouldShow = true;
+                    } else if (filterValue.toLowerCase() === 'admin' && 
+                              (category.toLowerCase().includes('admin') || category.toLowerCase().includes('administrative'))) {
+                        shouldShow = true;
+                    } else if (category.toLowerCase() === filterValue.toLowerCase()) {
+                        shouldShow = true;
+                    }
+                    
+                    if (shouldShow) {
+                        row.style.display = '';
+                        visibleCount++;
+                    } else {
+                        row.style.display = 'none';
+                    }
+                });
+            }
+
+            function setActiveTab(activeButton) {
+                // Remove active styles from all tabs
+                tabButtons.forEach(btn => {
+                    btn.classList.remove('text-gray-800', 'border-blue-500', 'bg-blue-50');
+                    btn.classList.add('text-gray-500', 'border-gray-300');
+                });
+
+                // Add active styles to clicked tab
+                activeButton.classList.remove('text-gray-500', 'border-gray-300');
+                activeButton.classList.add('text-gray-800', 'border-blue-500', 'bg-blue-50');
+            }
+
+            tabButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const filterValue = button.getAttribute('data-filter');
+                    
+                    // Option 1: Client-side filtering (current behavior)
+                    filterReports(filterValue);
+                    setActiveTab(button);
+                    
+                    // Option 2: Backend filtering (uncomment to enable)
+                    // if (filterValue === 'all') {
+                    //     window.location.href = '{{ route("reports.index") }}';
+                    // } else {
+                    //     window.location.href = '{{ route("reports.index") }}?category=' + filterValue;
+                    // }
+                });
+            });
+
+            // Log all categories on page load for debugging
+            reportRows.forEach(row => {
+                const category = row.getAttribute('data-report-category');
+            });
+        });
     </script>
 
     @if (session('success'))

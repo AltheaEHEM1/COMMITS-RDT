@@ -97,7 +97,7 @@
 
         <!-- Notification Messages -->
         {{-- @if (session('success'))
-            <div id="session-alert" class="fixed z-50 tw-p-4 tw-mb-4 tw-text-green-800 text-white tw-bg-green-200 tw-rounded-lg"
+            <div id="session-alert" class="fixed z-50 text-white tw-p-4 tw-mb-4 tw-text-green-800 tw-bg-green-200 tw-rounded-lg"
                 style="transition: opacity 0.5s;">
                 {{ session('success') }}
             </div>
@@ -113,7 +113,7 @@
             <!--loading spinner-->
             <x-loading-spinner />
 
-            <div class="p-4 h-full">
+            <div class="p-4">
                 <!--Main Content-->
                 @yield('content')
             </div>
