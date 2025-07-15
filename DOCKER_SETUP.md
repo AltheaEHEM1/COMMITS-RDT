@@ -1,33 +1,95 @@
 # PRMS - Patient Records Management System
 
-## Quick Start with Docker Desktop
+## Complete Docker Setup
 
-### How to setup docker for meilisearch
+### Prerequisites
+- Docker Desktop installed and running
+- Git (to clone the repository)
 
-1. Open Docker Desktop
-2. Click on "Containers" in the left sidebar
-3. Click the terminal button
-4. Navigate to project directory using this command:
-    ```bash
-    cd "c:\laragon\www\COMMITS-RDT"
-    ```
-5. Run the docker-compose using this command:
-    ```bash
-    docker-compose up -d meilisearch
-    ```
-6. Wait for Meilisearch to start (check the logs for "Meilisearch is ready" or check if the container is active/running)
-7. Go back to vscode or your IDE
-8. Run this command in terminal to import existing patients:
-    ```bash
-    php artisan scout:import "App\Models\Patient"
-    ```
-9. Start Laravel: `php artisan serve`
+### Quick Start
+
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/AltheaEHEM1/COMMITS-RDT.git
+   cd COMMITS-RDT
+   ```
+
+2. **Copy environment file:**
+   ```bash
+   copy .env.example .env
+   ```
+
+3. **Update .env for Docker:**
+   ```env
+   DB_CONNECTION=mysql
+   DB_HOST=mysql
+   DB_PORT=3306
+   DB_DATABASE=prms
+   DB_USERNAME=root
+   DB_PASSWORD=
+
+   MEILISEARCH_HOST=http://meilisearch:7700
+   SCOUT_DRIVER=meilisearch
+   ```
+
+4. **Build and start all services:**
+   ```bash
+   docker-compose up -d
+   ```
+
+5. **Generate application key:**
+   ```bash
+   docker-compose exec app php artisan key:generate
+   ```
+
+6. **Run migrations:**
+   ```bash
+   docker-compose exec app php artisan migrate:fresh --seed
+   ```
+
+7. **Import patient data to Meilisearch:**
+   ```bash
+   docker-compose exec app php artisan scout:import "App\Models\Patient"
+   ```
+
+### Access the Application
+
+- **Laravel App**: http://localhost:8000
+- **Vite Dev Server**: http://localhost:5173
+- **Meilisearch**: http://localhost:7700
+- **MySQL**: localhost:3306
+
+### Useful Commands
+
+```bash
+# View logs
+docker-compose logs -f app
+docker-compose logs -f vite
+
+# Stop all services
+docker-compose down
+
+# Rebuild containers
+docker-compose up -d --build
+
+# Access app container shell
+docker-compose exec app bash
+
+# Run artisan commands
+docker-compose exec app php artisan [command]
+```
+
+### Development Workflow
+
+1. Make changes to your code
+2. Vite will automatically reload CSS/JS changes
+3. Laravel changes are reflected immediately
+4. Database changes persist in Docker volumes
 
 ## Important Notes
 
--   Meilisearch will be available at: http://localhost:7700
--   Laravel will be available at: http://localhost:8000
--   Patient search data persists between restarts
--   New patients are automatically indexed when created
--   Only need to run `scout:import` once after starting Meilisearch for the first time
--   You need to setup the Meilisearch configuration once (see .env.example for reference)
+- All services run in containers
+- Hot module replacement (HMR) works for frontend development
+- Database data persists between container restarts
+- Meilisearch data persists between container restarts
+- Use `docker-compose down -v` to remove all data volumes

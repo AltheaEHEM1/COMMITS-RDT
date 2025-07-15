@@ -1,22 +1,75 @@
-version: "3.8"
-
 services:
-    meilisearch:
-        image: getmeili/meilisearch:latest
-        container_name: prms_meilisearch
-        ports:
-            - "7700:7700"
-        environment:
-            - MEILI_ENV=development
-            - MEILI_NO_ANALYTICS=true
-        volumes:
-            - meilisearch_data:/meili_data
-        restart: unless-stopped
-        healthcheck:
-            test: ["CMD", "curl", "-f", "http://localhost:7700/health"]
-            interval: 30s
-            timeout: 10s
-            retries: 3
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: prms-app
+    restart: unless-stopped
+    working_dir: /var/www
+    volumes:
+      - .:/var/www
+      - /var/www/node_modules
+    ports:
+      - "8000:8000"
+    environment:
+      - APP_ENV=local
+      - APP_DEBUG=true
+    depends_on:
+      - mysql
+      - meilisearch
+    networks:
+      - prms-network
+
+  vite:
+    build:
+      context: .
+      dockerfile: Dockerfile.vite
+    container_name: prms-vite
+    restart: unless-stopped
+    working_dir: /var/www
+    volumes:
+      - .:/var/www
+      - /var/www/node_modules
+    ports:
+      - "5173:5173"
+    command: npm run dev
+    networks:
+      - prms-network
+
+  mysql:
+    image: mysql:8.0
+    container_name: prms-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: prms
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_PASSWORD: password
+      MYSQL_USER: prms_user
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - prms-network
+
+  meilisearch:
+    image: getmeili/meilisearch:latest
+    container_name: prms-meilisearch
+    restart: unless-stopped
+    ports:
+      - "7700:7700"
+    environment:
+      - MEILI_ENV=development
+      - MEILI_MASTER_KEY=your-master-key
+    volumes:
+      - meilisearch_data:/meili_data
+    networks:
+      - prms-network
 
 volumes:
-    meilisearch_data:
+  mysql_data:
+  meilisearch_data:
+
+networks:
+  prms-network:
+    driver: bridge

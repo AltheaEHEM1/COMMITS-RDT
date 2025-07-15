@@ -76,6 +76,12 @@ This project specifically uses MySQL as the database management system. Follow t
 
 ---
 
+### If you are having trouble installing npm
+- Open windows powershell as administrator:
+    ```bash
+    Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
+    ```
+
 ### Access the Application
 - Once the server is running, open your browser and navigate to:
     ```bash
