@@ -472,8 +472,7 @@
                             <!-- Action Buttons -->
                             <div class="flex gap-3 pt-4">
                                 <button type="button" id="savePatientBtn" disabled
-                                    class="flex-1 px-6 py-2.5 bg-green-600 text-white text-sm font-semibold rounded-lg
-                                hover:bg-green-700 focus:ring focus:ring-red-200 transition-all">
+                                    class="flex-1 px-6 py-2.5 bg-gray-400 text-white text-sm font-semibold rounded-lg cursor-not-allowed transition-all">
                                     <span class="spinner-border spinner-border-sm d-none me-2" role="status"></span>
                                     Save Patient
                                 </button>
@@ -944,18 +943,74 @@
         $(document).ready(function() {
             let formSubmitting = false;
 
+            // Function to check if all required fields are filled
+            function validateRequiredFields() {
+                const form = $('#addPatientForm');
+                const requiredFields = form.find('input[required], select[required]');
+                let allValid = true;
+
+                requiredFields.each(function() {
+                    const field = $(this);
+                    const value = field.val().trim();
+                    
+                    // Check if field is visible (for student number field)
+                    const isVisible = !field.closest('.col-span-2').hasClass('d-none');
+                    
+                    if (isVisible && (!value || value === '')) {
+                        allValid = false;
+                        return false; // Break out of each loop
+                    }
+                });
+
+                // Enable/disable save button based on validation
+                const saveBtn = $('#savePatientBtn');
+                if (allValid) {
+                    saveBtn.prop('disabled', false);
+                    saveBtn.removeClass('bg-gray-400 cursor-not-allowed')
+                           .addClass('bg-green-600 hover:bg-green-700');
+                } else {
+                    saveBtn.prop('disabled', true);
+                    saveBtn.removeClass('bg-green-600 hover:bg-green-700')
+                           .addClass('bg-gray-400 cursor-not-allowed');
+                }
+            }
+
+            // Initial validation on page load
+            validateRequiredFields();
+
+            // Validate on input/change events for all form fields
+            $('#addPatientForm input, #addPatientForm select').on('input change keyup', function() {
+                // Clear any existing error alerts
+                $('#addErrorAlert').addClass('d-none').html('');
+                
+                // Validate required fields
+                validateRequiredFields();
+            });
+
+            // Special handling for patient type change (to show/hide student number field)
+            $('#addPatientForm select[name="patientType"]').on('change', function() {
+                toggleStudentNumberField(this, 'add');
+                validateRequiredFields(); // Re-validate after toggle
+            });
+
             // Reload the page when the modal is closed (to update the table)
             $('#addPatientModal').on('hidden.bs.modal', function () {
                 window.location.reload();
             });
 
-            
+            // Reset form when modal is shown
+            $('#addPatientModal').on('shown.bs.modal', function () {
+                const form = $('#addPatientForm');
+                form.trigger('reset');
+                $('#addErrorAlert').addClass('d-none').html('');
+                validateRequiredFields();
+            });
 
             // Click handler for the Save Patient button
             $('#savePatientBtn').on('click', function(e) {
                 e.preventDefault();
 
-                if (formSubmitting) {
+                if (formSubmitting || $(this).prop('disabled')) {
                     return;
                 }
 
@@ -973,6 +1028,10 @@
                     formSubmitting = true;
                     $('#addErrorAlert').addClass('d-none');
                     
+                    // Show loading state
+                    $('#savePatientBtn').html('<span class="spinner-border spinner-border-sm me-2" role="status"></span>Saving...')
+                                       .prop('disabled', true);
+                    
                     $.ajax({
                         url: form.attr('action'),
                         type: form.attr('method'),
@@ -986,7 +1045,7 @@
                             setTimeout(() => {
                                 $('#addPatientModal').modal('hide');
                                 form.trigger('reset');
-                                $('#savePatientBtn').prop('disabled', false);
+                                $('#savePatientBtn').html('Save Patient').prop('disabled', false);
                                 formSubmitting = false;
                             }, 1500);
                         },
@@ -999,7 +1058,10 @@
                                 .html('Error while saving patient: ' + msg)
                                 .removeClass('d-none alert-success alert-warning')
                                 .addClass('alert alert-danger');
+                            
+                            $('#savePatientBtn').html('Save Patient').prop('disabled', false);
                             formSubmitting = false;
+                            validateRequiredFields(); // Re-validate to set correct button state
                         }
                     });
                 }
@@ -1098,10 +1160,13 @@
                 
                 // Wait for modal to close, then proceed with save
                 setTimeout(() => {
-                    // Create a new proceedWithSave function for this context
                     const form = $('#addPatientForm');
                     formSubmitting = true;
                     $('#addErrorAlert').addClass('d-none');
+                    
+                    // Show loading state
+                    $('#savePatientBtn').html('<span class="spinner-border spinner-border-sm me-2" role="status"></span>Saving...')
+                                       .prop('disabled', true);
                     
                     $.ajax({
                         url: form.attr('action'),
@@ -1116,7 +1181,7 @@
                             setTimeout(() => {
                                 $('#addPatientModal').modal('hide');
                                 form.trigger('reset');
-                                $('#savePatientBtn').prop('disabled', false);
+                                $('#savePatientBtn').html('Save Patient').prop('disabled', false);
                                 formSubmitting = false;
                             }, 1500);
                         },
@@ -1129,7 +1194,10 @@
                                 .html('Error while saving patient: ' + msg)
                                 .removeClass('d-none alert-success alert-warning')
                                 .addClass('alert alert-danger');
+                            
+                            $('#savePatientBtn').html('Save Patient').prop('disabled', false);
                             formSubmitting = false;
+                            validateRequiredFields();
                         }
                     });
                 }, 300);
@@ -1152,6 +1220,9 @@
                 }, 300);
             }
 
+            // Make viewExistingPatient globally accessible
+            window.viewExistingPatient = viewExistingPatient;
+
             // Optional: Add keyboard shortcut to close modal (Escape key)
             document.addEventListener('keydown', function(e) {
                 if (e.key === 'Escape') {
@@ -1160,12 +1231,6 @@
                         $('#exactDuplicateModal').modal('hide');
                     }
                 }
-            });
-
-            // When any name field is modified, clear warnings and re-enable the Save button
-            $('#firstName, #middleName, #lastName').on('input', function() {
-                $('#addErrorAlert').addClass('d-none').html('');
-                $('#savePatientBtn').prop('disabled', false);
             });
         });
 
@@ -1542,7 +1607,11 @@
             // Clear any existing warnings when patient type changes
             if (formType === 'add') {
                 $('#addErrorAlert').addClass('d-none').html('');
-                $('#savePatientBtn').prop('disabled', false);
+                
+                // Trigger validation after field visibility change
+                setTimeout(() => {
+                    $('#addPatientForm input, #addPatientForm select').trigger('input');
+                }, 50);
             }
         }
 
