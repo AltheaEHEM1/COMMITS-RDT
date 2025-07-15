@@ -63,45 +63,101 @@ class PatientController extends Controller
 
     public function checkSimilar(Request $request)
     {
-        // If there are literally no patients yet, skip the fuzzy‐search entirely:
-        if (Patient::count() === 0) {
+        $firstName = trim($request->input('firstName', ''));
+        $middleName = trim($request->input('middleName', ''));
+        $lastName = trim($request->input('lastName', ''));
+        $patientType = trim($request->input('patientType', ''));
+        $studentNumber = trim($request->input('studentNumber', ''));
+
+        // Check for exact duplicate first (prioritize this)
+        $duplicateType = Patient::getExactDuplicateType($firstName, $middleName, $lastName, $patientType, $studentNumber);
+        
+        if ($duplicateType) {
+            $message = 'A patient with this exact name already exists.';
+            
+            // Customize message based on duplicate type
+            switch ($duplicateType) {
+                case 'both':
+                    $message = 'A student with this exact name and student number already exists.';
+                    break;
+                case 'name':
+                    $message = 'A patient with this exact name already exists.';
+                    break;
+                case 'student_number':
+                    $message = 'A student with this student number already exists.';
+                    break;
+            }
+            
             return response()->json([
-                'similarFound'    => false,
-                'similarPatients' => [],
+                'similarFound' => true,
+                'exactDuplicate' => true,
+                'duplicateType' => $duplicateType,
+                'message' => $message,
+                'similarPatients' => []
             ]);
         }
 
-        $first  = $request->input('firstName');
-        $middle = $request->input('middleName');
-        $last   = $request->input('lastName');
+        // If no exact duplicate, check for similar names
+        $similarPatients = Patient::findSimilarNames($firstName, $middleName, $lastName, $patientType, $studentNumber);
+        
+        // Filter out less relevant matches
+        $relevantSimilar = $similarPatients->filter(function ($patient) use ($firstName, $lastName, $patientType, $studentNumber) {
+            $patientFirstLower = strtolower($patient->firstName);
+            $patientLastLower = strtolower($patient->lastName);
+            $searchFirstLower = strtolower($firstName);
+            $searchLastLower = strtolower($lastName);
+            
+            $nameMatch = (
+                str_contains($patientFirstLower, $searchFirstLower) ||
+                str_contains($searchFirstLower, $patientFirstLower) ||
+                str_contains($patientLastLower, $searchLastLower) ||
+                str_contains($searchLastLower, $patientLastLower) ||
+                levenshtein($patientFirstLower, $searchFirstLower) <= 2 ||
+                levenshtein($patientLastLower, $searchLastLower) <= 2
+            );
+            
+            // For students, also check student number similarity (but not exact match)
+            $studentNumberMatch = false;
+            if ($patientType === 'Student' && !empty($studentNumber) && $patient->patientType === 'Student') {
+                $patientStudentNumber = strtolower($patient->student_number ?? '');
+                $searchStudentNumber = strtolower($studentNumber);
+                
+                // Only similar, not exact
+                if ($patientStudentNumber !== $searchStudentNumber) {
+                    $studentNumberMatch = (
+                        str_contains($patientStudentNumber, $searchStudentNumber) ||
+                        str_contains($searchStudentNumber, $patientStudentNumber) ||
+                        levenshtein($patientStudentNumber, $searchStudentNumber) <= 2
+                    );
+                }
+            }
+            
+            return $nameMatch || $studentNumberMatch;
+        });
 
-        $query = trim(implode(' ', array_filter([$first, $middle, $last])));
-
-        if (empty($query)) {
-            return response()->json([
-                'similarFound'    => false,
-                'similarPatients' => [],
-            ]);
-        }
-
-        try {
-            $results = Patient::search($query)->get();
-        } catch (\Throwable $e) {
-            Log::error('checkSimilar failed: '.$e->getMessage());
-            return response()->json([
-                'message' => 'Search service error — please try again later.'
-            ], 500);
+        $message = 'No similar patients found.';
+        if ($relevantSimilar->isNotEmpty()) {
+            $message = 'Similar patient names found.';
+            if ($patientType === 'Student') {
+                $message = 'Similar student names or student numbers found.';
+            }
+            $message .= ' Please verify this is a new patient.';
         }
 
         return response()->json([
-            'similarFound'    => $results->isNotEmpty(),
-            'similarPatients' => $results->map(fn($p) => [
-                'id'         => $p->id,
-                'firstName'  => $p->firstName,
+            'similarFound' => $relevantSimilar->isNotEmpty(),
+            'exactDuplicate' => false,
+            'message' => $message,
+            'similarPatients' => $relevantSimilar->map(fn($p) => [
+                'id' => $p->id,
+                'firstName' => $p->firstName,
                 'middleName' => $p->middleName,
-                'lastName'   => $p->lastName,
-                'full_name'  => "{$p->firstName} {$p->middleName} {$p->lastName}",
-            ]),
+                'lastName' => $p->lastName,
+                'fullName' => trim("{$p->firstName} {$p->middleName} {$p->lastName}"),
+                'patientType' => $p->patientType,
+                'contactDetails' => $p->contactDetails,
+                'studentNumber' => $p->student_number
+            ])->values()
         ]);
     }
 
@@ -125,35 +181,45 @@ class PatientController extends Controller
     public function store(Request $request)
     {
         try {
-            // Validate incoming request data.
+            // Validate incoming request data
             $validated = $request->validate(
                 Patient::validationRules(),
                 Patient::validationMessages()
             );
 
-            // Trim and extract the name fields.
-            $first  = trim($validated['firstName'] ?? '');
-            $middle = trim($validated['middleName'] ?? '');
-            $last   = trim($validated['lastName'] ?? '');
+            $firstName = trim($validated['firstName'] ?? '');
+            $middleName = trim($validated['middleName'] ?? '');
+            $lastName = trim($validated['lastName'] ?? '');
+            $patientType = trim($validated['patientType'] ?? '');
+            $studentNumber = trim($validated['student_number'] ?? '');
 
-            // Check for an exact duplicate. Adjust the query as needed.
-            $duplicate = Patient::query()
-                ->whereRaw('LOWER(firstName) = ?', [strtolower($first)])
-                ->whereRaw('LOWER(lastName) = ?', [strtolower($last)])
-                ->when(!empty($middle), function ($query) use ($middle) {
-                    $query->whereRaw('LOWER(middleName) = ?', [strtolower($middle)]);
-                })
-                ->first();
-
-            if ($duplicate) {
-                // If a duplicate is found, return an error response.
+            // Check for exact duplicate (this should prevent all exact matches)
+            $duplicateType = Patient::getExactDuplicateType($firstName, $middleName, $lastName, $patientType, $studentNumber);
+            
+            if ($duplicateType) {
+                $message = 'A patient with this exact name already exists. Please check the patient list.';
+                
+                switch ($duplicateType) {
+                    case 'both':
+                        $message = 'A student with this exact name and student number already exists. Please check the student list.';
+                        break;
+                    case 'name':
+                        $message = 'A patient with this exact name already exists. Please check the patient list.';
+                        break;
+                    case 'student_number':
+                        $message = 'A student with this student number already exists. Please use a different student number or check if this student is already registered.';
+                        break;
+                }
+                
                 return response()->json([
                     'success' => false,
-                    'message' => 'A patient with this name already exists.',
+                    'message' => $message,
+                    'exactDuplicate' => true,
+                    'duplicateType' => $duplicateType
                 ], 422);
             }
 
-            // If no duplicate is found, proceed with saving the patient.
+            // Proceed with creating the patient
             $patient = $this->patientService->executeTransaction(function () use ($validated) {
                 return $this->patientService->createPatient($validated);
             });
@@ -161,18 +227,19 @@ class PatientController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => 'Patient added successfully',
-                'data'    => $patient
+                'data' => $patient
             ]);
+
         } catch (ValidationException $e) {
             return response()->json([
                 'success' => false,
                 'message' => 'Validation failed. Please check the form and try again.',
-                'errors'  => $e->errors()
+                'errors' => $e->errors()
             ], 422);
         } catch (\Exception $e) {
             Log::error('Patient creation error: ' . $e->getMessage(), [
                 'request' => $request->except(['_token']),
-                'trace'   => $e->getTraceAsString()
+                'trace' => $e->getTraceAsString()
             ]);
 
             return response()->json([

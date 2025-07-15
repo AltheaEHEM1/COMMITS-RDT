@@ -491,30 +491,143 @@
         </div>
     </div>
 
-    {{-- <div class="modal fade" id="similarPatientsModal" tabindex="-1" role="dialog" aria-labelledby="similarPatientsModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="similarPatientsModalLabel">Similar Patients Found</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <div class="alert alert-warning">
-                <i class="fas fa-exclamation-triangle"></i> 
-                The following similar patients were found in the database:
+    <!-- Similar Patients Warning Modal -->
+    <div class="modal fade" id="similarPatientsModal" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+            <div class="overflow-hidden border-0 shadow-lg modal-content rounded-xl">
+                <div class="p-6 modal-body">
+                    <!-- Modal Header -->
+                    <div class="relative pb-5 mb-6 border-b border-gray-200">
+                        <div class="text-center">
+                            <div class="flex items-center justify-center w-16 h-16 mx-auto mb-4 bg-yellow-100 rounded-full">
+                                <i class="text-2xl text-yellow-600 fas fa-exclamation-triangle"></i>
+                            </div>
+                            <h5 class="text-xl font-semibold text-gray-900">Similar Patients Found</h5>
+                            <p class="text-sm text-gray-500" id="similarModalMessage">
+                                We found patients with similar names in the system.
+                            </p>
+                        </div>
+                        <button type="button"
+                            class="absolute top-0 right-0 text-gray-400 hover:text-gray-500 focus:outline-none"
+                            data-bs-dismiss="modal">
+                            <i class="text-xl fas fa-times"></i>
+                        </button>
+                    </div>
+
+                    <!-- Similar Patients List -->
+                    <div class="mb-6">
+                        <h6 class="mb-3 text-sm font-semibold text-gray-700 uppercase">Similar Patients:</h6>
+                        <div id="similarPatientsList" class="space-y-3 max-h-64 overflow-y-auto">
+                            <!-- Will be populated dynamically -->
+                        </div>
+                    </div>
+
+                    <!-- Verification Notice -->
+                    <div class="p-4 mb-6 bg-blue-50 border border-blue-200 rounded-lg">
+                        <div class="flex items-start">
+                            <div class="flex-shrink-0">
+                                <i class="text-blue-600 fas fa-info-circle"></i>
+                            </div>
+                            <div class="ml-3">
+                                <h3 class="text-sm font-medium text-blue-800">Please Verify</h3>
+                                <div class="mt-1 text-sm text-blue-700">
+                                    <p>If this is a <strong>different person</strong>, click "Add New Patient" below.</p>
+                                    <p>If this is the <strong>same person</strong>, please cancel and use the existing record.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="flex justify-end gap-3">
+                        <button type="button" 
+                            class="px-6 py-2.5 bg-gray-100 text-gray-700 text-sm font-semibold rounded-lg hover:bg-gray-200 focus:ring focus:ring-gray-200 transition-all"
+                            data-bs-dismiss="modal">
+                            <i class="mr-2 fas fa-times"></i>
+                            Cancel & Review
+                        </button>
+                        <button type="button" id="confirmAddNewPatient"
+                            class="px-6 py-2.5 bg-red-600 text-white text-sm font-semibold rounded-lg hover:bg-red-700 focus:ring focus:ring-red-200 transition-all">
+                            <i class="mr-2 fas fa-user-plus"></i>
+                            Add New Patient
+                        </button>
+                    </div>
                 </div>
-                <div class="patient-list"></div>
-                <p class="mt-3">Are you sure you want to add this patient anyway?</p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" id="cancelAddPatient">Cancel</button>
-                <button type="button" class="btn btn-primary" id="confirmAddPatient">Add Anyway</button>
-            </div>
             </div>
         </div>
-    </div> --}}
+    </div>
+
+    <!-- Exact Duplicate Error Modal -->
+    <div class="modal fade" id="exactDuplicateModal" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="overflow-hidden border-0 shadow-lg modal-content rounded-xl">
+                <div class="p-6 modal-body">
+                    <!-- Modal Header -->
+                    <div class="relative pb-5 mb-6 border-b border-gray-200">
+                        <div class="text-center">
+                            <div class="flex items-center justify-center w-16 h-16 mx-auto mb-4 bg-red-100 rounded-full">
+                                <i class="text-2xl text-red-600 fas fa-ban"></i>
+                            </div>
+                            <h5 class="text-xl font-semibold text-gray-900">Exact Duplicate Found</h5>
+                            <p class="text-sm text-red-600" id="exactDuplicateMessage">
+                                A patient with this exact name already exists in the system.
+                            </p>
+                        </div>
+                        <button type="button"
+                            class="absolute top-0 right-0 text-gray-400 hover:text-gray-500 focus:outline-none"
+                            data-bs-dismiss="modal" aria-label="Close">
+                            <i class="text-xl fas fa-times"></i>
+                        </button>
+                    </div>
+
+                    <!-- Error Message -->
+                    <div class="p-4 mb-6 bg-red-50 border border-red-200 rounded-lg">
+                        <div class="flex items-start">
+                            <div class="flex-shrink-0">
+                                <i class="text-red-600 fas fa-exclamation-circle"></i>
+                            </div>
+                            <div class="ml-3">
+                                <h3 class="text-sm font-medium text-red-800">Cannot Add Duplicate Patient</h3>
+                                <div class="mt-1 text-sm text-red-700">
+                                    <p>A patient with this exact name already exists in the system. Please check the patient list or modify the name if this is a different person.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Suggestions Box -->
+                    <div class="p-4 mb-6 bg-blue-50 border border-blue-200 rounded-lg">
+                        <div class="flex items-start">
+                            <div class="flex-shrink-0">
+                                <i class="text-blue-600 fas fa-lightbulb"></i>
+                            </div>
+                            <div class="ml-3">
+                                <h3 class="text-sm font-medium text-blue-800">What you can do:</h3>
+                                <div class="mt-1 text-sm text-blue-700">
+                                    <ul class="list-disc list-inside space-y-1">
+                                        <li>Check if this patient already exists in the patient list</li>
+                                        <li>Modify the name if this is a different person</li>
+                                        <li>Add a middle name or initial to differentiate</li>
+                                        <li>Contact your administrator if you need assistance</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="flex justify-center gap-3">
+                        <button type="button" 
+                            class="px-6 py-2.5 bg-gray-600 text-white text-sm font-semibold rounded-lg hover:bg-gray-700 focus:ring focus:ring-gray-200 transition-all"
+                            data-bs-dismiss="modal">
+                            <i class="mr-2 fas fa-check"></i>
+                            Close
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
     @foreach ($patients as $patient)
         <div class="modal fade" id="viewPatient-{{ $patient->id }}" tabindex="-1" role="dialog" aria-hidden="true">
@@ -836,6 +949,8 @@
                 window.location.reload();
             });
 
+            
+
             // Click handler for the Save Patient button
             $('#savePatientBtn').on('click', function(e) {
                 e.preventDefault();
@@ -844,16 +959,96 @@
                     return;
                 }
 
-                // Reference the form and clear any previous error
                 const form = $('#addPatientForm');
                 $('#addErrorAlert').addClass('d-none').html('');
 
-                // Retrieve trimmed values from input fields.
-                const firstName  = form.find('input[name="firstName"]').val().trim();
+                const firstName = form.find('input[name="firstName"]').val().trim();
                 const middleName = form.find('input[name="middleName"]').val().trim();
-                const lastName   = form.find('input[name="lastName"]').val().trim();
+                const lastName = form.find('input[name="lastName"]').val().trim();
+                const patientType = form.find('select[name="patientType"]').val().trim();
+                const studentNumber = form.find('input[name="student_number"]').val().trim();
 
-                // First, perform duplicate check via the check-similar route.
+                // Define proceedWithSave function before using it
+                function proceedWithSave() {
+                    formSubmitting = true;
+                    $('#addErrorAlert').addClass('d-none');
+                    
+                    $.ajax({
+                        url: form.attr('action'),
+                        type: form.attr('method'),
+                        data: form.serialize(),
+                        success: function(resp) {
+                            $('#addErrorAlert')
+                                .html('Patient added successfully.')
+                                .removeClass('d-none alert-danger alert-warning')
+                                .addClass('alert alert-success');
+
+                            setTimeout(() => {
+                                $('#addPatientModal').modal('hide');
+                                form.trigger('reset');
+                                $('#savePatientBtn').prop('disabled', false);
+                                formSubmitting = false;
+                            }, 1500);
+                        },
+                        error: function(xhr, status, error) {
+                            let msg = error;
+                            if (xhr.status === 422 && xhr.responseJSON && xhr.responseJSON.message) {
+                                msg = xhr.responseJSON.message;
+                            }
+                            $('#addErrorAlert')
+                                .html('Error while saving patient: ' + msg)
+                                .removeClass('d-none alert-success alert-warning')
+                                .addClass('alert alert-danger');
+                            formSubmitting = false;
+                        }
+                    });
+                }
+
+                function showSimilarPatientsModal(response) {
+                    // Update modal message
+                    $('#similarModalMessage').text(response.message);
+                    
+                    // Clear and populate similar patients list
+                    const similarList = $('#similarPatientsList');
+                    similarList.empty();
+                    
+                    response.similarPatients.forEach(patient => {
+                        let studentInfo = '';
+                        if (patient.patientType === 'Student' && patient.studentNumber) {
+                            studentInfo = `<div class="text-xs text-gray-500 mt-1">Student #: ${patient.studentNumber}</div>`;
+                        }
+                        
+                        const patientCard = $(`
+                            <div class="p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <div class="font-medium text-gray-900">${patient.fullName}</div>
+                                        <div class="text-sm text-gray-600">
+                                            <span class="inline-flex items-center px-2 py-1 text-xs font-medium text-blue-700 bg-blue-100 rounded-full mr-2">
+                                                ${patient.patientType}
+                                            </span>
+                                            Contact: ${patient.contactDetails}
+                                        </div>
+                                        ${studentInfo}
+                                    </div>
+                                    <div class="text-right">
+                                        <button type="button" 
+                                            class="px-3 py-1 text-xs text-blue-600 bg-white border border-blue-300 rounded hover:bg-blue-50"
+                                            onclick="viewExistingPatient(${patient.id})">
+                                            View Details
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        `);
+                        similarList.append(patientCard);
+                    });
+                    
+                    // Show the modal
+                    $('#similarPatientsModal').modal('show');
+                }
+
+                // Check for similar/duplicate patients
                 $.ajax({
                     url: "{{ route('patients.check-similar') }}",
                     type: 'POST',
@@ -862,76 +1057,115 @@
                         _token: "{{ csrf_token() }}",
                         firstName: firstName,
                         middleName: middleName,
-                        lastName: lastName
+                        lastName: lastName,
+                        patientType: patientType,
+                        studentNumber: studentNumber
                     },
                     success: function(response) {
                         console.log("Duplicate check response:", response);
-                        if (response.similarFound && response.similarPatients.length > 0) {
-                            console.log("Duplicate detected, preventing submission.");
-                            // Show error alert at the top.
-                            $('#addErrorAlert')
-                                .html('A patient with this name already exists. Please check before proceeding.')
-                                .removeClass('d-none')
-                                .removeClass('alert-success')
-                                .addClass('alert alert-danger');
-                            // Disable the Save button
-                            $('#savePatientBtn')
-                                .prop('disabled', true)
+                        
+                        if (response.exactDuplicate) {
+                            // Show exact duplicate modal
+                            $('#exactDuplicateMessage').text(response.message);
+                            $('#exactDuplicateModal').modal('show');
                             formSubmitting = false;
-                            return; // Stop further processing
-                        } else {
-                            formSubmitting = true;
-                            // Proceed to save the patient via the store route.
-                            $.ajax({
-                                url: form.attr('action'),
-                                type: form.attr('method'),
-                                data: form.serialize(),
-                                success: function(resp) {
-                                    $('#addErrorAlert')
-                                        .html('Patient added successfully.')
-                                        .removeClass('d-none')
-                                        .removeClass('alert-danger')
-                                        .addClass('alert alert-success');
-                                    // Close the modal and reset the form.
-                                    $('#addPatientModal').modal('hide');
-                                    form.trigger('reset');
-                                    // Re-enable the Save button (restore green button)
-                                    $('#savePatientBtn')
-                                        .prop('disabled', false)
-                                    formSubmitting = false;
-                                },
-                                error: function(xhr, status, error) {
-                                    // If the server returns a 422, try to extract the JSON message.
-                                    let msg = error;
-                                    if (xhr.status === 422 && xhr.responseJSON && xhr.responseJSON.message) {
-                                        msg = xhr.responseJSON.message;
-                                    }
-                                    $('#addErrorAlert')
-                                        .html('Error while saving patient: ' + msg)
-                                        .removeClass('d-none')
-                                        .removeClass('alert-success')
-                                        .addClass('alert alert-danger');
-                                    formSubmitting = false;
-                                }
-                            });
+                            return;
                         }
+                        
+                        if (response.similarFound && response.similarPatients.length > 0) {
+                            // Show similar patients modal
+                            showSimilarPatientsModal(response);
+                            formSubmitting = false;
+                            return;
+                        }
+                        
+                        // No duplicates or similar names found - proceed with save
+                        proceedWithSave();
                     },
                     error: function(xhr, status, error) {
                         $('#addErrorAlert')
-                            .html('Error while checking duplicates: ' + error)
-                            .removeClass('d-none')
-                            .removeClass('alert-success')
+                            .html('Error while checking for duplicates: ' + error)
+                            .removeClass('d-none alert-success')
                             .addClass('alert alert-danger');
                         formSubmitting = false;
                     }
                 });
             });
 
-            // When any name field is modified, clear error messages and re-enable the Save button.
+            // Handle "Add New Patient" button in similar patients modal
+            $('#confirmAddNewPatient').off('click').on('click', function() {
+                $('#similarPatientsModal').modal('hide');
+                
+                // Wait for modal to close, then proceed with save
+                setTimeout(() => {
+                    // Create a new proceedWithSave function for this context
+                    const form = $('#addPatientForm');
+                    formSubmitting = true;
+                    $('#addErrorAlert').addClass('d-none');
+                    
+                    $.ajax({
+                        url: form.attr('action'),
+                        type: form.attr('method'),
+                        data: form.serialize(),
+                        success: function(resp) {
+                            $('#addErrorAlert')
+                                .html('Patient added successfully.')
+                                .removeClass('d-none alert-danger alert-warning')
+                                .addClass('alert alert-success');
+
+                            setTimeout(() => {
+                                $('#addPatientModal').modal('hide');
+                                form.trigger('reset');
+                                $('#savePatientBtn').prop('disabled', false);
+                                formSubmitting = false;
+                            }, 1500);
+                        },
+                        error: function(xhr, status, error) {
+                            let msg = error;
+                            if (xhr.status === 422 && xhr.responseJSON && xhr.responseJSON.message) {
+                                msg = xhr.responseJSON.message;
+                            }
+                            $('#addErrorAlert')
+                                .html('Error while saving patient: ' + msg)
+                                .removeClass('d-none alert-success alert-warning')
+                                .addClass('alert alert-danger');
+                            formSubmitting = false;
+                        }
+                    });
+                }, 300);
+            });
+
+            // When any name field OR student number is modified, clear warnings and re-enable the Save button
+            $('#firstName, #middleName, #lastName, #addPatientForm select[name="patientType"], #addPatientForm input[name="student_number"]').on('input change', function() {
+                $('#addErrorAlert').addClass('d-none').html('');
+                $('#savePatientBtn').prop('disabled', false);
+            });
+
+            // Function to view existing patient details (optional)
+            function viewExistingPatient(patientId) {
+                // Close the similar patients modal
+                $('#similarPatientsModal').modal('hide');
+                
+                // Wait for modal to close, then open the patient view modal
+                setTimeout(() => {
+                    $(`#viewPatient-${patientId}`).modal('show');
+                }, 300);
+            }
+
+            // Optional: Add keyboard shortcut to close modal (Escape key)
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    const exactDuplicateModal = document.getElementById('exactDuplicateModal');
+                    if (exactDuplicateModal.classList.contains('show')) {
+                        $('#exactDuplicateModal').modal('hide');
+                    }
+                }
+            });
+
+            // When any name field is modified, clear warnings and re-enable the Save button
             $('#firstName, #middleName, #lastName').on('input', function() {
                 $('#addErrorAlert').addClass('d-none').html('');
-                $('#savePatientBtn')
-                    .prop('disabled', false)
+                $('#savePatientBtn').prop('disabled', false);
             });
         });
 
@@ -1303,6 +1537,12 @@
                 studentNumberDiv.classList.add('d-none');
                 studentNumberInput.required = false;
                 studentNumberInput.value = '';
+            }
+            
+            // Clear any existing warnings when patient type changes
+            if (formType === 'add') {
+                $('#addErrorAlert').addClass('d-none').html('');
+                $('#savePatientBtn').prop('disabled', false);
             }
         }
 

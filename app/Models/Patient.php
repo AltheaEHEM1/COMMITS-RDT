@@ -135,4 +135,137 @@ class Patient extends Model
             ->withPivot('quantity')
             ->withTimestamps();
     }
+
+    /**
+     * Check if a patient with exact same name already exists
+     */
+    public static function hasExactDuplicate($firstName, $middleName, $lastName, $patientType = null, $studentNumber = null)
+    {
+        // Check for exact name match first
+        $nameQuery = static::query()
+            ->whereRaw('LOWER(TRIM(firstName)) = ?', [strtolower(trim($firstName))])
+            ->whereRaw('LOWER(TRIM(lastName)) = ?', [strtolower(trim($lastName))])
+            ->whereRaw('LOWER(TRIM(COALESCE(middleName, ""))) = ?', [strtolower(trim($middleName ?? ''))]);
+        
+        if ($nameQuery->exists()) {
+            return true;
+        }
+        
+        // If patient type is Student, also check for exact student number match
+        if ($patientType === 'Student' && !empty($studentNumber)) {
+            $studentQuery = static::query()
+                ->where('patientType', 'Student')
+                ->whereRaw('LOWER(TRIM(student_number)) = ?', [strtolower(trim($studentNumber))]);
+                
+            if ($studentQuery->exists()) {
+                return true;
+            }
+        }
+        
+        return false;
+    }
+
+    /**
+     * Get the type of exact duplicate found
+     */
+    public static function getExactDuplicateType($firstName, $middleName, $lastName, $patientType = null, $studentNumber = null)
+    {
+        // Check for exact name match first
+        $nameQuery = static::query()
+            ->whereRaw('LOWER(TRIM(firstName)) = ?', [strtolower(trim($firstName))])
+            ->whereRaw('LOWER(TRIM(lastName)) = ?', [strtolower(trim($lastName))])
+            ->whereRaw('LOWER(TRIM(COALESCE(middleName, ""))) = ?', [strtolower(trim($middleName ?? ''))]);
+        
+        $nameExists = $nameQuery->exists();
+        
+        // If patient type is Student, also check for exact student number match
+        $studentNumberExists = false;
+        if ($patientType === 'Student' && !empty($studentNumber)) {
+            $studentQuery = static::query()
+                ->where('patientType', 'Student')
+                ->whereRaw('LOWER(TRIM(student_number)) = ?', [strtolower(trim($studentNumber))]);
+                
+            $studentNumberExists = $studentQuery->exists();
+        }
+        
+        if ($nameExists && $studentNumberExists) {
+            return 'both'; // Both name and student number exist
+        } elseif ($nameExists) {
+            return 'name'; // Only name exists
+        } elseif ($studentNumberExists) {
+            return 'student_number'; // Only student number exists
+        }
+        
+        return false; // No duplicates found
+    }
+
+    /**
+     * Find patients with similar names (for warnings)
+     */
+    public static function findSimilarNames($firstName, $middleName, $lastName, $patientType = null, $studentNumber = null)
+    {
+        $query = trim(implode(' ', array_filter([$firstName, $middleName, $lastName])));
+        
+        if (empty($query)) {
+            return collect();
+        }
+        
+        try {
+            $results = static::search($query)->get();
+            
+            // If patient type is Student, also check for similar student numbers
+            if ($patientType === 'Student' && !empty($studentNumber)) {
+                $studentNumberResults = static::where('patientType', 'Student')
+                    ->where('student_number', 'LIKE', '%' . $studentNumber . '%')
+                    ->whereRaw('LOWER(TRIM(student_number)) != ?', [strtolower(trim($studentNumber))]) // Exclude exact matches
+                    ->get();
+                
+                // Merge and remove duplicates
+                $results = $results->merge($studentNumberResults)->unique('id');
+            }
+            
+            // Filter out exact duplicates from similar results
+            $results = $results->filter(function ($patient) use ($firstName, $middleName, $lastName, $patientType, $studentNumber) {
+                $exactNameMatch = (
+                    strtolower(trim($patient->firstName)) === strtolower(trim($firstName)) &&
+                    strtolower(trim($patient->lastName)) === strtolower(trim($lastName)) &&
+                    strtolower(trim($patient->middleName ?? '')) === strtolower(trim($middleName ?? ''))
+                );
+                
+                $exactStudentMatch = false;
+                if ($patientType === 'Student' && !empty($studentNumber) && $patient->patientType === 'Student') {
+                    $exactStudentMatch = strtolower(trim($patient->student_number ?? '')) === strtolower(trim($studentNumber));
+                }
+                
+                // Exclude exact matches from similar results
+                return !($exactNameMatch || $exactStudentMatch);
+            });
+            
+            return $results;
+        } catch (\Throwable $e) {
+            // Fallback to database search if Meilisearch fails
+            $query = static::query()
+                ->where(function ($q) use ($firstName, $lastName) {
+                    $q->whereRaw('LOWER(firstName) LIKE ?', ['%' . strtolower($firstName) . '%'])
+                    ->orWhereRaw('LOWER(lastName) LIKE ?', ['%' . strtolower($lastName) . '%']);
+                });
+                
+            // Add student number check for fallback as well (excluding exact matches)
+            if ($patientType === 'Student' && !empty($studentNumber)) {
+                $query->orWhere(function ($q) use ($studentNumber) {
+                    $q->where('patientType', 'Student')
+                    ->where('student_number', 'LIKE', '%' . $studentNumber . '%')
+                    ->whereRaw('LOWER(TRIM(student_number)) != ?', [strtolower(trim($studentNumber))]);
+                });
+            }
+            
+            // Filter out exact name matches from fallback results
+            $query->where(function ($q) use ($firstName, $middleName, $lastName) {
+                $q->whereRaw('NOT (LOWER(TRIM(firstName)) = ? AND LOWER(TRIM(lastName)) = ? AND LOWER(TRIM(COALESCE(middleName, ""))) = ?)', 
+                    [strtolower(trim($firstName)), strtolower(trim($lastName)), strtolower(trim($middleName ?? ''))]);
+            });
+            
+            return $query->get();
+        }
+    }
 }
