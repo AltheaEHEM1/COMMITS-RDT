@@ -12,7 +12,6 @@
         
         <!-- Tabs (left-aligned) -->
         <div class="flex space-x-3 overflow-x-auto" aria-label="Tabs">
-            
             <button type="button"
                 class="px-3 py-2 text-base text-gray-800 border-b-2 border-blue-500 rounded-t bg-blue-50 tab-btn whitespace-nowrap active hover:text-gray-700"
                 data-filter="all">
@@ -942,6 +941,9 @@
         // send an AJAX request to check for duplicate patients
         $(document).ready(function() {
             let formSubmitting = false;
+            let currentActiveTab = 'all'; // Track the currently active tab
+            // Track if a patient was successfully added
+            let patientWasAdded = false;
 
             // Function to check if all required fields are filled
             function validateRequiredFields() {
@@ -975,6 +977,68 @@
                 }
             }
 
+            // Tab switching functionality with tracking
+            document.addEventListener('DOMContentLoaded', function() {
+                const tabButtons = document.querySelectorAll('.tab-btn');
+                const patientRows = document.querySelectorAll('tr[data-patient-type]');
+
+                function filterPatients(filterValue) {
+                    currentActiveTab = filterValue; // Update current active tab
+                    
+                    patientRows.forEach(row => {
+                        if (filterValue === 'all' || row.dataset.patientType === filterValue) {
+                            row.classList.remove('hidden');
+                        } else {
+                            row.classList.add('hidden');
+                        }
+                    });
+                }
+
+                tabButtons.forEach(button => {
+                    button.addEventListener('click', () => {
+                        tabButtons.forEach(btn => {
+                            btn.classList.remove('border-blue-500', 'text-gray-800', 'bg-blue-50', 'active');
+                            btn.classList.add('border-gray-300', 'text-gray-500');
+                        });
+                        button.classList.remove('border-gray-300', 'text-gray-500');
+                        button.classList.add('border-blue-500', 'text-gray-800', 'bg-blue-50', 'active');
+                        filterPatients(button.dataset.filter);
+                    });
+                });
+
+                // Set initial active tab
+                const activeTab = document.querySelector('.tab-btn.active');
+                if (activeTab) {
+                    currentActiveTab = activeTab.dataset.filter;
+                }
+            });
+
+            // Reset form when modal is shown and set default patient type
+            $('#addPatientModal').on('shown.bs.modal', function () {
+                const form = $('#addPatientForm');
+                form.trigger('reset');
+                $('#addErrorAlert').addClass('d-none').html('');
+                
+                // Set default patient type based on current active tab
+                const patientTypeSelect = form.find('select[name="patientType"]');
+                const currentTab = window.currentActiveTab || 'all';
+                
+                if (currentTab && currentTab !== 'all') {
+                    // Set the patient type based on the current tab
+                    patientTypeSelect.val(currentTab);
+                    
+                    // Trigger change event to handle student number field visibility
+                    toggleStudentNumberField(patientTypeSelect[0], 'add');
+                }
+                
+                validateRequiredFields();
+            });
+
+            // Update the tab button click handler to also track the active tab
+            $('.tab-btn').on('click', function() {
+                currentActiveTab = $(this).data('filter');
+            });
+
             // Initial validation on page load
             validateRequiredFields();
 
@@ -993,13 +1057,13 @@
                 validateRequiredFields(); // Re-validate after toggle
             });
 
-            // Reload the page when the modal is closed (to update the table)
+            // Reload the page when the modal is closed only if a patient was added
             $('#addPatientModal').on('hidden.bs.modal', function () {
-                window.location.reload();
-            });
-
-            // Reset form when modal is shown
-            $('#addPatientModal').on('shown.bs.modal', function () {
+                if (patientWasAdded) {
+                    window.location.reload();
+                }
+                // Reset the flag and form when modal is closed
+                patientWasAdded = false;
                 const form = $('#addPatientForm');
                 form.trigger('reset');
                 $('#addErrorAlert').addClass('d-none').html('');
@@ -1037,6 +1101,8 @@
                         type: form.attr('method'),
                         data: form.serialize(),
                         success: function(resp) {
+                            patientWasAdded = true; // Set flag when patient is successfully added
+                            
                             $('#addErrorAlert')
                                 .html('Patient added successfully.')
                                 .removeClass('d-none alert-danger alert-warning')
@@ -1044,8 +1110,7 @@
 
                             setTimeout(() => {
                                 $('#addPatientModal').modal('hide');
-                                form.trigger('reset');
-                                $('#savePatientBtn').html('Save Patient').prop('disabled', false);
+                                // Don't reset form here since it will be reset in the hidden.bs.modal handler
                                 formSubmitting = false;
                             }, 1500);
                         },
@@ -1092,13 +1157,6 @@
                                             Contact: ${patient.contactDetails}
                                         </div>
                                         ${studentInfo}
-                                    </div>
-                                    <div class="text-right">
-                                        <button type="button" 
-                                            class="px-3 py-1 text-xs text-blue-600 bg-white border border-blue-300 rounded hover:bg-blue-50"
-                                            onclick="viewExistingPatient(${patient.id})">
-                                            View Details
-                                        </button>
                                     </div>
                                 </div>
                             </div>
@@ -1173,6 +1231,8 @@
                         type: form.attr('method'),
                         data: form.serialize(),
                         success: function(resp) {
+                            patientWasAdded = true; // Set flag when patient is successfully added
+                            
                             $('#addErrorAlert')
                                 .html('Patient added successfully.')
                                 .removeClass('d-none alert-danger alert-warning')
@@ -1180,8 +1240,6 @@
 
                             setTimeout(() => {
                                 $('#addPatientModal').modal('hide');
-                                form.trigger('reset');
-                                $('#savePatientBtn').html('Save Patient').prop('disabled', false);
                                 formSubmitting = false;
                             }, 1500);
                         },
@@ -1197,7 +1255,7 @@
                             
                             $('#savePatientBtn').html('Save Patient').prop('disabled', false);
                             formSubmitting = false;
-                            validateRequiredFields();
+                            validateRequiredFields(); // Re-validate to set correct button state
                         }
                     });
                 }, 300);
@@ -1637,6 +1695,8 @@
             const patientRows = document.querySelectorAll('tr[data-patient-type]');
 
             function filterPatients(filterValue) {
+                window.currentActiveTab = filterValue; // Make it globally accessible
+                
                 patientRows.forEach(row => {
                     if (filterValue === 'all' || row.dataset.patientType === filterValue) {
                         row.classList.remove('hidden');
@@ -1648,40 +1708,28 @@
 
             tabButtons.forEach(button => {
                 button.addEventListener('click', () => {
+                    // Remove active classes from all buttons
                     tabButtons.forEach(btn => {
-                        btn.classList.remove('border-blue-500', 'text-gray-800', 'bg-blue-50');
+                        btn.classList.remove('border-blue-500', 'text-gray-800', 'bg-blue-50', 'active');
                         btn.classList.add('border-gray-300', 'text-gray-500');
                     });
+                    
+                    // Add active classes to clicked button
                     button.classList.remove('border-gray-300', 'text-gray-500');
-                    button.classList.add('border-blue-500', 'text-gray-800', 'bg-blue-50');
+                    button.classList.add('border-blue-500', 'text-gray-800', 'bg-blue-50', 'active');
+                    
+                    // Filter patients
                     filterPatients(button.dataset.filter);
                 });
             });
 
-            const prescriptionForms = document.querySelectorAll('form[action*="prescriptions"]');
-            prescriptionForms.forEach(form => {
-                form.addEventListener('submit', function(e) {
-                    e.preventDefault();
-                    handlePrescriptionSubmit(form);
-                });
-            });
-
-            const medicineSelects = document.querySelectorAll('select[id^="medicine-select-"]');
-            medicineSelects.forEach(select => {
-                select.addEventListener('change', function() {
-                    handleMedicineSelection(this);
-                });
-            });
-
-            document.querySelector('#addPatientForm [name="patientType"]')?.addEventListener('change', function() {
-                toggleStudentNumberField(this, 'add');
-            });
-
-            document.querySelectorAll('[id^="patientForm-"] [name="patientType"]').forEach(select => {
-                select.addEventListener('change', function() {
-                    toggleStudentNumberField(this, 'edit');
-                });
-            });
+            // Set initial active tab from the HTML
+            const activeTab = document.querySelector('.tab-btn.active');
+            if (activeTab) {
+                window.currentActiveTab = activeTab.dataset.filter;
+            } else {
+                window.currentActiveTab = 'all';
+            }
         });
 
         async function handlePrescriptionSubmit(form) {
@@ -1711,6 +1759,8 @@
                         );
                     }
 
+
+
                     const patientId = formData.get('patient_id');
                     bootstrap.Modal.getInstance(document.querySelector(`#prescriptionModal-${patientId}`)).hide();
 
@@ -1720,6 +1770,7 @@
                         icon: 'success',
                         confirmButtonColor: '#dc2626'
                     }).then(() => {
+
                         const prescriptionsList = document.querySelector(
                             `#prescriptionListModal-${patientId} .overflow-y-auto`);
                         if (prescriptionsList) {
