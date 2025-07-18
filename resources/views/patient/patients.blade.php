@@ -1191,6 +1191,9 @@
                 const form = $('#addPatientForm');
                 form.trigger('reset');
                 $('#addErrorAlert').addClass('d-none').html('');
+                // Hide validation messages
+                $('#yearCourseDeptError').addClass('d-none');
+                $('#contactNumberError').addClass('d-none');
                 validateRequiredFields();
             });
 
