@@ -1,8 +1,8 @@
 @extends('layouts.guest-layout')
 
 @section('guest_content')
-    <div class="flex flex-col w-[500px] items-center justify-center p-8 bg-white bg-opacity-90 rounded-3xl">
-        <div class="flex flex-col items-center">
+    <div class="flex flex-col items-center justify-center">
+        <div class="flex flex-col items-center mb-6">
             <div class="flex flex-row justify-center w-full">
                 <p class="text-lg font-bold text-center">Reset Password</p>
             </div>
@@ -10,23 +10,23 @@
                 <p class="text-center">Enter your email and new password below.</p>
             </div>
         </div>
-        <form method="POST" action="{{ route('password.update') }}">
+        <form method="POST" action="{{ route('password.update') }}" class="w-full">
             @csrf
-            <div class="flex flex-col mt-4 gap-y-2">
+            <div class="flex flex-col gap-y-4">
                     {{-- Email field --}}
                     <div class="flex flex-row space-x-1">
                         <label for="email" class="text-xs font-medium text-gray-800">Email</label>
                         <span class="text-red-500">*</span>
                     </div>
-                    <input type="email" name="email" placeholder="Enter your email" class="w-full p-2 py-3 text-xs border-2 border-gray-300 outline-none focus:border-blue-500 rounded-xl">
+                    <input type="email" name="email" placeholder="Enter your email" class="w-full p-3 text-sm border-2 border-gray-300 outline-none focus:border-blue-500 rounded-xl">
                     {{-- Password field --}}
                     <div class="flex flex-row space-x-1">
                         <label for="password" class="text-xs font-medium text-gray-800">Password</label>
                         <span class="text-red-500">*</span>
                     </div>
                     <div class="relative">
-                        <input name="password" type="password" id="passwordID" placeholder="Enter your new password" class="w-full p-2 py-3 text-xs border-2 border-gray-300 outline-none focus:border-blue-500 rounded-xl">
-                        <button type="button" id="togglePassword" class="absolute right-3 top-3">
+                        <input name="password" type="password" id="passwordID" placeholder="Enter your new password" class="w-full p-3 pr-12 text-sm border-2 border-gray-300 outline-none focus:border-blue-500 rounded-xl">
+                        <button type="button" id="togglePassword" class="absolute transform -translate-y-1/2 right-3 top-1/2">
                             <svg id="eyeIconPassword" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" 
                                 class="w-5 h-5 text-gray-400">
                                 <path stroke-linecap="round" stroke-linejoin="round"
@@ -44,8 +44,8 @@
                         <span class="text-red-500">*</span>
                     </div>
                     <div class="relative">
-                        <input name="password_confirmation" type="password" id="confirmPasswordID" placeholder="Confirm new password" class="w-full p-2 py-3 text-xs border-2 border-gray-300 outline-none focus:border-blue-500 rounded-xl">
-                        <button type="button" id="toggleConfirmPassword" class="absolute right-3 top-3">
+                        <input name="password_confirmation" type="password" id="confirmPasswordID" placeholder="Confirm new password" class="w-full p-3 pr-12 text-sm border-2 border-gray-300 outline-none focus:border-blue-500 rounded-xl">
+                        <button type="button" id="toggleConfirmPassword" class="absolute transform -translate-y-1/2 right-3 top-1/2">
                             <svg id="eyeIconConfirmPassword" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" 
                                 class="w-5 h-5 text-gray-400">
                                 <path stroke-linecap="round" stroke-linejoin="round"
@@ -60,11 +60,11 @@
                     {{-- hidden token field contained the value of secret $token --}}
                     <input type="hidden" name="token" value="{{ $token }}"> {{-- change the value to token variable --}}
             </div>
-            <div class="flex flex-row justify-end w-full mt-5 gap-x-2">
-                <a href="{{ route('login') }}">
-                    <button type="button" class="px-4 py-2 text-sm text-white bg-red-500 rounded-xl w-44">Cancel</button>
+            <div class="flex flex-row justify-between w-full mt-6 gap-x-4">
+                <a href="{{ route('login') }}" class="flex-1">
+                    <button type="button" class="w-full px-4 py-3 text-sm text-white transition-colors bg-red-500 hover:bg-red-600 rounded-xl">Cancel</button>
                 </a>
-                <button type="submit" class="px-4 py-2 text-sm text-white bg-green-600 rounded-xl w-44">Confirm</button>
+                <button type="submit" class="flex-1 px-4 py-3 text-sm text-white transition-colors bg-green-600 hover:bg-green-700 rounded-xl">Confirm</button>
             </div>
         </form>
     </div>

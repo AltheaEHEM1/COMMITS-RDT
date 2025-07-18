@@ -1,10 +1,10 @@
 <div id="addReportModal" tabindex="-1" aria-hidden="true"
-    class="fixed inset-0 z-50 flex items-center justify-center hidden transition-opacity duration-300 ease-out opacity-0 bg-black/50">
+    class="fixed inset-0 z-50 flex items-center justify-center hidden p-4 transition-opacity duration-300 ease-out opacity-0 bg-black/50">
     <!-- Modal content -->
     <div
-        class="relative w-full h-full max-w-2xl p-4 transition-transform duration-300 ease-out transform scale-95 bg-white rounded-lg shadow md:h-auto sm:p-5">
+        class="relative w-full max-w-2xl max-h-[85vh] transition-transform duration-300 ease-out transform scale-95 bg-white rounded-lg shadow flex flex-col">
         <!-- Modal header -->
-        <div class="flex items-center justify-between pb-4 mb-4 rounded-t sm:mb-5">
+        <div class="flex items-center justify-between p-4 pb-3 border-b border-gray-200">
             <h3 class="text-lg font-semibold text-gray-900">
                 Add New Report
             </h3>
@@ -20,10 +20,12 @@
                 <span class="sr-only">Close modal</span>
             </button>
         </div>
-        <!-- Modal body -->
-        <form class="max-h-[80vh] overflow-y-auto" id="addReportForm" action="{{ route('reports.store') }}" method="POST" enctype="multipart/form-data">
-            @csrf
-            <div class="grid gap-4 px-3 mb-4 sm:grid-cols-2">
+        
+        <!-- Modal body with scroll -->
+        <div class="flex-1 p-4 overflow-y-auto">
+            <form id="addReportForm" action="{{ route('reports.store') }}" method="POST" enctype="multipart/form-data">
+                @csrf
+                <div class="grid gap-4 sm:grid-cols-2">
                 <div>
                     <label for="title" class="block mb-2 text-sm font-medium text-gray-900">Report title <span
                             class="text-red-500">*</span></label>
@@ -105,16 +107,19 @@
                         placeholder="Type remarks here"></textarea>
                 </div>
             </div>
-            <div class="flex items-center justify-end w-full gap-3 mt-6">
-                <button type="button" onclick="hideAddReportModal()"
-                    class="flex justify-center w-full px-4 py-3 text-sm font-medium text-gray-700 transition-colors bg-white border border-gray-300 rounded-lg focus:ring-4 focus:outline-none focus:ring-gray-300 shadow-theme-xs hover:bg-gray-50 hover:text-gray-800 sm:w-auto">
-                    Close
-                </button>
-                <button type="submit"
-                    class="flex justify-center w-full px-4 py-3 text-sm font-medium text-white bg-green-500 rounded-lg focus:ring-4 focus:outline-none focus:ring-green-300 hover:bg-green-600 bg-brand-500 shadow-theme-xs hover:bg-brand-600 sm:w-auto">
-                    Save Changes
-                </button>
-            </div>
-        </form>
+            </form>
+        </div>
+        
+        <!-- Modal footer with buttons outside scroll area -->
+        <div class="flex items-center justify-end gap-3 p-4 border-t border-gray-200">
+            <button type="button" onclick="hideAddReportModal()"
+                class="px-4 py-2 text-sm font-medium text-gray-700 transition-colors bg-white border border-gray-300 rounded-lg focus:ring-4 focus:outline-none focus:ring-gray-300 hover:bg-gray-50 hover:text-gray-800">
+                Close
+            </button>
+            <button type="submit" form="addReportForm"
+                class="px-4 py-2 text-sm font-medium text-white bg-green-500 rounded-lg focus:ring-4 focus:outline-none focus:ring-green-300 hover:bg-green-600">
+                Save Changes
+            </button>
+        </div>
     </div>
 </div>

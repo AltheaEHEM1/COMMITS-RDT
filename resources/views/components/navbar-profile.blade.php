@@ -58,18 +58,18 @@
                 @if (auth()->user() && auth()->user()->role == 'standard')
                     <div>
                         <a href="{{ route('dashboard') }}"
-                            class="font-medium px-2 hover:underline text-base hover:text-blue-500">Dashboard</a>
+                            class="px-2 text-base font-medium hover:underline hover:text-blue-500">Dashboard</a>
                     </div>
                 @else
                     <div>
                         <a href="{{ route('Superadmin_dashboard') }}"
-                            class="font-medium px-2 hover:underline text-base hover:text-blue-500">Dashboard</a>
+                            class="px-2 text-base font-medium hover:underline hover:text-blue-500">Dashboard</a>
                     </div>
                 @endif
             </div>
         </div>
 
-        <div class="relative flex items-center lg:order-2 space-x-1">
+        <div class="relative flex items-center space-x-1 lg:order-2">
             @if (auth()->user() && auth()->user()->role == 'standard')
                 <!-- Notifications -->
                 <div class="relative">
@@ -197,17 +197,6 @@
                                 d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
                         </svg>
                         <span>Profile</span>
-                    </a>
-                    <a href="{{ route('password.change') }}"
-                        class="flex items-center px-4 py-2 text-gray-800 hover:bg-gray-100">
-                        <svg class="inline w-4 h-4 mr-2 text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="none"
-                            viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round"
-                                d="M21.75 6.75a4.5 4.5 0 0 1-4.884 4.484c-1.076-.091-2.264.071-2.95.904l-7.152 8.684a2.548 2.548 0 1 1-3.586-3.586l8.684-7.152c.833-.686.995-1.874.904-2.95a4.5 4.5 0 0 1 6.336-4.486l-3.276 3.276a3.004 3.004 0 0 0 2.25 2.25l3.276-3.276c.256.565.398 1.192.398 1.852Z" />
-                            <path stroke-linecap="round" stroke-linejoin="round"
-                                d="M4.867 19.125h.008v.008h-.008v-.008Z" />
-                        </svg>
-                        <span>Change Password</span>
                     </a>
                     <a id="logout-button" class="flex items-center px-4 py-2 text-gray-800 hover:bg-gray-100">
                         <svg class="inline w-4 h-4 mr-2 text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="none"
