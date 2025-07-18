@@ -412,7 +412,7 @@
                             </div>
 
                             <!-- Classification -->
-                            <div class="grid grid-cols-2 gap-4">
+                            <div id="classificationGrid" class="grid grid-cols-2 gap-4">
                                 <div id="patientTypeDropdownWrapper">
                                     <div class="flex"><x-input-label value="Patient Type" /><span
                                             class="ml-1 text-red-500">*</span></div>
@@ -427,14 +427,14 @@
                                         <option value="Dependent">Dependent</option>
                                     </select>
                                 </div>
-                                <div>
+                                <div id="yearCourseDeptWrapper">
                                     <div class="flex"><x-input-label value="Year/Course/Dept" /><span
                                             class="ml-1 text-red-500">*</span></div>
                                     <input type="text" name="year_course_dept"
                                         class="w-full px-2 py-2.5 text-sm rounded-lg border border-gray-300 focus:border-blue-500 focus:ring focus:ring-blue-200 transition-all"
                                         placeholder="Year/Course/Dept">
                                 </div>
-                                <div class="col-span-2">
+                                <div id="studentNumberWrapper" class="col-span-2">
                                     <div class="flex"><x-input-label value="Student Number" /><span
                                             class="ml-1 text-red-500">*</span></div>
                                     <input type="text" name="student_number"
@@ -1024,7 +1024,40 @@
                 }
             });
 
-            // Reset form when modal is shown and set default patient type, update modal title and dropdown
+            // Set modal title, dropdown, and student number layout BEFORE modal is shown for a seamless UX
+            $('#addPatientModal').on('show.bs.modal', function () {
+                const form = $('#addPatientForm');
+                const currentTab = window.currentActiveTab || 'all';
+                const label = getPatientTypeLabel(currentTab);
+                const titleEl = document.getElementById('addPatientModalTitle');
+                const subtitleEl = document.getElementById('addPatientModalSubtitle');
+                const dropdownWrapper = document.getElementById('patientTypeDropdownWrapper');
+                const classificationGrid = document.getElementById('classificationGrid');
+                const studentNumberWrapper = document.getElementById('studentNumberWrapper');
+                const yearCourseDeptWrapper = document.getElementById('yearCourseDeptWrapper');
+                if (label) {
+                    titleEl.textContent = label;
+                    subtitleEl.textContent = 'Enter patient information below';
+                    dropdownWrapper.classList.add('d-none');
+                    // Move student number beside year/course/dept
+                    studentNumberWrapper.classList.remove('col-span-2');
+                    studentNumberWrapper.classList.add('col-span-1');
+                    classificationGrid.classList.remove('grid-cols-2');
+                    classificationGrid.classList.add('grid-cols-2', 'md:grid-cols-2', 'lg:grid-cols-2');
+                    yearCourseDeptWrapper.after(studentNumberWrapper);
+                } else {
+                    titleEl.textContent = 'New Patient';
+                    subtitleEl.textContent = 'Enter patient information below';
+                    dropdownWrapper.classList.remove('d-none');
+                    // Move student number below as full row
+                    studentNumberWrapper.classList.add('col-span-2');
+                    studentNumberWrapper.classList.remove('col-span-1');
+                    classificationGrid.classList.remove('md:grid-cols-2', 'lg:grid-cols-2');
+                    classificationGrid.classList.add('grid-cols-2');
+                    classificationGrid.appendChild(studentNumberWrapper);
+                }
+            });
+            // Reset form, set patient type, and validate after modal is fully shown
             $('#addPatientModal').on('shown.bs.modal', function () {
                 const form = $('#addPatientForm');
                 form.trigger('reset');
@@ -1036,20 +1069,6 @@
                     patientTypeSelect.val(currentTab);
                 } else {
                     patientTypeSelect.val('');
-                }
-                // Update modal title and dropdown visibility
-                const label = getPatientTypeLabel(currentTab);
-                const titleEl = document.getElementById('addPatientModalTitle');
-                const subtitleEl = document.getElementById('addPatientModalSubtitle');
-                const dropdownWrapper = document.getElementById('patientTypeDropdownWrapper');
-                if (label) {
-                    titleEl.textContent = label;
-                    subtitleEl.textContent = 'Enter patient information below';
-                    dropdownWrapper.classList.add('d-none');
-                } else {
-                    titleEl.textContent = 'New Patient';
-                    subtitleEl.textContent = 'Enter patient information below';
-                    dropdownWrapper.classList.remove('d-none');
                 }
                 validateRequiredFields();
             });
