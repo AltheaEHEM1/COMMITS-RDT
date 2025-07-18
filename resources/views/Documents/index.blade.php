@@ -126,7 +126,7 @@
                                 <!-- View Button -->
                                 <a href="{{ route('documents.' . strtolower(str_replace(' ', '_', $document->document_type)) . '.view', $document->id) }}"
                                    class="inline-flex items-center gap-2 px-3 py-2 text-sm text-white transition-all duration-200 transform bg-green-500 rounded-lg shadow-md hover:bg-green-600 hover:shadow-lg active:shadow-sm active:bg-green-700 focus:outline-none focus:border-green-700 active:translate-y-0"
-                                   title="View">
+                                   title="View Document">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="size-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                             d="M15 12a3 3 0 11-6 0 3 3 0 016 0zm6 0c0 5-9 9-9 9s-9-4-9-9a9 9 0 0118 0z" />
@@ -135,7 +135,7 @@
                                 <!-- Edit Button -->
                                 <a href="{{ route('documents.' . strtolower(str_replace(' ', '_', $document->document_type)) . '.edit', $document->id) }}"
                                    class="px-3 py-2 text-white bg-yellow-500 rounded-lg hover:bg-yellow-600"
-                                   title="Edit">
+                                   title="Edit Document">
                                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-5">
                                         <path d="M21.731 2.269a2.625 2.625 0 0 0-3.712 0l-1.157 1.157 3.712 3.712 1.157-1.157a2.625 2.625 0 0 0 0-3.712ZM19.513 8.199l-3.712-3.712-8.4 8.4a5.25 5.25 0 0 0-1.32 2.214l-.8 2.685a.75.75 0 0 0 .933.933l2.685-.8a5.25 5.25 0 0 0 2.214-1.32l8.4-8.4Z" />
                                         <path d="M5.25 5.25a3 3 0 0 0-3 3v10.5a3 3 0 0 0 3 3h10.5a3 3 0 0 0 3-3V13.5a.75.75 0 0 0-1.5 0v5.25a1.5 1.5 0 0 1-1.5 1.5H5.25a1.5 1.5 0 0 1-1.5-1.5V8.25a1.5 1.5 0 0 1 1.5-1.5h5.25a.75.75 0 0 0 0-1.5H5.25Z" />
@@ -150,7 +150,7 @@
                                     <button type="button"
                                         onclick="confirmDelete('delete-document-{{$document->id}}')"
                                         class="inline-flex items-center gap-2 px-3 py-2 text-sm text-white transition-all duration-200 transform bg-red-500 rounded-lg shadow-md hover:bg-red-600 hover:shadow-lg active:shadow-sm active:bg-red-700 focus:outline-none focus:border-red-700 active:translate-y-0"
-                                        title="Delete">
+                                        title="Delete Document">
                                         <svg xmlns="http://www.w3.org/2000/svg" class="size-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                                         </svg>
