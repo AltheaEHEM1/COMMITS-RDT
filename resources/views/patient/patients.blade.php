@@ -404,10 +404,12 @@
                                 <div>
                                     <div class="flex"><x-input-label value="Contact Number " /><span
                                             class="ml-1 text-red-500">*</span></div>
-                                    <input type="tel" name="contactDetails"
+                                    <input type="tel" name="contactDetails" id="contactDetails"
                                         class="w-full px-2 py-2.5 text-sm rounded-lg border border-gray-300 focus:border-blue-500 focus:ring focus:ring-blue-200 transition-all"
-                                        placeholder="Contact Number" pattern="[0-9]{11}"
-                                        title="Please enter a valid 11-digit phone number" required>
+                                        placeholder="Contact Number" pattern="09[0-9]{9}"
+                                        minlength="11" maxlength="11"
+                                        title="Contact number must start with 09 and be exactly 11 digits" required>
+                                    <div id="contactNumberError" class="text-red-500 text-xs mt-1 d-none">Contact number must start with 09 and be exactly 11 digits.</div>
                                 </div>
                             </div>
 
@@ -432,7 +434,8 @@
                                             class="ml-1 text-red-500">*</span></div>
                                     <input type="text" name="year_course_dept"
                                         class="w-full px-2 py-2.5 text-sm rounded-lg border border-gray-300 focus:border-blue-500 focus:ring focus:ring-blue-200 transition-all"
-                                        placeholder="Year/Course/Dept">
+                                        placeholder="Year/Course/Dept" id="yearCourseDept">
+                                    <div id="yearCourseDeptError" class="text-red-500 text-xs mt-1 d-none">Format: Course (space) Year-Digit or Letter (e.g. BSIT 2-1, BSCpE 1-A)</div>
                                 </div>
                                 <div id="studentNumberWrapper" class="col-span-2">
                                     <div class="flex"><x-input-label value="Student Number" /><span
@@ -951,6 +954,67 @@
         }
         // send an AJAX request to check for duplicate patients
         $(document).ready(function() {
+            // Year/Course/Dept validation message with debounce on input, instant on blur
+            function showYearCourseDeptError(show) {
+                if (show) {
+                    $('#yearCourseDeptError').removeClass('d-none');
+                } else {
+                    $('#yearCourseDeptError').addClass('d-none');
+                }
+            }
+            let yearCourseDeptTimeout;
+            function shouldValidateYearCourseDept() {
+                // Get current tab or patient type
+                let tab = (window.currentActiveTab || '').toLowerCase();
+                let type = ($('#addPatientForm select[name="patientType"]').val() || '').toLowerCase();
+                // If tab/type is faculty or admin/administrative, skip validation
+                return !(tab === 'faculty' || tab === 'admin' || tab === 'administrative' || type === 'faculty' || type === 'admin' || type === 'administrative');
+            }
+            $('#yearCourseDept').on('input', function() {
+                clearTimeout(yearCourseDeptTimeout);
+                const value = $(this).val().trim();
+                yearCourseDeptTimeout = setTimeout(function() {
+                    if (shouldValidateYearCourseDept()) {
+                        const isInvalid = !/^[A-Za-z]+ ?[A-Za-z]* \d-\d[A-Za-z]?$/.test(value);
+                        showYearCourseDeptError(isInvalid && value.length > 0);
+                    } else {
+                        showYearCourseDeptError(false);
+                    }
+                }, 2000);
+            });
+            $('#yearCourseDept').on('blur', function() {
+                clearTimeout(yearCourseDeptTimeout);
+                const value = $(this).val().trim();
+                if (shouldValidateYearCourseDept()) {
+                    const isInvalid = !/^[A-Za-z]+ ?[A-Za-z]* \d-\d[A-Za-z]?$/.test(value);
+                    showYearCourseDeptError(isInvalid && value.length > 0);
+                } else {
+                    showYearCourseDeptError(false);
+                }
+            });
+            // Contact number validation message with debounce on input, instant on blur
+            function showContactNumberError(show) {
+                if (show) {
+                    $('#contactNumberError').removeClass('d-none');
+                } else {
+                    $('#contactNumberError').addClass('d-none');
+                }
+            }
+            let contactNumberTimeout;
+            $('#contactDetails').on('input', function() {
+                clearTimeout(contactNumberTimeout);
+                const value = $(this).val().trim();
+                contactNumberTimeout = setTimeout(function() {
+                    const isInvalid = !/^09\d{9}$/.test(value);
+                    showContactNumberError(isInvalid && value.length > 0);
+                }, 2000);
+            });
+            $('#contactDetails').on('blur', function() {
+                clearTimeout(contactNumberTimeout);
+                const value = $(this).val().trim();
+                const isInvalid = !/^09\d{9}$/.test(value);
+                showContactNumberError(isInvalid && value.length > 0);
+            });
             let formSubmitting = false;
             let currentActiveTab = 'all'; // Track the currently active tab
             // Track if a patient was successfully added
@@ -965,13 +1029,18 @@
                 requiredFields.each(function() {
                     const field = $(this);
                     const value = field.val().trim();
-                    
                     // Check if field is visible (for student number field)
                     const isVisible = !field.closest('.col-span-2').hasClass('d-none');
-                    
                     if (isVisible && (!value || value === '')) {
                         allValid = false;
                         return false; // Break out of each loop
+                    }
+                    // Extra validation for contact number
+                    if (field.attr('name') === 'contactDetails' && isVisible) {
+                        if (!/^09\d{9}$/.test(value)) {
+                            allValid = false;
+                            return false;
+                        }
                     }
                 });
 
