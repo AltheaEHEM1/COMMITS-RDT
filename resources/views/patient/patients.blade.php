@@ -150,14 +150,16 @@
                                             <button
                                                 class="px-3 py-2 text-white transition-colors duration-200 bg-blue-600 rounded-lg hover:bg-blue-900"
                                                 data-bs-toggle="modal" data-bs-target="#viewPatient-{{ $patient->id }}"
-                                                data-patient-id="{{ $patient->id }}" title="View">
+                                                data-patient-id="{{ $patient->id }}"
+                                                title="View Patient">
                                                 <i class="fas fa-eye"></i>
                                             </button>
                                             <button
                                                 class="px-3 py-2 text-white transition-colors duration-200 bg-green-600 rounded-lg hover:bg-green-900"
                                                 data-bs-toggle="modal"
                                                 data-bs-target="#prescriptionListModal-{{ $patient->id }}"
-                                                data-patient-id="{{ $patient->id }}" title="View">
+                                                data-patient-id="{{ $patient->id }}"
+                                                title="View Prescriptions">
                                                 <i class="fas fa-prescription"></i>
                                             </button>
                                             <form action="{{ route('patients.destroy', $patient->id) }}" method="POST"
@@ -165,7 +167,8 @@
                                                 @csrf
                                                 @method('DELETE')
                                                 <button type="button" onclick="confirmDelete(this.form)"
-                                                    class="px-3 py-2 text-white transition-colors duration-200 bg-red-600 rounded-lg hover:bg-red-900">
+                                                    class="px-3 py-2 text-white transition-colors duration-200 bg-red-600 rounded-lg hover:bg-red-900"
+                                                    title="Delete Patient">
                                                     <i class="fas fa-trash"></i>
                                                 </button>
                                             </form>
@@ -969,15 +972,16 @@
                 clearTimeout(studentNumberTimeout);
                 const value = $(this).val().trim();
                 studentNumberTimeout = setTimeout(function() {
-                    // Format: 2023-00529-CM-0
-                    const isInvalid = !/^\d{4}-\d{5}-[A-Z]{2}-\d$/.test(value);
+                    // Format: 2023-00509-CM-0 (allow 5 or more digits in the middle group)
+                    const isInvalid = !/^\d{4}-\d{5,}-[A-Z]{2}-\d$/.test(value);
                     showStudentNumberError(isInvalid && value.length > 0);
                 }, 3000);
             });
             $('#studentNumber').on('blur', function() {
                 clearTimeout(studentNumberTimeout);
                 const value = $(this).val().trim();
-                const isInvalid = !/^\d{4}-\d{5}-[A-Z]{2}-\d$/.test(value);
+                // Format: 2023-00509-CM-0 (allow 5 or more digits in the middle group)
+                const isInvalid = !/^\d{4}-\d{5,}-[A-Z]{2}-\d$/.test(value);
                 showStudentNumberError(isInvalid && value.length > 0);
             });
             // Year/Course/Dept validation message with debounce on input, instant on blur
@@ -2075,6 +2079,6 @@
             </div>
         </div>
     `;
-        }
+    }
     </script>
 @endsection
