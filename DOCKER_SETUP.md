@@ -27,8 +27,9 @@
    DB_DATABASE=prms
    DB_USERNAME=root
    DB_PASSWORD=root
-
+   
    MEILISEARCH_HOST=http://meilisearch:7700
+   MEILISEARCH_KEY=your-master-key
    SCOUT_DRIVER=meilisearch
    ```
 
