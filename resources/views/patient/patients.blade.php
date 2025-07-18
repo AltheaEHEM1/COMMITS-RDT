@@ -150,14 +150,16 @@
                                             <button
                                                 class="px-3 py-2 text-white transition-colors duration-200 bg-blue-600 rounded-lg hover:bg-blue-900"
                                                 data-bs-toggle="modal" data-bs-target="#viewPatient-{{ $patient->id }}"
-                                                data-patient-id="{{ $patient->id }}" title="View">
+                                                data-patient-id="{{ $patient->id }}"
+                                                title="View Patient">
                                                 <i class="fas fa-eye"></i>
                                             </button>
                                             <button
                                                 class="px-3 py-2 text-white transition-colors duration-200 bg-green-600 rounded-lg hover:bg-green-900"
                                                 data-bs-toggle="modal"
                                                 data-bs-target="#prescriptionListModal-{{ $patient->id }}"
-                                                data-patient-id="{{ $patient->id }}" title="View">
+                                                data-patient-id="{{ $patient->id }}"
+                                                title="View Prescriptions">
                                                 <i class="fas fa-prescription"></i>
                                             </button>
                                             <form action="{{ route('patients.destroy', $patient->id) }}" method="POST"
@@ -165,7 +167,8 @@
                                                 @csrf
                                                 @method('DELETE')
                                                 <button type="button" onclick="confirmDelete(this.form)"
-                                                    class="px-3 py-2 text-white transition-colors duration-200 bg-red-600 rounded-lg hover:bg-red-900">
+                                                    class="px-3 py-2 text-white transition-colors duration-200 bg-red-600 rounded-lg hover:bg-red-900"
+                                                    title="Delete Patient">
                                                     <i class="fas fa-trash"></i>
                                                 </button>
                                             </form>
@@ -361,8 +364,8 @@
 
                         <!-- Form Title -->
                         <div class="mb-6 text-center">
-                            <h5 class="text-xl font-semibold text-gray-900">New Patient</h5>
-                            <p class="text-sm text-gray-500">Enter patient information below</p>
+                            <h5 id="addPatientModalTitle" class="text-xl font-semibold text-gray-900">New Patient</h5>
+                            <p class="text-sm text-gray-500" id="addPatientModalSubtitle">Enter patient information below</p>
                         </div>
 
                         <div class="space-y-4">
@@ -404,16 +407,18 @@
                                 <div>
                                     <div class="flex"><x-input-label value="Contact Number " /><span
                                             class="ml-1 text-red-500">*</span></div>
-                                    <input type="tel" name="contactDetails"
+                                    <input type="tel" name="contactDetails" id="contactDetails"
                                         class="w-full px-2 py-2.5 text-sm rounded-lg border border-gray-300 focus:border-blue-500 focus:ring focus:ring-blue-200 transition-all"
-                                        placeholder="Contact Number" pattern="[0-9]{11}"
-                                        title="Please enter a valid 11-digit phone number" required>
+                                        placeholder="Contact Number" pattern="09[0-9]{9}"
+                                        minlength="11" maxlength="11"
+                                        title="Contact number must start with 09 and be exactly 11 digits" required>
+                                    <div id="contactNumberError" class="text-red-500 text-xs mt-1 d-none">Contact number must start with 09 and be exactly 11 digits.</div>
                                 </div>
                             </div>
 
                             <!-- Classification -->
-                            <div class="grid grid-cols-2 gap-4">
-                                <div>
+                            <div id="classificationGrid" class="grid grid-cols-2 gap-4">
+                                <div id="patientTypeDropdownWrapper">
                                     <div class="flex"><x-input-label value="Patient Type" /><span
                                             class="ml-1 text-red-500">*</span></div>
                                     <select name="patientType"
@@ -427,19 +432,22 @@
                                         <option value="Dependent">Dependent</option>
                                     </select>
                                 </div>
-                                <div>
+                                <div id="yearCourseDeptWrapper">
                                     <div class="flex"><x-input-label value="Year/Course/Dept" /><span
                                             class="ml-1 text-red-500">*</span></div>
                                     <input type="text" name="year_course_dept"
                                         class="w-full px-2 py-2.5 text-sm rounded-lg border border-gray-300 focus:border-blue-500 focus:ring focus:ring-blue-200 transition-all"
-                                        placeholder="Year/Course/Dept">
+                                        placeholder="Year/Course/Dept" id="yearCourseDept">
+                                    <div id="yearCourseDeptError" class="text-red-500 text-xs mt-1 d-none">Format: Course (space) Year-Digit or Letter (e.g. BSIT 2-1, BSCpE 1-A)</div>
                                 </div>
-                                <div class="col-span-2">
+                                <div id="studentNumberWrapper" class="col-span-2">
                                     <div class="flex"><x-input-label value="Student Number" /><span
                                             class="ml-1 text-red-500">*</span></div>
                                     <input type="text" name="student_number"
                                         class="w-full px-2 py-2.5 text-sm rounded-lg border border-gray-300 focus:border-blue-500 focus:ring focus:ring-blue-200 transition-all"
-                                        placeholder="Enter student number">
+                                        placeholder="Enter student number"
+                                        id="studentNumber">
+                                    <div id="studentNumberError" class="text-red-500 text-xs mt-1 d-none">Format: 2025-00123-CM-0</div>
                                 </div>
                             </div>
 
@@ -938,8 +946,105 @@
 
 @section('scripts')
     <script>
+        // Helper: Map tab filter to patient type label
+        function getPatientTypeLabel(tab) {
+            switch(tab) {
+                case 'Student': return 'Student';
+                case 'Faculty': return 'Faculty';
+                case 'Admin': return 'Administrative';
+                case 'Visitor': return 'Visitor';
+                case 'Dependent': return 'Dependent';
+                default: return null;
+            }
+        }
         // send an AJAX request to check for duplicate patients
         $(document).ready(function() {
+            // Student number validation message with debounce on input, instant on blur
+            function showStudentNumberError(show) {
+                if (show) {
+                    $('#studentNumberError').removeClass('d-none');
+                } else {
+                    $('#studentNumberError').addClass('d-none');
+                }
+            }
+            let studentNumberTimeout;
+            $('#studentNumber').on('input', function() {
+                clearTimeout(studentNumberTimeout);
+                const value = $(this).val().trim();
+                studentNumberTimeout = setTimeout(function() {
+                    // Format: 2023-00509-CM-0 (allow 5 or more digits in the middle group)
+                    const isInvalid = !/^\d{4}-\d{5,}-[A-Z]{2}-\d$/.test(value);
+                    showStudentNumberError(isInvalid && value.length > 0);
+                }, 3000);
+            });
+            $('#studentNumber').on('blur', function() {
+                clearTimeout(studentNumberTimeout);
+                const value = $(this).val().trim();
+                // Format: 2023-00509-CM-0 (allow 5 or more digits in the middle group)
+                const isInvalid = !/^\d{4}-\d{5,}-[A-Z]{2}-\d$/.test(value);
+                showStudentNumberError(isInvalid && value.length > 0);
+            });
+            // Year/Course/Dept validation message with debounce on input, instant on blur
+            function showYearCourseDeptError(show) {
+                if (show) {
+                    $('#yearCourseDeptError').removeClass('d-none');
+                } else {
+                    $('#yearCourseDeptError').addClass('d-none');
+                }
+            }
+            let yearCourseDeptTimeout;
+            function shouldValidateYearCourseDept() {
+                // Get current tab or patient type
+                let tab = (window.currentActiveTab || '').toLowerCase();
+                let type = ($('#addPatientForm select[name="patientType"]').val() || '').toLowerCase();
+                // If tab/type is faculty or admin/administrative, skip validation
+                return !(tab === 'faculty' || tab === 'admin' || tab === 'administrative' || type === 'faculty' || type === 'admin' || type === 'administrative');
+            }
+            $('#yearCourseDept').on('input', function() {
+                clearTimeout(yearCourseDeptTimeout);
+                const value = $(this).val().trim();
+                yearCourseDeptTimeout = setTimeout(function() {
+                    if (shouldValidateYearCourseDept()) {
+                        const isInvalid = !/^[A-Za-z]+ ?[A-Za-z]* \d-\d[A-Za-z]?$/.test(value);
+                        showYearCourseDeptError(isInvalid && value.length > 0);
+                    } else {
+                        showYearCourseDeptError(false);
+                    }
+                }, 3000);
+            });
+            $('#yearCourseDept').on('blur', function() {
+                clearTimeout(yearCourseDeptTimeout);
+                const value = $(this).val().trim();
+                if (shouldValidateYearCourseDept()) {
+                    const isInvalid = !/^[A-Za-z]+ ?[A-Za-z]* \d-\d[A-Za-z]?$/.test(value);
+                    showYearCourseDeptError(isInvalid && value.length > 0);
+                } else {
+                    showYearCourseDeptError(false);
+                }
+            });
+            // Contact number validation message with debounce on input, instant on blur
+            function showContactNumberError(show) {
+                if (show) {
+                    $('#contactNumberError').removeClass('d-none');
+                } else {
+                    $('#contactNumberError').addClass('d-none');
+                }
+            }
+            let contactNumberTimeout;
+            $('#contactDetails').on('input', function() {
+                clearTimeout(contactNumberTimeout);
+                const value = $(this).val().trim();
+                contactNumberTimeout = setTimeout(function() {
+                    const isInvalid = !/^09\d{9}$/.test(value);
+                    showContactNumberError(isInvalid && value.length > 0);
+                }, 3000);
+            });
+            $('#contactDetails').on('blur', function() {
+                clearTimeout(contactNumberTimeout);
+                const value = $(this).val().trim();
+                const isInvalid = !/^09\d{9}$/.test(value);
+                showContactNumberError(isInvalid && value.length > 0);
+            });
             let formSubmitting = false;
             let currentActiveTab = 'all'; // Track the currently active tab
             // Track if a patient was successfully added
@@ -954,13 +1059,18 @@
                 requiredFields.each(function() {
                     const field = $(this);
                     const value = field.val().trim();
-                    
                     // Check if field is visible (for student number field)
                     const isVisible = !field.closest('.col-span-2').hasClass('d-none');
-                    
                     if (isVisible && (!value || value === '')) {
                         allValid = false;
                         return false; // Break out of each loop
+                    }
+                    // Extra validation for contact number
+                    if (field.attr('name') === 'contactDetails' && isVisible) {
+                        if (!/^09\d{9}$/.test(value)) {
+                            allValid = false;
+                            return false;
+                        }
                     }
                 });
 
@@ -1013,30 +1123,110 @@
                 }
             });
 
-            // Reset form when modal is shown and set default patient type
+            // Set modal title, dropdown, and student number layout BEFORE modal is shown for a seamless UX
+            $('#addPatientModal').on('show.bs.modal', function () {
+                const form = $('#addPatientForm');
+                const currentTab = window.currentActiveTab || 'all';
+                const label = getPatientTypeLabel(currentTab);
+                const titleEl = document.getElementById('addPatientModalTitle');
+                const subtitleEl = document.getElementById('addPatientModalSubtitle');
+                const dropdownWrapper = document.getElementById('patientTypeDropdownWrapper');
+                const classificationGrid = document.getElementById('classificationGrid');
+                const studentNumberWrapper = document.getElementById('studentNumberWrapper');
+                const yearCourseDeptWrapper = document.getElementById('yearCourseDeptWrapper');
+                // Determine if student number should be shown
+                let hideStudentNumber = false;
+                if (currentTab && (
+                    currentTab.toLowerCase() === 'faculty' ||
+                    currentTab.toLowerCase() === 'admin' ||
+                    currentTab.toLowerCase() === 'administrative' ||
+                    currentTab.toLowerCase() === 'visitor')) {
+                    hideStudentNumber = true;
+                }
+                if (label) {
+                    titleEl.textContent = label;
+                    subtitleEl.textContent = 'Enter patient information below';
+                    dropdownWrapper.classList.add('d-none');
+                    // Move student number beside year/course/dept
+                    studentNumberWrapper.classList.remove('col-span-2');
+                    studentNumberWrapper.classList.add('col-span-1');
+                    classificationGrid.classList.remove('grid-cols-2');
+                    classificationGrid.classList.add('grid-cols-2', 'md:grid-cols-2', 'lg:grid-cols-2');
+                    yearCourseDeptWrapper.after(studentNumberWrapper);
+                } else {
+                    titleEl.textContent = 'New Patient';
+                    subtitleEl.textContent = 'Enter patient information below';
+                    dropdownWrapper.classList.remove('d-none');
+                    // Move student number below as full row
+                    studentNumberWrapper.classList.add('col-span-2');
+                    studentNumberWrapper.classList.remove('col-span-1');
+                    classificationGrid.classList.remove('md:grid-cols-2', 'lg:grid-cols-2');
+                    classificationGrid.classList.add('grid-cols-2');
+                    classificationGrid.appendChild(studentNumberWrapper);
+                }
+                // Hide or show student number field
+                if (hideStudentNumber) {
+                    studentNumberWrapper.classList.add('d-none');
+                } else {
+                    studentNumberWrapper.classList.remove('d-none');
+                }
+
+                // Move patient status beside year/course/dept for Faculty, Admin, Visitor
+                const patientStatusWrapper = document.querySelector('input[name="patient_status"]').closest('div');
+                const patientStatusGrid = patientStatusWrapper.closest('.grid');
+                if (currentTab && (
+                    currentTab.toLowerCase() === 'faculty' ||
+                    currentTab.toLowerCase() === 'admin' ||
+                    currentTab.toLowerCase() === 'administrative' ||
+                    currentTab.toLowerCase() === 'visitor')) {
+                    // Move patient status beside year/course/dept
+                    yearCourseDeptWrapper.after(patientStatusWrapper);
+                    // Optionally adjust grid columns if needed
+                    yearCourseDeptWrapper.parentElement.classList.add('grid-cols-2');
+                } else {
+                    // Restore patient status to original location (below medical info grid)
+                    if (patientStatusGrid !== null && !patientStatusGrid.contains(patientStatusWrapper)) {
+                        patientStatusGrid.appendChild(patientStatusWrapper);
+                    }
+                    // Optionally adjust grid columns if needed
+                    yearCourseDeptWrapper.parentElement.classList.remove('grid-cols-2');
+                }
+            });
+            // Reset form, set patient type, and validate after modal is fully shown
             $('#addPatientModal').on('shown.bs.modal', function () {
                 const form = $('#addPatientForm');
                 form.trigger('reset');
                 $('#addErrorAlert').addClass('d-none').html('');
-                
                 // Set default patient type based on current active tab
                 const patientTypeSelect = form.find('select[name="patientType"]');
                 const currentTab = window.currentActiveTab || 'all';
-                
                 if (currentTab && currentTab !== 'all') {
-                    // Set the patient type based on the current tab
                     patientTypeSelect.val(currentTab);
-                    
-                    // Trigger change event to handle student number field visibility
-                    toggleStudentNumberField(patientTypeSelect[0], 'add');
+                } else {
+                    patientTypeSelect.val('');
                 }
-                
                 validateRequiredFields();
             });
 
-            // Update the tab button click handler to also track the active tab
+            // Update the tab button click handler to also track the active tab and update modal if open
             $('.tab-btn').on('click', function() {
                 currentActiveTab = $(this).data('filter');
+                // If modal is open, update header/dropdown immediately
+                if ($('#addPatientModal').hasClass('show')) {
+                    const label = getPatientTypeLabel(currentActiveTab);
+                    const titleEl = document.getElementById('addPatientModalTitle');
+                    const subtitleEl = document.getElementById('addPatientModalSubtitle');
+                    const dropdownWrapper = document.getElementById('patientTypeDropdownWrapper');
+                    if (label) {
+                        titleEl.textContent = label;
+                        subtitleEl.textContent = 'Enter patient information below';
+                        dropdownWrapper.classList.add('d-none');
+                    } else {
+                        titleEl.textContent = 'New Patient';
+                        subtitleEl.textContent = 'Enter patient information below';
+                        dropdownWrapper.classList.remove('d-none');
+                    }
+                }
             });
 
             // Initial validation on page load
@@ -1059,6 +1249,7 @@
 
             // Reload the page when the modal is closed only if a patient was added
             $('#addPatientModal').on('hidden.bs.modal', function () {
+                $('#studentNumberError').addClass('d-none');
                 if (patientWasAdded) {
                     window.location.reload();
                 }
@@ -1067,6 +1258,9 @@
                 const form = $('#addPatientForm');
                 form.trigger('reset');
                 $('#addErrorAlert').addClass('d-none').html('');
+                // Hide validation messages
+                $('#yearCourseDeptError').addClass('d-none');
+                $('#contactNumberError').addClass('d-none');
                 validateRequiredFields();
             });
 
@@ -1885,6 +2079,6 @@
             </div>
         </div>
     `;
-        }
+    }
     </script>
 @endsection

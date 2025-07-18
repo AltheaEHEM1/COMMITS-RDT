@@ -120,16 +120,19 @@
                     <x-inventory.table-cell class="align-middle">{{ $medicine->medicine_name }}</x-inventory.table-cell>
                     <x-inventory.table-cell class="align-middle">{{ $medicine->unit }}</x-inventory.table-cell>
                     <x-inventory.table-cell class="align-middle">
-                        {{ number_format($medicine->consumed_quantity) }}/{{ number_format($medicine->initial_quantity) }}
+                        {{ number_format($medicine->remaining_quantity) }}/{{ number_format($medicine->initial_quantity) }}
                     </x-inventory.table-cell>
                     <x-inventory.table-cell class="align-middle">{{ \Carbon\Carbon::parse($medicine->expiration_date)->format("M' y") }}</x-inventory.table-cell>
                     <x-inventory.table-cell class="align-middle">{{ $medicine->box->user->first_name }}</x-inventory.table-cell>
                     <x-inventory.table-cell class="align-middle">
                         @php
-                            // Check if the box is returned first
+                            $isExpired = \Carbon\Carbon::parse($medicine->expiration_date)->isPast();
                             if ($medicine->box->isReturned) {
                                 $status = 'Returned';
-                                $statusColor = 'bg-gray-100 text-gray-800'; // Default text color
+                                $statusColor = 'bg-gray-100 text-gray-800';
+                            } elseif ($isExpired) {
+                                $status = 'Expired';
+                                $statusColor = 'bg-orange-100 text-orange-800';
                             } else {
                                 $status = ucfirst($medicine->status);
                                 $statusColor = match($status) {
@@ -147,7 +150,7 @@
                     </x-inventory.table-cell>
                     <x-inventory.table-cell class="align-middle">
                         <div class="flex justify-center gap-2">
-                            <!-- View Button (Green, Eye Icon, styled like btn-delete) -->
+                            <!-- View Button (always visible) -->
                             <a href="{{ route('medicines.show', $medicine->id) }}"
                                 class="inline-flex items-center gap-2 px-3 py-2 text-sm text-white transition-all duration-200 transform bg-green-500 rounded-lg shadow-md hover:bg-green-600 hover:shadow-lg active:shadow-sm active:bg-green-700 focus:outline-none focus:border-green-700 active:translate-y-0"
                                 title="View Details">
@@ -156,87 +159,93 @@
                                         d="M15 12a3 3 0 11-6 0 3 3 0 016 0zm6 0c0 5-9 9-9 9s-9-4-9-9a9 9 0 0118 0z" />
                                 </svg>
                             </a>
-                            <!-- Return Button -->
-                            <x-inventory.btn-return target="{{ 'return-'.$medicine->id }}"/>
-                            <x-inventory.confirm-return 
-                                target="{{'return-'.$medicine->id}}" 
-                                action="{{ route('return_medicine', $medicine->id) }}" 
-                            />
-                            <!-- Edit Button -->
-                            <x-inventory.btn-edit-modal heading="Edit a Record" target="{{ 'edit-'.$medicine->id }}" >  
-                                <x-inventory.form method="POST" action="{{ route('update_medicine', $medicine->id) }}" 
-                                    id="edit-medicine-form-{{ $medicine->id }}"
-                                    onsubmit="return validateDateSubmit('edit-date-received-{{ $medicine->id }}', 'edit-expiration-date-{{ $medicine->id }}')">
-                                    @method('PUT')
-                                    <!-- date_received -->
-                                    <x-inventory.date
-                                        label="Date Received" 
-                                        name="date_received"    
-                                        value="{{ old('date_received', \Carbon\Carbon::parse($medicine->box->date_received)->format('Y-m-d')) }}"
-                                        id="edit-date-received-{{ $medicine->id }}"
-                                        required
-                                    />
-                                    
-                                    <!-- expiration_date -->
-                                    <x-inventory.date
-                                        label="Expiration Date" 
-                                        name="expiration_date" 
-                                        value="{{ old('expiration_date', \Carbon\Carbon::parse($medicine->expiration_date)->format('Y-m-d')) }}"
-                                        id="edit-expiration-date-{{ $medicine->id }}"
-                                        required
-                                    />
-                
-                                    <!-- medicine_name -->
-                                    <x-inventory.input
-                                        label="Medicine Name" 
-                                        name="medicine_name" 
-                                        value="{{ old('medicine_name', $medicine->medicine_name) }}"
-                                        placeholder="Paracetamol 500mg"
-                                        required
-                                    />
-                
-                                    <!-- stock_number -->
-                                    <x-inventory.input
-                                        label="Stock #" 
-                                        name="stock_number" 
-                                        value="{{ old('stock_number', $medicine->box->stock_number) }}"
-                                        placeholder="##-###"
-                                        required
-                                    />
-                
-                                    <!-- unit_of_measurement-->
-                                    <x-inventory.input
-                                        label="Unit of Measurement" 
-                                        name="unit_of_measurement" 
-                                        value="{{ old('unit_of_measurement', $medicine->unit) }}"
-                                        placeholder="Capsule"
-                                        required
-                                    />
-                
-                                    <!-- initial_quantity -->
-                                    <x-inventory.quantity
-                                        label="Initial Quantity"
-                                        name="initial_quantity"
-                                        value="{{ old('initial_quantity', $medicine->initial_quantity) }}"
-                                        :min="$medicine->consumed_quantity"
-                                        placeholder="100"
-                                        required
-                                    />
-                
-                                    <!-- user_id / memorandum_receipt -->
-                                    <x-inventory.select
-                                        label="MOR" 
-                                        name="user_id" 
-                                        :selected="$medicine->box->user_id"
-                                        :options="$users->pluck('full_name', 'id')->toArray()"
-                                        required
-                                    />
-                                </x-inventory.form>
-                            </x-inventory.btn-edit-modal> 
-
-                            <!-- Delete Button -->
-                            <x-inventory.btn-delete target="{{'delete-'.$medicine->id}}" />
-                            <x-inventory.confirm-deletion target="{{'delete-'.$medicine->id}}" action="{{ route('delete_medicine', $medicine->id) }}" />
+                            @php
+                                $isReturned = $medicine->box->isReturned;
+                                $isExpired = \Carbon\Carbon::parse($medicine->expiration_date)->isPast();
+                                $isOutOfStock = strtolower($medicine->status) === 'out of stock';
+                            @endphp
+                            @if(!$isReturned && !$isExpired && !$isOutOfStock)
+                                <!-- Return Button -->
+                                <span title="Return Medicine">
+                                    <x-inventory.btn-return target="{{ 'return-'.$medicine->id }}"/>
+                                </span>
+                                <x-inventory.confirm-return 
+                                    target="{{'return-'.$medicine->id}}" 
+                                    action="{{ route('return_medicine', $medicine->id) }}" 
+                                />
+                                <!-- Edit Button -->
+                                <span title="Edit Medicine">
+                                    <x-inventory.btn-edit-modal heading="Edit a Record" target="{{ 'edit-'.$medicine->id }}" >  
+                                        <x-inventory.form method="POST" action="{{ route('update_medicine', $medicine->id) }}" 
+                                            id="edit-medicine-form-{{ $medicine->id }}"
+                                            onsubmit="return validateDateSubmit('edit-date-received-{{ $medicine->id }}', 'edit-expiration-date-{{ $medicine->id }}')">
+                                            @method('PUT')
+                                            <!-- date_received -->
+                                            <x-inventory.date
+                                                label="Date Received" 
+                                                name="date_received"    
+                                                value="{{ old('date_received', \Carbon\Carbon::parse($medicine->box->date_received)->format('Y-m-d')) }}"
+                                                id="edit-date-received-{{ $medicine->id }}"
+                                                required
+                                            />
+                                            <!-- expiration_date -->
+                                            <x-inventory.date
+                                                label="Expiration Date" 
+                                                name="expiration_date" 
+                                                value="{{ old('expiration_date', \Carbon\Carbon::parse($medicine->expiration_date)->format('Y-m-d')) }}"
+                                                id="edit-expiration-date-{{ $medicine->id }}"
+                                                required
+                                            />
+                                            <!-- medicine_name -->
+                                            <x-inventory.input
+                                                label="Medicine Name" 
+                                                name="medicine_name" 
+                                                value="{{ old('medicine_name', $medicine->medicine_name) }}"
+                                                placeholder="Paracetamol 500mg"
+                                                required
+                                            />
+                                            <!-- stock_number -->
+                                            <x-inventory.input
+                                                label="Stock #" 
+                                                name="stock_number" 
+                                                value="{{ old('stock_number', $medicine->box->stock_number) }}"
+                                                placeholder="##-###"
+                                                required
+                                            />
+                                            <!-- unit_of_measurement-->
+                                            <x-inventory.input
+                                                label="Unit of Measurement" 
+                                                name="unit_of_measurement" 
+                                                value="{{ old('unit_of_measurement', $medicine->unit) }}"
+                                                placeholder="Capsule"
+                                                required
+                                            />
+                                            <!-- initial_quantity -->
+                                            <x-inventory.quantity
+                                                label="Initial Quantity"
+                                                name="initial_quantity"
+                                                value="{{ old('initial_quantity', $medicine->initial_quantity) }}"
+                                                :min="$medicine->consumed_quantity"
+                                                placeholder="100"
+                                                required
+                                            />
+                                            <!-- user_id / memorandum_receipt -->
+                                            <x-inventory.select
+                                                label="MOR" 
+                                                name="user_id" 
+                                                :selected="$medicine->box->user_id"
+                                                :options="$users->pluck('full_name', 'id')->toArray()"
+                                                required
+                                            />
+                                        </x-inventory.form>
+                                    </x-inventory.btn-edit-modal> 
+                                </span>
+                                <!-- Delete Button -->
+                                <span title="Delete Medicine">
+                                    <x-inventory.btn-delete target="{{'delete-'.$medicine->id}}" />
+                                </span>
+                                <x-inventory.confirm-deletion target="{{'delete-'.$medicine->id}}" action="{{ route('delete_medicine', $medicine->id) }}" />
+                            @endif
                         </div>
                     </x-inventory.table-cell>
                 </x-inventory.table-row>
