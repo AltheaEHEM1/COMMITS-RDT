@@ -442,7 +442,9 @@
                                             class="ml-1 text-red-500">*</span></div>
                                     <input type="text" name="student_number"
                                         class="w-full px-2 py-2.5 text-sm rounded-lg border border-gray-300 focus:border-blue-500 focus:ring focus:ring-blue-200 transition-all"
-                                        placeholder="Enter student number">
+                                        placeholder="Enter student number"
+                                        id="studentNumber">
+                                    <div id="studentNumberError" class="text-red-500 text-xs mt-1 d-none">Format: 2025-00123-CM-0</div>
                                 </div>
                             </div>
 
@@ -954,6 +956,30 @@
         }
         // send an AJAX request to check for duplicate patients
         $(document).ready(function() {
+            // Student number validation message with debounce on input, instant on blur
+            function showStudentNumberError(show) {
+                if (show) {
+                    $('#studentNumberError').removeClass('d-none');
+                } else {
+                    $('#studentNumberError').addClass('d-none');
+                }
+            }
+            let studentNumberTimeout;
+            $('#studentNumber').on('input', function() {
+                clearTimeout(studentNumberTimeout);
+                const value = $(this).val().trim();
+                studentNumberTimeout = setTimeout(function() {
+                    // Format: 2023-00529-CM-0
+                    const isInvalid = !/^\d{4}-\d{5}-[A-Z]{2}-\d$/.test(value);
+                    showStudentNumberError(isInvalid && value.length > 0);
+                }, 3000);
+            });
+            $('#studentNumber').on('blur', function() {
+                clearTimeout(studentNumberTimeout);
+                const value = $(this).val().trim();
+                const isInvalid = !/^\d{4}-\d{5}-[A-Z]{2}-\d$/.test(value);
+                showStudentNumberError(isInvalid && value.length > 0);
+            });
             // Year/Course/Dept validation message with debounce on input, instant on blur
             function showYearCourseDeptError(show) {
                 if (show) {
@@ -980,7 +1006,7 @@
                     } else {
                         showYearCourseDeptError(false);
                     }
-                }, 2000);
+                }, 3000);
             });
             $('#yearCourseDept').on('blur', function() {
                 clearTimeout(yearCourseDeptTimeout);
@@ -1007,7 +1033,7 @@
                 contactNumberTimeout = setTimeout(function() {
                     const isInvalid = !/^09\d{9}$/.test(value);
                     showContactNumberError(isInvalid && value.length > 0);
-                }, 2000);
+                }, 3000);
             });
             $('#contactDetails').on('blur', function() {
                 clearTimeout(contactNumberTimeout);
@@ -1104,6 +1130,15 @@
                 const classificationGrid = document.getElementById('classificationGrid');
                 const studentNumberWrapper = document.getElementById('studentNumberWrapper');
                 const yearCourseDeptWrapper = document.getElementById('yearCourseDeptWrapper');
+                // Determine if student number should be shown
+                let hideStudentNumber = false;
+                if (currentTab && (
+                    currentTab.toLowerCase() === 'faculty' ||
+                    currentTab.toLowerCase() === 'admin' ||
+                    currentTab.toLowerCase() === 'administrative' ||
+                    currentTab.toLowerCase() === 'visitor')) {
+                    hideStudentNumber = true;
+                }
                 if (label) {
                     titleEl.textContent = label;
                     subtitleEl.textContent = 'Enter patient information below';
@@ -1124,6 +1159,33 @@
                     classificationGrid.classList.remove('md:grid-cols-2', 'lg:grid-cols-2');
                     classificationGrid.classList.add('grid-cols-2');
                     classificationGrid.appendChild(studentNumberWrapper);
+                }
+                // Hide or show student number field
+                if (hideStudentNumber) {
+                    studentNumberWrapper.classList.add('d-none');
+                } else {
+                    studentNumberWrapper.classList.remove('d-none');
+                }
+
+                // Move patient status beside year/course/dept for Faculty, Admin, Visitor
+                const patientStatusWrapper = document.querySelector('input[name="patient_status"]').closest('div');
+                const patientStatusGrid = patientStatusWrapper.closest('.grid');
+                if (currentTab && (
+                    currentTab.toLowerCase() === 'faculty' ||
+                    currentTab.toLowerCase() === 'admin' ||
+                    currentTab.toLowerCase() === 'administrative' ||
+                    currentTab.toLowerCase() === 'visitor')) {
+                    // Move patient status beside year/course/dept
+                    yearCourseDeptWrapper.after(patientStatusWrapper);
+                    // Optionally adjust grid columns if needed
+                    yearCourseDeptWrapper.parentElement.classList.add('grid-cols-2');
+                } else {
+                    // Restore patient status to original location (below medical info grid)
+                    if (patientStatusGrid !== null && !patientStatusGrid.contains(patientStatusWrapper)) {
+                        patientStatusGrid.appendChild(patientStatusWrapper);
+                    }
+                    // Optionally adjust grid columns if needed
+                    yearCourseDeptWrapper.parentElement.classList.remove('grid-cols-2');
                 }
             });
             // Reset form, set patient type, and validate after modal is fully shown
@@ -1183,6 +1245,7 @@
 
             // Reload the page when the modal is closed only if a patient was added
             $('#addPatientModal').on('hidden.bs.modal', function () {
+                $('#studentNumberError').addClass('d-none');
                 if (patientWasAdded) {
                     window.location.reload();
                 }
