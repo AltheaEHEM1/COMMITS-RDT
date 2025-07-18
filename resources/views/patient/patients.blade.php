@@ -361,8 +361,8 @@
 
                         <!-- Form Title -->
                         <div class="mb-6 text-center">
-                            <h5 class="text-xl font-semibold text-gray-900">New Patient</h5>
-                            <p class="text-sm text-gray-500">Enter patient information below</p>
+                            <h5 id="addPatientModalTitle" class="text-xl font-semibold text-gray-900">New Patient</h5>
+                            <p class="text-sm text-gray-500" id="addPatientModalSubtitle">Enter patient information below</p>
                         </div>
 
                         <div class="space-y-4">
@@ -413,7 +413,7 @@
 
                             <!-- Classification -->
                             <div class="grid grid-cols-2 gap-4">
-                                <div>
+                                <div id="patientTypeDropdownWrapper">
                                     <div class="flex"><x-input-label value="Patient Type" /><span
                                             class="ml-1 text-red-500">*</span></div>
                                     <select name="patientType"
@@ -938,6 +938,17 @@
 
 @section('scripts')
     <script>
+        // Helper: Map tab filter to patient type label
+        function getPatientTypeLabel(tab) {
+            switch(tab) {
+                case 'Student': return 'Student';
+                case 'Faculty': return 'Faculty';
+                case 'Admin': return 'Administrative';
+                case 'Visitor': return 'Visitor';
+                case 'Dependent': return 'Dependent';
+                default: return null;
+            }
+        }
         // send an AJAX request to check for duplicate patients
         $(document).ready(function() {
             let formSubmitting = false;
@@ -1013,30 +1024,55 @@
                 }
             });
 
-            // Reset form when modal is shown and set default patient type
+            // Reset form when modal is shown and set default patient type, update modal title and dropdown
             $('#addPatientModal').on('shown.bs.modal', function () {
                 const form = $('#addPatientForm');
                 form.trigger('reset');
                 $('#addErrorAlert').addClass('d-none').html('');
-                
                 // Set default patient type based on current active tab
                 const patientTypeSelect = form.find('select[name="patientType"]');
                 const currentTab = window.currentActiveTab || 'all';
-                
                 if (currentTab && currentTab !== 'all') {
-                    // Set the patient type based on the current tab
                     patientTypeSelect.val(currentTab);
-                    
-                    // Trigger change event to handle student number field visibility
-                    toggleStudentNumberField(patientTypeSelect[0], 'add');
+                } else {
+                    patientTypeSelect.val('');
                 }
-                
+                // Update modal title and dropdown visibility
+                const label = getPatientTypeLabel(currentTab);
+                const titleEl = document.getElementById('addPatientModalTitle');
+                const subtitleEl = document.getElementById('addPatientModalSubtitle');
+                const dropdownWrapper = document.getElementById('patientTypeDropdownWrapper');
+                if (label) {
+                    titleEl.textContent = label;
+                    subtitleEl.textContent = 'Enter patient information below';
+                    dropdownWrapper.classList.add('d-none');
+                } else {
+                    titleEl.textContent = 'New Patient';
+                    subtitleEl.textContent = 'Enter patient information below';
+                    dropdownWrapper.classList.remove('d-none');
+                }
                 validateRequiredFields();
             });
 
-            // Update the tab button click handler to also track the active tab
+            // Update the tab button click handler to also track the active tab and update modal if open
             $('.tab-btn').on('click', function() {
                 currentActiveTab = $(this).data('filter');
+                // If modal is open, update header/dropdown immediately
+                if ($('#addPatientModal').hasClass('show')) {
+                    const label = getPatientTypeLabel(currentActiveTab);
+                    const titleEl = document.getElementById('addPatientModalTitle');
+                    const subtitleEl = document.getElementById('addPatientModalSubtitle');
+                    const dropdownWrapper = document.getElementById('patientTypeDropdownWrapper');
+                    if (label) {
+                        titleEl.textContent = label;
+                        subtitleEl.textContent = 'Enter patient information below';
+                        dropdownWrapper.classList.add('d-none');
+                    } else {
+                        titleEl.textContent = 'New Patient';
+                        subtitleEl.textContent = 'Enter patient information below';
+                        dropdownWrapper.classList.remove('d-none');
+                    }
+                }
             });
 
             // Initial validation on page load
