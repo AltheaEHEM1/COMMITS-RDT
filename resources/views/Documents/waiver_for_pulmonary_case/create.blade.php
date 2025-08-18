@@ -92,18 +92,18 @@
                     </div>
                 </div>
                 <div class="text-right mb-5 font-Arial">
-                    <span> <span id="date-placeholder" class="underline-offset-4">Date ___________________</span>
+                    <span> <span id="date-placeholder" class="underline-offset-4">Date _______________</span>
                 </div>
 
                 <div class="space-y-4 font-Arial mb-5">
 
                     <p class="indent-8">
                         I, <span id="name-placeholder" class="underline-offset-4">
-                            __________________________________________________________________________</span>
-                        student from the College of <span id="school">_____________________________</span>, school year
-                        <span id="department">____________________</span>, am aware that as per medical advice from the
+                            ________________________________________________</span>
+                        student from the College of <span id="school">_______________________</span>, school year
+                        <span id="department">__________________</span>, am aware that as per medical advice from the
                         University Medical Clinic, should submit by myself for
-                        follow-up medical check-up on <span id="date">________________________</span> and that
+                        follow-up medical check-up on <span id="date">____________________</span> and that
                         additional clearance must be secured prior to the next
                         semester's enrollment.
                     </p>
@@ -154,18 +154,18 @@
                 </div>
 
                 <div class="text-right mb-5 font-Arial">
-                    <span><span id="date-placeholder2" class="underline-offset-4">Date ____________________</span>
+                    <span><span id="date-placeholder2" class="underline-offset-4">Date ________________</span>
                 </div>
 
                 <div class="space-y-4 font-Arial mb-5">
                     <p class="indent-8">
                         I, <span id="name-placeholder2" class="underline-offset-4">
-                            __________________________________________________________________________</span> student from
-                        the College of <span id="school2">_____________________________</span> , school year
-                        <span id="department2">____________________</span>, am aware that as per medical advice from the
+                            ________________________________________________</span> student from
+                        the College of <span id="school2">_______________________</span> , school year
+                        <span id="department2">__________________</span>, am aware that as per medical advice from the
                         University Medical Clinic, should submit by myself for
                         follow-up medical check-up on
-                        <span id="date2">________________________</span> and that additional clearance must be secured prior
+                        <span id="date2">____________________</span> and that additional clearance must be secured prior
                         to the next
                         semester's enrollment.
                 </div>

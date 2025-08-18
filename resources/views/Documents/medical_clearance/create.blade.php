@@ -71,7 +71,7 @@
 
 
         <div class="page">
-            <!-- Document 2 (duplicate the structure as needed) -->
+            <!-- Document 1 -->
             <div class="container mb-0">
                 @foreach ($controlNumber->where('document_type', $documentType) as $control)
                     <div class="flex flex-col items-end text-xs leading-tight text-gray-800">
@@ -99,20 +99,20 @@
                 </div>
 
                 <div class="text-right my-0 mb-0 font-Arial">
-                    <span> <span id="date-placeholder" class="underline-offset-4">Date ___________________</span>
+                    <span> <span id="date-placeholder" class="underline-offset-4">Date _______________</span>
                 </div>
 
                 <div class="space-y-4 font-Arial my-4">
                     <p>To Whom It May Concern:</p>
                     <p class="indent-8">
                         This is to clarify that <span id="name-placeholder" class="underline-offset-4">
-                            _____________________________________________________________</span>
+                            _________________________________</span>
                         has been examined by the undersigned and found to be physically fit at the time of examination.
                     </p>
                     <p class="indent-8">
                         This certification is issued upon his/her request for <span id="excuse-placeholder"
                             class="underline-offset-4">
-                            ___________________________________________________________________________________</span>
+                            _________________________________________</span>
                         purposes but not for medico-legal
                         reason.
                     </p>
@@ -128,16 +128,16 @@
                         <p><span class="checkbox" id="status-boosters">_____</span> 1st / second Boosters</p>
                     </div>
                     <div class="w-11/30 text-left">
-                        <p><span id="x-ray-placeholder2" class="underline-offset-4">____________________</span> M.D.</p>
-                        <p><span id="x-ray-placeholder2" class="underline-offset-4">____________________</span> </p>
-                        <p>Lic No. <span id="lic_no-placeholder2" class="underline-underoffset-4">
-                                ____________________</span></p>
+                        <p><span id="doctor-name-placeholder" class="underline-offset-4">__________________</span> M.D.</p>
+                        <p><span id="doctor-signature-placeholder" class="underline-offset-4">__________________</span> </p>
+                        <p>Lic No. <span id="lic_no-placeholder" class="underline-offset-4">
+                                __________________</span></p>
                     </div>
                 </div>
             </div>
 
 
-            <!-- Document 2 (duplicate the structure as needed) -->
+            <!-- Document 2 -->
             <div class="container2 mt-0">
                     @foreach ($controlNumber->where('document_type', $documentType) as $control)
                         <div class="flex flex-col items-end text-xs leading-tight text-gray-800">
@@ -165,20 +165,20 @@
                 </div>
 
                 <div class="text-right mb-0 mb-0 font-Arial">
-                    <span><span id="date-placeholder2" class="underline-offset-4">Date ____________________</span>
+                    <span><span id="date-placeholder2" class="underline-offset-4">Date _______________</span>
                 </div>
 
                 <div class="space-y-4 font-Arial mt-4">
                     <p>To Whom It May Concern:</p>
                     <p class="indent-8">
                         This is to clarify that <span id="name-placeholder2" class="underline-offset-4">
-                            _____________________________________________________________</span>
+                            _________________________________</span>
                         has been examined by the undersigned and found to be physically fit at the time of examination.
                     </p>
                     <p class="indent-8">
                         This certification is issued upon his/her request for <span id="excuse-placeholder2"
                             class="underline-offset-4">
-                            ___________________________________________________________________________________</span>
+                            _________________________________________</span>
                         purposes but not for medico-legal
                         reason.
                     </p>
@@ -186,7 +186,7 @@
                 </div>
                 <div class="my-4">
                     <span>X-ray Result: <span id="x-ray-placeholder2" class="underline-offset-4">
-                            ____________________</span>
+                            __________________</span>
                 </div>
                 <!-- Flex Row for COVID Status and Signature -->
                 <div class="flex justify-between mt-0">
@@ -199,10 +199,10 @@
                         <p><span class="checkbox" id="status-boosters2">_____</span> 1st / second Boosters</p>
                     </div>
                     <div class="w-11/30 text-left">
-                        <p><span id="x-ray-placeholder2" class="underline-offset-4">____________________</span> M.D.</p>
-                        <p><span id="x-ray-placeholder2" class="underline-offset-4">____________________</span> </p>
-                        <p>Lic No. <span id="lic_no-placeholder2" class="underline-underoffset-4">
-                                ____________________</span></p>
+                        <p><span id="doctor-name-placeholder2" class="underline-offset-4">__________________</span> M.D.</p>
+                        <p><span id="doctor-signature-placeholder2" class="underline-offset-4">__________________</span> </p>
+                        <p>Lic No. <span id="lic_no-placeholder2" class="underline-offset-4">
+                                __________________</span></p>
                     </div>
                 </div>
             </div>

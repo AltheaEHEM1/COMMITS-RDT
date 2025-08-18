@@ -82,7 +82,7 @@
 
     <div class="container mx-auto bg-white md:py-10 md:px-10 w-[90%] md:w-[70%] lg:w-[70%]">
         <div class="page">
-            <!-- Document 2 (duplicate the structure as needed) -->
+            <!-- Document 1 -->
             <div class="container mb-0">
                 @foreach ($controlNumber->where('document_type', $documentType) as $control)
                     <div class="flex flex-col items-end text-xs leading-tight text-gray-800">
@@ -110,16 +110,16 @@
                 </div>
 
                 <div class="text-right my-5 mb-0 font-Arial">
-                    <span> <span id="date-placeholder" class="underline-offset-4">Date ___________________</span>
+                    <span> <span id="date-placeholder" class="underline-offset-4">Date _______________</span>
                 </div>
 
                 <div class="space-y-4 font-Arial mb-0">
                     <p>To Whom It May Concern:</p>
                     <p class="indent-8">
                         This is to clarify that <span id="name-placeholder" class="underline-offset-4">
-                            __________________________________________________________________________</span>
-                        has been examined by the undersigned at the PUP Medical Clinic on <span id="excuse-placeholder"
-                            class="underline-offset-4">_______________________________.</span>
+                            _________________________________</span>
+                        has been examined by the undersigned at the PUP Medical Clinic on <span id="exam-date-placeholder"
+                            class="underline-offset-4">___________________.</span>
                     </p>
                     <p class="indent-8">
                         This certification is issued upon his/her request for
@@ -131,10 +131,10 @@
                 <!-- signature -->
                 <div class="flex justify-end py-5">
                     <div class="w-11/30 text-left">
-                        <p><span id="physician-name-placeholder" class="underline-underoffset-4">____________________</span>
+                        <p><span id="physician-name-placeholder" class="underline-offset-4">__________________</span>
                             M.D.</p>
-                        <p>Lic No. <span id="lic_no-placeholder" class="underline-underoffset-4">
-                                ____________________</span></p>
+                        <p>Lic No. <span id="lic_no-placeholder" class="underline-offset-4">
+                                __________________</span></p>
                     </div>
                 </div>
 
@@ -142,7 +142,7 @@
         </div>
 
 
-        <!-- Document 2 (duplicate the structure as needed) -->
+        <!-- Document 2 -->
         <div class="container2 mt-0">
                 @foreach ($controlNumber->where('document_type', $documentType) as $control)
                     <div class="flex flex-col items-end text-xs leading-tight text-gray-800">
@@ -170,16 +170,16 @@
             </div>
 
             <div class="text-right my-5 mb-0 font-Arial">
-                <span><span id="date-placeholder2" class="underline-offset-4">Date ____________________</span>
+                <span><span id="date-placeholder2" class="underline-offset-4">Date _______________</span>
             </div>
 
             <div class="space-y-4 font-Arial mb-5">
                 <p>To Whom It May Concern:</p>
                 <p class="indent-8">
                     This is to clarify that <span id="name-placeholder2" class="underline-offset-4">
-                        __________________________________________________________________________</span>
-                    as been examined by the undersigned at the PUP Medical Clinic on <span id="excuse-placeholder2"
-                        class="underline-offset-4">_______________________________.</span>
+                        _________________________________</span>
+                    has been examined by the undersigned at the PUP Medical Clinic on <span id="exam-date-placeholder2"
+                        class="underline-offset-4">___________________.</span>
                 </p>
                 <p class="indent-8">
                     This certification is issued upon his/her request for <span class="font-bold italic font-arial">Annual
@@ -192,9 +192,9 @@
 
             <div class="flex justify-end p-0 ">
                 <div class="w-11/30 text-left">
-                    <p><span id="x-ray-placeholder2" class="underline-offset-4">____________________</span> M.D.</p>
-                    <p>Lic No. <span id="lic_no-placeholder2" class="underline-underoffset-4">
-                            ____________________</span></p>
+                    <p><span id="physician-name-placeholder2" class="underline-offset-4">__________________</span> M.D.</p>
+                    <p>Lic No. <span id="lic_no-placeholder2" class="underline-offset-4">
+                            __________________</span></p>
                 </div>
             </div>
         </div>

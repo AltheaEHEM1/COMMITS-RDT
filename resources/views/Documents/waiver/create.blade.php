@@ -90,27 +90,27 @@
                     </div>
                 </div>
                 <div class="text-right my-5 mb-8 font-Arial">
-                    <span> <span id="date-placeholder" class="underline-offset-4">Date ___________________</span>
+                    <span> <span id="date-placeholder" class="underline-offset-4">Date _______________</span>
                 </div>
 
                 <div class="space-y-4 font-Arial mb-0">
 
                     <p class="indent-8">
                         I, <span id="name-placeholder" class="underline-offset-4">
-                            ____________________________________________________________________</span>
-                        enrolled at the College of <span id="school">_____________________________</span> Department
+                            ________________________________________________</span>
+                        enrolled at the College of <span id="school">_______________________</span> Department
                         of
-                        <span id="department">____________________</span>, was seen and examined at the PUP Medical
+                        <span id="department">__________________</span>, was seen and examined at the PUP Medical
                         Clinic dated
-                        <span id="date">________________________</span> with the diagnosis of <span
-                            id="diagnose">___________________________</span>. I promise to come back for a follow-up on
-                        <span id="follow-up"> ______________________</span> as adviced.
+                        <span id="date">____________________</span> with the diagnosis of <span
+                            id="diagnose">_______________________</span>. I promise to come back for a follow-up on
+                        <span id="follow-up"> __________________</span> as adviced.
                     </p>
                 </div>
 
                 <div class="flex justify-end py-5">
                     <div class="w-11/30 text-left">
-                        <p><span id="lic_no-placeholder" class="underline-underoffset-4">____________________</span>
+                        <p><span id="lic_no-placeholder" class="underline-underoffset-4">__________________</span>
                             M.D.</p>
                         <p class="text-center">Clinic Physician</p>
                     </div>
@@ -146,25 +146,25 @@
                 </div>
 
                 <div class="text-right my-10 mb-8 font-Arial">
-                    <span><span id="date-placeholder2" class="underline-offset-4">Date ____________________</span>
+                    <span><span id="date-placeholder2" class="underline-offset-4">Date ________________</span>
                 </div>
 
                 <div class="space-y-4 font-Arial mb-5">
                     <p class="indent-8">
                         I, <span id="name-placeholder2" class="underline-offset-4">
-                            __________________________________________________________________________</span>
-                        enrolled at the College of <span id="school2">_____________________________</span> Department of
-                        <span id="department2">____________________</span>, was seen and examined at the PUP Medical Clinic
+                            ________________________________________________</span>
+                        enrolled at the College of <span id="school2">_______________________</span> Department of
+                        <span id="department2">__________________</span>, was seen and examined at the PUP Medical Clinic
                         dated
-                        <span id="date2">________________________</span> with the diagnosis of <span id="diagnose2">
-                            ___________________________</span>. I promise to come back for a follow-up on
-                        <span id="follow-up2"> ______________________</span> as advised.
+                        <span id="date2">____________________</span> with the diagnosis of <span id="diagnose2">
+                            _______________________</span>. I promise to come back for a follow-up on
+                        <span id="follow-up2"> __________________</span> as advised.
                     </p>
                 </div>
 
                 <div class="flex justify-end p-10">
                     <div class="w-11/30 text-left">
-                        <p><span id="lic_no-placeholder2" class="underline-underoffset-4">____________________</span> M.D.
+                        <p><span id="lic_no-placeholder2" class="underline-underoffset-4">__________________</span> M.D.
                         </p>
                         <p class="text-center">Clinic Physician</p>
                     </div>
